@@ -184,7 +184,16 @@ qPersonAttMarkRussian.Value AS 'Атт. Русский Язык',
             get { return chbIsParallel.Checked; }
             set { chbIsParallel.Checked = value; }
         }
-
+        public bool IsCrimea
+        {
+            get { return chbIsCrimea.Checked; }
+            set { chbIsCrimea.Checked = value; }
+        }
+        public bool IsQuota
+        {
+            get { return chbIsQuota.Checked; }
+            set { chbIsQuota.Checked = value; }
+        }
         public bool IsCel
         {
             get { return chbCel.Checked; }
@@ -373,7 +382,7 @@ qPersonAttMarkRussian.Value AS 'Атт. Русский Язык',
         {
             using (PriemEntities context = new PriemEntities())
             {
-                int plan = 0, planCel = 0, entered = 0, enteredCel = 0;               
+                int plan = 0, planCel = 0, planCrimea = 0, planQuota = 0, entered = 0, enteredCel = 0, enteredCrimea = 0, enteredQuota = 0;        
 
                 qEntry entry = (from ent in MainClass.GetEntry(context)
                        where ent.IsReduced == IsReduced && ent.IsParallel == IsParallel && ent.IsSecond == IsSecond 
@@ -398,6 +407,18 @@ qPersonAttMarkRussian.Value AS 'Атт. Русский Язык',
                            where ab.CompetitionId != 6 && ab.EntryId == entryId
                            select ab).Count();
 
+                enteredCrimea = (from ab in context.qAbitAll
+                                 join ev in context.extEntryView
+                                 on ab.Id equals ev.AbiturientId
+                                 where (ab.CompetitionId == 11 || ab.CompetitionId == 12) && ab.EntryId == entryId
+                                 select ab).Count();
+
+                enteredQuota = (from ab in context.qAbitAll
+                                join ev in context.extEntryView
+                                on ab.Id equals ev.AbiturientId
+                                where (ab.CompetitionId == 2 || ab.CompetitionId == 7) && ab.EntryId == entryId
+                                select ab).Count();
+
                 enteredCel = (from ab in context.qAbitAll
                               join ev in context.extEntryView
                               on ab.Id equals ev.AbiturientId
@@ -406,10 +427,19 @@ qPersonAttMarkRussian.Value AS 'Атт. Русский Язык',
                
                 CheckLockAndPasha(context);
 
-                if (IsCel)                
+                /*if (IsCel)                
                     return planCel - enteredCel;                
                 else                
-                    return plan - planCel - entered;                
+                    return plan - planCel - entered;
+                */
+                if (IsCel)
+                    return planCel - enteredCel;
+                else if (IsCrimea)
+                    return planCrimea - enteredCrimea;
+                else if (IsQuota)
+                    return planQuota - enteredQuota;
+                else
+                    return plan - planCel - entered - enteredQuota;
             }
         }
 
@@ -424,6 +454,7 @@ qPersonAttMarkRussian.Value AS 'Атт. Русский Язык',
                            && fv.StudyFormId == StudyFormId
                            && fv.StudyBasisId == StudyBasisId
                            && fv.IsCel == IsCel
+                           && fv.IsCrimea == IsCrimea
                            select fv).FirstOrDefault();
             
             string DocNum = string.Empty;
@@ -488,12 +519,19 @@ qPersonAttMarkRussian.Value AS 'Атт. Русский Язык',
                     LEFT JOIN ed.hlpAbiturientProf ON ed.hlpAbiturientProf.Id = ed.qAbiturient.Id 
                     LEFT JOIN ed.extAbitMarksSum ON ed.qAbiturient.Id = ed.extAbitMarksSum.Id";
 
-                    string whereFix = string.Format(@" WHERE ed.FixierenView.StudyLevelGroupId = {10} AND ed.FixierenView.StudyFormId={0} AND ed.FixierenView.StudyBasisId={1} AND ed.FixierenView.FacultyId={2} 
+                    /*string whereFix = string.Format(@" WHERE ed.FixierenView.StudyLevelGroupId = {10} AND ed.FixierenView.StudyFormId={0} AND ed.FixierenView.StudyBasisId={1} AND ed.FixierenView.FacultyId={2} 
                                                     AND ed.FixierenView.LicenseProgramId={3} AND ed.FixierenView.ObrazProgramId={4} {5} AND ed.FixierenView.IsCel = {6}
                                                     AND ed.FixierenView.IsSecond = {7} AND ed.FixierenView.IsReduced = {8} AND ed.FixierenView.IsParallel = {9} ",
                         StudyFormId, StudyBasisId, FacultyId, LicenseProgramId, ObrazProgramId, ProfileId == null ? " AND ed.FixierenView.ProfileId IS NULL" : "AND ed.FixierenView.ProfileId='" + ProfileId + "'", 
                         QueryServ.StringParseFromBool(IsCel), QueryServ.StringParseFromBool(IsSecond), QueryServ.StringParseFromBool(IsReduced), QueryServ.StringParseFromBool(IsParallel), MainClass.studyLevelGroupId);
-                    
+                    */
+                    string whereFix = string.Format(
+@" WHERE ed.FixierenView.StudyLevelGroupId = {10} AND ed.FixierenView.StudyFormId={0} AND ed.FixierenView.StudyBasisId={1} AND ed.FixierenView.FacultyId={2} 
+AND ed.FixierenView.LicenseProgramId={3} AND ed.FixierenView.ObrazProgramId={4} {5} AND ed.FixierenView.IsCel = {6}
+AND ed.FixierenView.IsSecond = {7} AND ed.FixierenView.IsReduced = {8} AND ed.FixierenView.IsParallel = {9} AND ed.FixierenView.IsCrimea = {11} AND ed.FixierenView.IsQuota = {12}",
+                        StudyFormId, StudyBasisId, FacultyId, LicenseProgramId, ObrazProgramId, ProfileId == null ? " AND ed.FixierenView.ProfileId IS NULL" : "AND ed.FixierenView.ProfileId='" + ProfileId + "'",
+                        QueryServ.StringParseFromBool(IsCel), QueryServ.StringParseFromBool(IsSecond), QueryServ.StringParseFromBool(IsReduced), QueryServ.StringParseFromBool(IsParallel),
+                        MainClass.studyLevelGroupId, QueryServ.StringParseFromBool(IsCrimea), QueryServ.StringParseFromBool(IsQuota));
                     //sOrderBy = " ORDER BY Fixieren.Number ";
 
                     totalQuery = queryFix + whereFix + sOrderBy;
@@ -508,7 +546,18 @@ qPersonAttMarkRussian.Value AS 'Атт. Русский Язык',
                     // в общем списке выводить всех 
                     //else
                     //    sFilters += " AND ed.qAbiturient.CompetitionId NOT IN (6) ";
-                                        
+
+
+                    if (IsCrimea)
+                        sFilters += " AND ed.qAbiturient.CompetitionId IN (11, 12) ";
+                    else
+                        sFilters += " AND ed.qAbiturient.CompetitionId NOT IN (11, 12) ";
+                    //квотники?
+                    if (IsQuota)
+                        sFilters += " AND ed.qAbiturient.CompetitionId IN (2, 7) ";
+                    //else
+                    //    sFilters += " AND ed.qAbiturient.CompetitionId NOT IN (2, 7) ";
+
                     //не забрали доки
                     sFilters += " AND (ed.qAbiturient.BackDoc=0) ";
                     sFilters += " AND ed.qAbiturient.Id NOT IN (select abiturientid from ed.extentryview) ";                    
@@ -659,7 +708,9 @@ qPersonAttMarkRussian.Value AS 'Атт. Русский Язык',
                                            && (ProfileId == null ? fv.ProfileId == null : fv.ProfileId == ProfileId)
                                            && fv.StudyFormId == StudyFormId
                                            && fv.StudyBasisId == StudyBasisId
-                                           && fv.IsCel == IsCel
+                                           && fv.IsCel == IsCel 
+                                           && fv.IsCrimea == IsCrimea
+                                           && fv.IsQuota == IsQuota
                                            select fv.Id).FirstOrDefault();
 
                         if (fixViewId != null)
@@ -681,7 +732,7 @@ qPersonAttMarkRussian.Value AS 'Атт. Русский Язык',
                         int rand = new Random().Next(10000, 99999);
 
                         ObjectParameter fvId = new ObjectParameter("id", typeof(Guid));
-                        context.FixierenView_Insert(MainClass.studyLevelGroupId, FacultyId, LicenseProgramId, ObrazProgramId, ProfileId, StudyBasisId, StudyFormId, IsSecond, IsReduced, IsParallel, IsCel, rand, false, fvId);
+                        context.FixierenView_Insert(MainClass.studyLevelGroupId, FacultyId, LicenseProgramId, ObrazProgramId, ProfileId, StudyBasisId, StudyFormId, IsSecond, IsReduced, IsParallel, IsCel, rand, false, IsCrimea, IsQuota, fvId);
                         Guid? viewId = (Guid?)fvId.Value;
 
                         int counter = 0;
@@ -711,7 +762,7 @@ qPersonAttMarkRussian.Value AS 'Атт. Русский Язык',
             SaveFileDialog sfd = new SaveFileDialog();
             sfd.Filter = "ADOBE Pdf files|*.pdf";
             if (sfd.ShowDialog() == DialogResult.OK)
-                Print.PrintRatingProtocol(StudyFormId, StudyBasisId, FacultyId, LicenseProgramId, ObrazProgramId, ProfileId, IsCel,  
+                Print.PrintRatingProtocol(StudyFormId, StudyBasisId, FacultyId, LicenseProgramId, ObrazProgramId, ProfileId, IsCel, IsCrimea,  
                     plan, sfd.FileName, IsSecond, IsReduced, IsParallel);
         }        
 
@@ -864,6 +915,7 @@ qPersonAttMarkRussian.Value AS 'Атт. Русский Язык',
                                            && (ProfileId == null ? fv.ProfileId == null : fv.ProfileId == ProfileId)
                                            && fv.StudyFormId == StudyFormId
                                            && fv.StudyBasisId == StudyBasisId
+                                           && fv.IsCrimea == IsCrimea
                                            && fv.IsCel == IsCel
                                            select fv.Id).FirstOrDefault();
 
@@ -877,7 +929,7 @@ qPersonAttMarkRussian.Value AS 'Атт. Русский Язык',
                                            select fv.Id).FirstOrDefault();
                         
                         //удалили старое
-                        context.FirstWave_DELETE(entryId, IsCel);
+                        context.FirstWave_DELETE(entryId, IsCel, IsCrimea);
 
                         var fix = from fx in context.Fixieren
                                   where fx.FixierenViewId == fixViewId
@@ -887,9 +939,24 @@ qPersonAttMarkRussian.Value AS 'Атт. Русский Язык',
                         int cnt = 0;                    
                         foreach (DataGridViewRow row in dgvAbits.Rows)                        
                         {
+                            //cnt++;
+                            //Guid? abId = new Guid(row.Cells["Id"].Value.ToString());
+                            //context.FirstWave_INSERT(abId, cnt);
+                            ////context.FirstWave_INSERT(f.AbiturientId, f.Number);
                             cnt++;
                             Guid? abId = new Guid(row.Cells["Id"].Value.ToString());
-                            context.FirstWave_INSERT(abId, cnt);
+                            if (!chbCel.Checked)
+                            {
+                                if (!IsCrimea && !IsQuota)
+                                    context.FirstWave_INSERT(abId, cnt);
+                                else if (IsCrimea)
+                                    context.FirstWave_INSERTCRIMEA(abId, cnt);
+                                else if (IsQuota)
+                                    context.FirstWave_INSERTQUOTA(abId, cnt);
+
+                            }
+                            else
+                                context.FirstWave_INSERTCEL(abId, cnt);
                             //context.FirstWave_INSERT(f.AbiturientId, f.Number);
                         }
                         transaction.Complete();
@@ -924,7 +991,7 @@ qPersonAttMarkRussian.Value AS 'Атт. Русский Язык',
                                          select fv.Id).FirstOrDefault();
                     
                     //удалили
-                    context.FirstWave_DELETE(entryId, IsCel);
+                    context.FirstWave_DELETE(entryId, IsCel, IsCrimea);
                 }
             }
             catch (Exception ex)
@@ -992,10 +1059,17 @@ qPersonAttMarkRussian.Value AS 'Атт. Русский Язык',
         private void chbCel_CheckedChanged(object sender, EventArgs e)
         {
             NullDataGrid();
-            if (IsCel)
+
+            if (IsQuota)
+                chbIsQuota.Checked = false;
+            if (IsCrimea)
+                chbIsCrimea.Checked = false;
+
+
+            /*if (IsCel)
                 btnFixierenWeb.Enabled = false;
             else
-                btnFixierenWeb.Enabled = true;
+                btnFixierenWeb.Enabled = true;*/
         }             
     }
 }

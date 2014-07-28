@@ -120,16 +120,7 @@
           </EntitySet>
           <EntitySet Name="Prorektor" EntityType="Priem2012Model.Store.Prorektor" store:Type="Tables" Schema="ed" />
           <EntitySet Name="Protocol" EntityType="Priem2012Model.Store.Protocol" store:Type="Tables" Schema="ed" />
-          <EntitySet Name="ProtocolHistory" EntityType="Priem2012Model.Store.ProtocolHistory" store:Type="Tables" store:Schema="ed" store:Name="ProtocolHistory">
-            <DefiningQuery>SELECT 
-      [ProtocolHistory].[Id] AS [Id], 
-      [ProtocolHistory].[AbiturientId] AS [AbiturientId], 
-      [ProtocolHistory].[ProtocolId] AS [ProtocolId], 
-      [ProtocolHistory].[Excluded] AS [Excluded], 
-      [ProtocolHistory].[ExcludeProtocolId] AS [ExcludeProtocolId], 
-      [ProtocolHistory].[EntryHeaderId] AS [EntryHeaderId]
-      FROM [ed].[ProtocolHistory] AS [ProtocolHistory]</DefiningQuery>
-          </EntitySet>
+          <EntitySet Name="ProtocolHistory" EntityType="Priem2012Model.Store.ProtocolHistory" store:Type="Tables" Schema="ed" />
           <EntitySet Name="ProtocolNumbers" EntityType="Priem2012Model.Store.ProtocolNumbers" store:Type="Tables" Schema="ed" />
           <EntitySet Name="ProtocolType" EntityType="Priem2012Model.Store.ProtocolType" store:Type="Tables" Schema="ed" />
           <EntitySet Name="Region" EntityType="Priem2012Model.Store.Region" store:Type="Tables" Schema="ed" />
@@ -220,6 +211,7 @@
       [extAbitMarksSum].[StudyFormId] AS [StudyFormId], 
       [extAbitMarksSum].[StudyBasisId] AS [StudyBasisId], 
       [extAbitMarksSum].[TotalSum] AS [TotalSum], 
+      [extAbitMarksSum].[TotalSumFiveGrade] AS [TotalSumFiveGrade], 
       [extAbitMarksSum].[TotalCount] AS [TotalCount]
       FROM [ed].[extAbitMarksSum] AS [extAbitMarksSum]</DefiningQuery>
           </EntitySet>
@@ -488,7 +480,8 @@
       [extExamInEntry].[IsSecond] AS [IsSecond], 
       [extExamInEntry].[IsReduced] AS [IsReduced], 
       [extExamInEntry].[IsParallel] AS [IsParallel], 
-      [extExamInEntry].[ExamInEntryToCompetitiveGroupId] AS [ExamInEntryToCompetitiveGroupId]
+      [extExamInEntry].[ExamInEntryToCompetitiveGroupId] AS [ExamInEntryToCompetitiveGroupId], 
+      [extExamInEntry].[OrderNumber] AS [OrderNumber]
       FROM [ed].[extExamInEntry] AS [extExamInEntry]</DefiningQuery>
           </EntitySet>
           <EntitySet Name="extExamsVed" EntityType="Priem2012Model.Store.extExamsVed" store:Type="Views" store:Schema="ed" store:Name="extExamsVed">
@@ -855,7 +848,12 @@
       [extPersonAll].[SNILS] AS [SNILS], 
       [extPersonAll].[RegionEducId] AS [RegionEducId], 
       [extPersonAll].[KladrCode] AS [KladrCode], 
-      [extPersonAll].[EqualDocumentNumber] AS [EqualDocumentNumber]
+      [extPersonAll].[EqualDocumentNumber] AS [EqualDocumentNumber], 
+      [extPersonAll].[ForeignNationalityId] AS [ForeignNationalityId], 
+      [extPersonAll].[ForeignCountryId] AS [ForeignCountryId], 
+      [extPersonAll].[HasTRKI] AS [HasTRKI], 
+      [extPersonAll].[TRKICertificateNumber] AS [TRKICertificateNumber], 
+      [extPersonAll].[ForeignCountryEducId] AS [ForeignCountryEducId]
       FROM [ed].[extPersonAll] AS [extPersonAll]</DefiningQuery>
           </EntitySet>
           <EntitySet Name="extPersonSPO" EntityType="Priem2012Model.Store.extPersonSPO" store:Type="Views" store:Schema="ed" store:Name="extPersonSPO">
@@ -1184,7 +1182,8 @@
       [qEntry].[QualificationCode] AS [QualificationCode], 
       [qEntry].[StudyLevelFISName] AS [StudyLevelFISName], 
       [qEntry].[ObrazProgramPrintName] AS [ObrazProgramPrintName], 
-      [qEntry].[KCPCrimea] AS [KCPCrimea]
+      [qEntry].[KCPCrimea] AS [KCPCrimea], 
+      [qEntry].[KCPQuota] AS [KCPQuota]
       FROM [ed].[qEntry] AS [qEntry]</DefiningQuery>
           </EntitySet>
           <EntitySet Name="qEntryToCompetitiveGroup" EntityType="Priem2012Model.Store.qEntryToCompetitiveGroup" store:Type="Views" store:Schema="ed" store:Name="qEntryToCompetitiveGroup">
@@ -1231,7 +1230,8 @@
       [qMark].[ExamNameId] AS [ExamNameId], 
       [qMark].[EntranceTestType] AS [EntranceTestType], 
       [qMark].[OlympiadId] AS [OlympiadId], 
-      [qMark].[EgeCertificateId] AS [EgeCertificateId]
+      [qMark].[EgeCertificateId] AS [EgeCertificateId], 
+      [qMark].[OrderNumber] AS [OrderNumber]
       FROM [ed].[qMark] AS [qMark]</DefiningQuery>
           </EntitySet>
           <EntitySet Name="qObrazProgram" EntityType="Priem2012Model.Store.qObrazProgram" store:Type="Views" store:Schema="ed" store:Name="qObrazProgram">
@@ -1432,6 +1432,10 @@
             <End Role="Abiturient" EntitySet="Abiturient" />
             <End Role="Mark" EntitySet="Mark" />
           </AssociationSet>
+          <AssociationSet Name="FK_Mark_EgeCertificate" Association="Priem2012Model.Store.FK_Mark_EgeCertificate">
+            <End Role="EgeCertificate" EntitySet="EgeCertificate" />
+            <End Role="Mark" EntitySet="Mark" />
+          </AssociationSet>
           <AssociationSet Name="fk_Mark_ExamInEntry" Association="Priem2012Model.Store.fk_Mark_ExamInEntry">
             <End Role="ExamInEntry" EntitySet="ExamInEntry" />
             <End Role="Mark" EntitySet="Mark" />
@@ -1611,10 +1615,12 @@
           </Key>
           <Property Name="AbiturientId" Type="uniqueidentifier" Nullable="false" />
           <Property Name="SortNum" Type="int" Nullable="false" />
-          <Property Name="IsCel" Type="bit" />
+          <Property Name="IsCel" Type="bit" Nullable="false" />
+          <Property Name="IsCrimea" Type="bit" Nullable="false" />
+          <Property Name="IsQuota" Type="bit" Nullable="false" />
         </EntityType>
-        <!--Errors Found During Generation:
-      warning 6002: The table/view 'Priem.ed._FirstWaveGreen' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+        <!--Ошибки, обнаруженные при создании:
+      предупреждение 6002: В таблице или представлении "Priem.ed._FirstWaveGreen" не определен первичный ключ. Ключ был выведен, а определение таблицы или представления было создано в режиме только для чтения.
       -->
         <EntityType Name="_FirstWaveGreen">
           <Key>
@@ -1819,6 +1825,7 @@
           <Property Name="IsOpen" Type="bit" Nullable="false" />
           <Property Name="Holder" Type="nvarchar" MaxLength="50" />
           <Property Name="NoNumber" Type="bit" />
+          <Property Name="ImportDate" Type="datetime" Nullable="false" />
         </EntityType>
         <EntityType Name="EgeExamName">
           <Key>
@@ -1849,8 +1856,8 @@
           <Property Name="EgeExamNameId" Type="int" Nullable="false" />
           <Property Name="ExamId" Type="int" />
         </EntityType>
-        <!--Errors Found During Generation:
-      warning 6002: The table/view 'Priem.ed.EgeToLanguage' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+        <!--Ошибки, обнаруженные при создании:
+      предупреждение 6002: В таблице или представлении "Priem.ed.EgeToLanguage" не определен первичный ключ. Ключ был выведен, а определение таблицы или представления было создано в режиме только для чтения.
       -->
         <EntityType Name="EgeToLanguage">
           <Key>
@@ -1895,6 +1902,7 @@
           <Property Name="DateOfStart" Type="datetime" Nullable="false" />
           <Property Name="CommissionId" Type="int" />
           <Property Name="KCPCrimea" Type="int" />
+          <Property Name="KCPQuota" Type="int" />
         </EntityType>
         <EntityType Name="EntryHeader">
           <Key>
@@ -1929,6 +1937,7 @@
           <Property Name="ExamInEntryToCompetitiveGroupId" Type="uniqueidentifier" />
           <Property Name="IsGosLine" Type="bit" Nullable="false" />
           <Property Name="IsCrimea" Type="bit" Nullable="false" />
+          <Property Name="OrderNumber" Type="tinyint" />
         </EntityType>
         <EntityType Name="ExamName">
           <Key>
@@ -1979,8 +1988,8 @@
           <Property Name="RoomNumber" Type="nvarchar" Nullable="false" MaxLength="50" />
           <Property Name="Number" Type="int" Nullable="false" />
         </EntityType>
-        <!--Errors Found During Generation:
-      warning 6002: The table/view 'Priem.ed.ExamsVedRoomHistory' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+        <!--Ошибки, обнаруженные при создании:
+      предупреждение 6002: В таблице или представлении "Priem.ed.ExamsVedRoomHistory" не определен первичный ключ. Ключ был выведен, а определение таблицы или представления было создано в режиме только для чтения.
       -->
         <EntityType Name="ExamsVedRoomHistory">
           <Key>
@@ -1997,8 +2006,8 @@
           <Property Name="Id" Type="int" Nullable="false" />
           <Property Name="Name" Type="nvarchar" Nullable="false" MaxLength="50" />
         </EntityType>
-        <!--Errors Found During Generation:
-      warning 6002: The table/view 'Priem.ed.Fixieren' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+        <!--Ошибки, обнаруженные при создании:
+      предупреждение 6002: В таблице или представлении "Priem.ed.Fixieren" не определен первичный ключ. Ключ был выведен, а определение таблицы или представления было создано в режиме только для чтения.
       -->
         <EntityType Name="Fixieren">
           <Key>
@@ -2028,6 +2037,8 @@
           <Property Name="IsCel" Type="bit" Nullable="false" />
           <Property Name="DocNum" Type="int" />
           <Property Name="Locked" Type="bit" Nullable="false" />
+          <Property Name="IsCrimea" Type="bit" Nullable="false" />
+          <Property Name="IsQuota" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="ForeignCountry">
           <Key>
@@ -2063,6 +2074,7 @@
           <Property Name="ExamVedId" Type="uniqueidentifier" />
           <Property Name="OlympiadId" Type="uniqueidentifier" />
           <Property Name="EgeCertificateId" Type="uniqueidentifier" />
+          <Property Name="FiveGradeValue" Type="tinyint" />
         </EntityType>
         <EntityType Name="OlympBook">
           <Key>
@@ -2122,6 +2134,7 @@
           <Property Name="NameDative" Type="nvarchar" MaxLength="100" />
           <Property Name="IsOpen" Type="bit" Nullable="false" />
           <Property Name="Holder" Type="nvarchar" MaxLength="150" />
+          <Property Name="ExamId" Type="int" />
         </EntityType>
         <EntityType Name="OlympType">
           <Key>
@@ -2184,6 +2197,8 @@
           <Property Name="AbiturientId" Type="uniqueidentifier" />
           <Property Name="IsOpen" Type="bit" Nullable="false" />
           <Property Name="Holder" Type="nvarchar" MaxLength="50" />
+          <Property Name="SumTotal" Type="nvarchar" MaxLength="500" />
+          <Property Name="SrokIndividual" Type="nvarchar" MaxLength="150" />
         </EntityType>
         <EntityType Name="PassportType">
           <Key>
@@ -2193,8 +2208,8 @@
           <Property Name="Name" Type="nvarchar" MaxLength="50" />
           <Property Name="FISName" Type="nvarchar" MaxLength="50" />
         </EntityType>
-        <!--Errors Found During Generation:
-      warning 6002: The table/view 'Priem.ed.PayDataEntry' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+        <!--Ошибки, обнаруженные при создании:
+      предупреждение 6002: В таблице или представлении "Priem.ed.PayDataEntry" не определен первичный ключ. Ключ был выведен, а определение таблицы или представления было создано в режиме только для чтения.
       -->
         <EntityType Name="PayDataEntry">
           <Key>
@@ -2377,8 +2392,8 @@
           <Property Name="Date" Type="date" />
           <Property Name="Number" Type="nvarchar" MaxLength="20" />
         </EntityType>
-        <!--Errors Found During Generation:
-      warning 6002: The table/view 'Priem.ed.PersonSportQualification' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+        <!--Ошибки, обнаруженные при создании:
+      предупреждение 6002: В таблице или представлении "Priem.ed.PersonSportQualification" не определен первичный ключ. Ключ был выведен, а определение таблицы или представления было создано в режиме только для чтения.
       -->
         <EntityType Name="PersonSportQualification">
           <Key>
@@ -2389,8 +2404,8 @@
           <Property Name="SportQualificationLevel" Type="nvarchar" MaxLength="50" />
           <Property Name="OtherSportQualification" Type="nvarchar" MaxLength="500" />
         </EntityType>
-        <!--Errors Found During Generation:
-      warning 6002: The table/view 'Priem.ed.Privilege' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+        <!--Ошибки, обнаруженные при создании:
+      предупреждение 6002: В таблице или представлении "Priem.ed.Privilege" не определен первичный ключ. Ключ был выведен, а определение таблицы или представления было создано в режиме только для чтения.
       -->
         <EntityType Name="Privilege">
           <Key>
@@ -2433,15 +2448,9 @@
           <Property Name="IsReduced" Type="bit" />
           <Property Name="IsListener" Type="bit" />
         </EntityType>
-        <!--Errors Found During Generation:
-      warning 6002: The table/view 'Priem.ed.ProtocolHistory' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
-      -->
         <EntityType Name="ProtocolHistory">
           <Key>
             <PropertyRef Name="Id" />
-            <PropertyRef Name="AbiturientId" />
-            <PropertyRef Name="ProtocolId" />
-            <PropertyRef Name="Excluded" />
           </Key>
           <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
           <Property Name="AbiturientId" Type="uniqueidentifier" Nullable="false" />
@@ -2597,8 +2606,8 @@
           <Property Name="Name" Type="nvarchar" Nullable="false" MaxLength="50" />
           <Property Name="Acronym" Type="nvarchar" MaxLength="10" />
         </EntityType>
-        <!--Errors Found During Generation:
-      warning 6002: The table/view 'Priem.ed.extAbit' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+        <!--Ошибки, обнаруженные при создании:
+      предупреждение 6002: В таблице или представлении "Priem.ed.extAbit" не определен первичный ключ. Ключ был выведен, а определение таблицы или представления было создано в режиме только для чтения.
       -->
         <EntityType Name="extAbit">
           <Key>
@@ -2698,8 +2707,8 @@
           <Property Name="CommitNumber" Type="int" />
           <Property Name="IsGosLine" Type="bit" Nullable="false" />
         </EntityType>
-        <!--Errors Found During Generation:
-      warning 6002: The table/view 'Priem.ed.extAbitMarksSum' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+        <!--Ошибки, обнаруженные при создании:
+      предупреждение 6002: В таблице или представлении "Priem.ed.extAbitMarksSum" не определен первичный ключ. Ключ был выведен, а определение таблицы или представления было создано в режиме только для чтения.
       -->
         <EntityType Name="extAbitMarksSum">
           <Key>
@@ -2711,10 +2720,11 @@
           <Property Name="StudyFormId" Type="int" Nullable="false" />
           <Property Name="StudyBasisId" Type="int" Nullable="false" />
           <Property Name="TotalSum" Type="int" />
+          <Property Name="TotalSumFiveGrade" Type="int" />
           <Property Name="TotalCount" Type="int" />
         </EntityType>
-        <!--Errors Found During Generation:
-      warning 6002: The table/view 'Priem.ed.extAbitSPO' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+        <!--Ошибки, обнаруженные при создании:
+      предупреждение 6002: В таблице или представлении "Priem.ed.extAbitSPO" не определен первичный ключ. Ключ был выведен, а определение таблицы или представления было создано в режиме только для чтения.
       -->
         <EntityType Name="extAbitSPO">
           <Key>
@@ -2809,8 +2819,8 @@
           <Property Name="ObrazProgramPrintName" Type="nvarchar" MaxLength="150" />
           <Property Name="HostelEduc" Type="bit" />
         </EntityType>
-        <!--Errors Found During Generation:
-      warning 6002: The table/view 'Priem.ed.extDisEntryView' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+        <!--Ошибки, обнаруженные при создании:
+      предупреждение 6002: В таблице или представлении "Priem.ed.extDisEntryView" не определен первичный ключ. Ключ был выведен, а определение таблицы или представления было создано в режиме только для чтения.
       -->
         <EntityType Name="extDisEntryView">
           <Key>
@@ -2842,8 +2852,8 @@
           <Property Name="IsParallel" Type="bit" />
           <Property Name="IsReduced" Type="bit" />
         </EntityType>
-        <!--Errors Found During Generation:
-      warning 6002: The table/view 'Priem.ed.extEgeMark' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+        <!--Ошибки, обнаруженные при создании:
+      предупреждение 6002: В таблице или представлении "Priem.ed.extEgeMark" не определен первичный ключ. Ключ был выведен, а определение таблицы или представления было создано в режиме только для чтения.
       -->
         <EntityType Name="extEgeMark">
           <Key>
@@ -2869,8 +2879,8 @@
           <Property Name="Year" Type="nvarchar" MaxLength="4" />
           <Property Name="FISName" Type="nvarchar" MaxLength="50" />
         </EntityType>
-        <!--Errors Found During Generation:
-      warning 6002: The table/view 'Priem.ed.extEgeMarkMax' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+        <!--Ошибки, обнаруженные при создании:
+      предупреждение 6002: В таблице или представлении "Priem.ed.extEgeMarkMax" не определен первичный ключ. Ключ был выведен, а определение таблицы или представления было создано в режиме только для чтения.
       -->
         <EntityType Name="extEgeMarkMax">
           <Key>
@@ -2894,8 +2904,8 @@
           <Property Name="Number" Type="nvarchar" Nullable="false" MaxLength="50" />
           <Property Name="PersonId" Type="uniqueidentifier" Nullable="false" />
         </EntityType>
-        <!--Errors Found During Generation:
-      warning 6002: The table/view 'Priem.ed.extEgeMarkMaxAbit' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+        <!--Ошибки, обнаруженные при создании:
+      предупреждение 6002: В таблице или представлении "Priem.ed.extEgeMarkMaxAbit" не определен первичный ключ. Ключ был выведен, а определение таблицы или представления было создано в режиме только для чтения.
       -->
         <EntityType Name="extEgeMarkMaxAbit">
           <Key>
@@ -2921,8 +2931,8 @@
           <Property Name="Number" Type="nvarchar" Nullable="false" MaxLength="50" />
           <Property Name="PersonId" Type="uniqueidentifier" Nullable="false" />
         </EntityType>
-        <!--Errors Found During Generation:
-      warning 6002: The table/view 'Priem.ed.extEnableProtocol' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+        <!--Ошибки, обнаруженные при создании:
+      предупреждение 6002: В таблице или представлении "Priem.ed.extEnableProtocol" не определен первичный ключ. Ключ был выведен, а определение таблицы или представления было создано в режиме только для чтения.
       -->
         <EntityType Name="extEnableProtocol">
           <Key>
@@ -2952,8 +2962,8 @@
           <Property Name="IsListener" Type="bit" />
           <Property Name="ProtocolTypeName" Type="nvarchar" Nullable="false" MaxLength="50" />
         </EntityType>
-        <!--Errors Found During Generation:
-      warning 6002: The table/view 'Priem.ed.extEntryProtocols' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+        <!--Ошибки, обнаруженные при создании:
+      предупреждение 6002: В таблице или представлении "Priem.ed.extEntryProtocols" не определен первичный ключ. Ключ был выведен, а определение таблицы или представления было создано в режиме только для чтения.
       -->
         <EntityType Name="extEntryProtocols">
           <Key>
@@ -2983,8 +2993,8 @@
           <Property Name="IsParallel" Type="bit" />
           <Property Name="IsReduced" Type="bit" />
         </EntityType>
-        <!--Errors Found During Generation:
-      warning 6002: The table/view 'Priem.ed.extEntryView' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+        <!--Ошибки, обнаруженные при создании:
+      предупреждение 6002: В таблице или представлении "Priem.ed.extEntryView" не определен первичный ключ. Ключ был выведен, а определение таблицы или представления было создано в режиме только для чтения.
       -->
         <EntityType Name="extEntryView">
           <Key>
@@ -3022,8 +3032,8 @@
           <Property Name="SignerName" Type="nvarchar" MaxLength="100" />
           <Property Name="SignerPosition" Type="nvarchar" MaxLength="100" />
         </EntityType>
-        <!--Errors Found During Generation:
-      warning 6002: The table/view 'Priem.ed.extEntryView_ForDisEntered' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+        <!--Ошибки, обнаруженные при создании:
+      предупреждение 6002: В таблице или представлении "Priem.ed.extEntryView_ForDisEntered" не определен первичный ключ. Ключ был выведен, а определение таблицы или представления было создано в режиме только для чтения.
       -->
         <EntityType Name="extEntryView_ForDisEntered">
           <Key>
@@ -3061,8 +3071,8 @@
           <Property Name="SignerName" Type="nvarchar" MaxLength="100" />
           <Property Name="SignerPosition" Type="nvarchar" MaxLength="100" />
         </EntityType>
-        <!--Errors Found During Generation:
-      warning 6002: The table/view 'Priem.ed.extExamInEntry' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+        <!--Ошибки, обнаруженные при создании:
+      предупреждение 6002: В таблице или представлении "Priem.ed.extExamInEntry" не определен первичный ключ. Ключ был выведен, а определение таблицы или представления было создано в режиме только для чтения.
       -->
         <EntityType Name="extExamInEntry">
           <Key>
@@ -3090,7 +3100,7 @@
           <Property Name="EgeMin" Type="int" />
           <Property Name="ExamNameId" Type="int" Nullable="false" />
           <Property Name="IsAdditional" Type="bit" Nullable="false" />
-          <Property Name="ExamName" Type="nvarchar" MaxLength="106" />
+          <Property Name="ExamName" Type="nvarchar" MaxLength="506" />
           <Property Name="FacultyId" Type="int" Nullable="false" />
           <Property Name="LicenseProgramId" Type="int" Nullable="false" />
           <Property Name="ObrazProgramId" Type="int" Nullable="false" />
@@ -3099,14 +3109,15 @@
           <Property Name="StudyFormId" Type="int" Nullable="false" />
           <Property Name="StudyLevelId" Type="int" Nullable="false" />
           <Property Name="StudyLevelGroupId" Type="int" Nullable="false" />
-          <Property Name="ExamDefName" Type="nvarchar" MaxLength="100" />
+          <Property Name="ExamDefName" Type="nvarchar" MaxLength="500" />
           <Property Name="IsSecond" Type="bit" Nullable="false" />
           <Property Name="IsReduced" Type="bit" Nullable="false" />
           <Property Name="IsParallel" Type="bit" Nullable="false" />
           <Property Name="ExamInEntryToCompetitiveGroupId" Type="uniqueidentifier" />
+          <Property Name="OrderNumber" Type="tinyint" />
         </EntityType>
-        <!--Errors Found During Generation:
-      warning 6002: The table/view 'Priem.ed.extExamsVed' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+        <!--Ошибки, обнаруженные при создании:
+      предупреждение 6002: В таблице или представлении "Priem.ed.extExamsVed" не определен первичный ключ. Ключ был выведен, а определение таблицы или представления было создано в режиме только для чтения.
       -->
         <EntityType Name="extExamsVed">
           <Key>
@@ -3141,8 +3152,8 @@
           <Property Name="StudyBasisAcr" Type="nvarchar" MaxLength="10" />
           <Property Name="FacultyName" Type="nvarchar" MaxLength="100" />
         </EntityType>
-        <!--Errors Found During Generation:
-      warning 6002: The table/view 'Priem.ed.extFBSStatus' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+        <!--Ошибки, обнаруженные при создании:
+      предупреждение 6002: В таблице или представлении "Priem.ed.extFBSStatus" не определен первичный ключ. Ключ был выведен, а определение таблицы или представления было создано в режиме только для чтения.
       -->
         <EntityType Name="extFBSStatus">
           <Key>
@@ -3154,8 +3165,8 @@
           <Property Name="PersonId" Type="uniqueidentifier" Nullable="false" />
           <Property Name="Surname" Type="nvarchar" MaxLength="50" />
         </EntityType>
-        <!--Errors Found During Generation:
-      warning 6002: The table/view 'Priem.ed.extForeignPerson' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+        <!--Ошибки, обнаруженные при создании:
+      предупреждение 6002: В таблице или представлении "Priem.ed.extForeignPerson" не определен первичный ключ. Ключ был выведен, а определение таблицы или представления было создано в режиме только для чтения.
       -->
         <EntityType Name="extForeignPerson">
           <Key>
@@ -3206,9 +3217,9 @@
           <Property Name="SchoolExitYear" Type="int" />
           <Property Name="CountryEducId" Type="int" />
           <Property Name="IsEqual" Type="bit" />
-          <Property Name="AttestatRegion" Type="nvarchar" MaxLength="2" />
+          <Property Name="AttestatRegion" Type="nvarchar" MaxLength="10" />
           <Property Name="AttestatSeries" Type="nvarchar" MaxLength="10" />
-          <Property Name="AttestatNum" Type="nvarchar" MaxLength="10" />
+          <Property Name="AttestatNum" Type="nvarchar" MaxLength="20" />
           <Property Name="DiplomSeries" Type="nvarchar" MaxLength="20" />
           <Property Name="DiplomNum" Type="nvarchar" MaxLength="20" />
           <Property Name="SchoolAVG" Type="float" />
@@ -3235,7 +3246,7 @@
           <Property Name="PersonNum" Type="nvarchar" MaxLength="7" />
           <Property Name="FIO" Type="nvarchar" MaxLength="152" />
           <Property Name="PassportData" Type="nvarchar" MaxLength="532" />
-          <Property Name="EducDocument" Type="nvarchar" MaxLength="41" />
+          <Property Name="EducDocument" Type="nvarchar" MaxLength="44" />
           <Property Name="HostelFacultyAcr" Type="nvarchar" MaxLength="50" />
           <Property Name="ForeignCountryName" Type="nvarchar" MaxLength="100" />
           <Property Name="CountryName" Type="nvarchar" MaxLength="100" />
@@ -3249,7 +3260,7 @@
           <Property Name="Code" Type="nvarchar" MaxLength="20" />
           <Property Name="City" Type="nvarchar" MaxLength="1000" />
           <Property Name="Street" Type="nvarchar" MaxLength="100" />
-          <Property Name="House" Type="nvarchar" MaxLength="10" />
+          <Property Name="House" Type="nvarchar" MaxLength="20" />
           <Property Name="Korpus" Type="nvarchar" MaxLength="10" />
           <Property Name="Flat" Type="nvarchar" MaxLength="10" />
           <Property Name="HostelEduc" Type="bit" />
@@ -3266,8 +3277,8 @@
           <Property Name="RegionEducId" Type="int" />
           <Property Name="ForeignCountryEducId" Type="int" />
         </EntityType>
-        <!--Errors Found During Generation:
-      warning 6002: The table/view 'Priem.ed.extOlympBook' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+        <!--Ошибки, обнаруженные при создании:
+      предупреждение 6002: В таблице или представлении "Priem.ed.extOlympBook" не определен первичный ключ. Ключ был выведен, а определение таблицы или представления было создано в режиме только для чтения.
       -->
         <EntityType Name="extOlympBook">
           <Key>
@@ -3284,8 +3295,8 @@
           <Property Name="OlympTypeName" Type="nvarchar" MaxLength="50" />
           <Property Name="Number" Type="int" />
         </EntityType>
-        <!--Errors Found During Generation:
-      warning 6002: The table/view 'Priem.ed.extOlympiads' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+        <!--Ошибки, обнаруженные при создании:
+      предупреждение 6002: В таблице или представлении "Priem.ed.extOlympiads" не определен первичный ключ. Ключ был выведен, а определение таблицы или представления было создано в режиме только для чтения.
       -->
         <EntityType Name="extOlympiads">
           <Key>
@@ -3314,8 +3325,8 @@
           <Property Name="SortOrder" Type="int" />
           <Property Name="OlympValueAcr" Type="nvarchar" MaxLength="50" />
         </EntityType>
-        <!--Errors Found During Generation:
-      warning 6002: The table/view 'Priem.ed.extOlympiadsAll' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+        <!--Ошибки, обнаруженные при создании:
+      предупреждение 6002: В таблице или представлении "Priem.ed.extOlympiadsAll" не определен первичный ключ. Ключ был выведен, а определение таблицы или представления было создано в режиме только для чтения.
       -->
         <EntityType Name="extOlympiadsAll">
           <Key>
@@ -3337,8 +3348,8 @@
           <Property Name="PersonId" Type="uniqueidentifier" />
           <Property Name="OriginDoc" Type="bit" Nullable="false" />
         </EntityType>
-        <!--Errors Found During Generation:
-      warning 6002: The table/view 'Priem.ed.extPerson' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+        <!--Ошибки, обнаруженные при создании:
+      предупреждение 6002: В таблице или представлении "Priem.ed.extPerson" не определен первичный ключ. Ключ был выведен, а определение таблицы или представления было создано в режиме только для чтения.
       -->
         <EntityType Name="extPerson">
           <Key>
@@ -3351,6 +3362,7 @@
             <PropertyRef Name="PassportTypeId" />
             <PropertyRef Name="Sex" />
             <PropertyRef Name="NationalityId" />
+            
           </Key>
           <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
           <Property Name="Barcode" Type="int" />
@@ -3375,7 +3387,7 @@
           <Property Name="Code" Type="nvarchar" MaxLength="20" />
           <Property Name="City" Type="nvarchar" MaxLength="1000" />
           <Property Name="Street" Type="nvarchar" MaxLength="100" />
-          <Property Name="House" Type="nvarchar" MaxLength="10" />
+          <Property Name="House" Type="nvarchar" MaxLength="20" />
           <Property Name="Flat" Type="nvarchar" MaxLength="10" />
           <Property Name="CodeReal" Type="nvarchar" MaxLength="20" />
           <Property Name="Korpus" Type="nvarchar" MaxLength="10" />
@@ -3423,7 +3435,7 @@
           <Property Name="ExtraInfo" Type="nvarchar(max)" />
           <Property Name="ScienceWork" Type="nvarchar(max)" />
           <Property Name="PersonNum" Type="nvarchar" MaxLength="7" />
-          <Property Name="FIO" Type="nvarchar" MaxLength="152" />
+          <Property Name="FIO" Type="nvarchar" Nullable="false" MaxLength="152" />
           <Property Name="PassportData" Type="nvarchar" MaxLength="532" />
           <Property Name="EducDocument" Type="nvarchar" MaxLength="44" />
           <Property Name="HostelFacultyAcr" Type="nvarchar" MaxLength="50" />
@@ -3439,8 +3451,8 @@
           <Property Name="SNILS" Type="nvarchar" MaxLength="50" />
           <Property Name="RegionEducId" Type="int" />
         </EntityType>
-        <!--Errors Found During Generation:
-      warning 6002: The table/view 'Priem.ed.extPersonAll' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+        <!--Ошибки, обнаруженные при создании:
+      предупреждение 6002: В таблице или представлении "Priem.ed.extPersonAll" не определен первичный ключ. Ключ был выведен, а определение таблицы или представления было создано в режиме только для чтения.
       -->
         <EntityType Name="extPersonAll">
           <Key>
@@ -3453,6 +3465,7 @@
             <PropertyRef Name="PassportTypeId" />
             <PropertyRef Name="Sex" />
             <PropertyRef Name="NationalityId" />
+            
           </Key>
           <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
           <Property Name="Barcode" Type="int" />
@@ -3477,7 +3490,7 @@
           <Property Name="Code" Type="nvarchar" MaxLength="20" />
           <Property Name="City" Type="nvarchar" MaxLength="1000" />
           <Property Name="Street" Type="nvarchar" MaxLength="100" />
-          <Property Name="House" Type="nvarchar" MaxLength="10" />
+          <Property Name="House" Type="nvarchar" MaxLength="20" />
           <Property Name="Flat" Type="nvarchar" MaxLength="10" />
           <Property Name="CodeReal" Type="nvarchar" MaxLength="20" />
           <Property Name="Korpus" Type="nvarchar" MaxLength="10" />
@@ -3525,7 +3538,7 @@
           <Property Name="ExtraInfo" Type="nvarchar(max)" />
           <Property Name="ScienceWork" Type="nvarchar(max)" />
           <Property Name="PersonNum" Type="nvarchar" MaxLength="7" />
-          <Property Name="FIO" Type="nvarchar" MaxLength="152" />
+          <Property Name="FIO" Type="nvarchar" Nullable="false" MaxLength="152" />
           <Property Name="PassportData" Type="nvarchar" MaxLength="532" />
           <Property Name="EducDocument" Type="nvarchar" MaxLength="44" />
           <Property Name="HostelFacultyAcr" Type="nvarchar" MaxLength="50" />
@@ -3545,9 +3558,14 @@
           <Property Name="RegionEducId" Type="int" />
           <Property Name="KladrCode" Type="nvarchar" MaxLength="50" />
           <Property Name="EqualDocumentNumber" Type="nvarchar" MaxLength="50" />
+          <Property Name="ForeignNationalityId" Type="int" />
+          <Property Name="ForeignCountryId" Type="int" />
+          <Property Name="HasTRKI" Type="bit" />
+          <Property Name="TRKICertificateNumber" Type="nvarchar" MaxLength="50" />
+          <Property Name="ForeignCountryEducId" Type="int" />
         </EntityType>
-        <!--Errors Found During Generation:
-      warning 6002: The table/view 'Priem.ed.extPersonSPO' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+        <!--Ошибки, обнаруженные при создании:
+      предупреждение 6002: В таблице или представлении "Priem.ed.extPersonSPO" не определен первичный ключ. Ключ был выведен, а определение таблицы или представления было создано в режиме только для чтения.
       -->
         <EntityType Name="extPersonSPO">
           <Key>
@@ -3560,6 +3578,7 @@
             <PropertyRef Name="PassportTypeId" />
             <PropertyRef Name="Sex" />
             <PropertyRef Name="NationalityId" />
+            
           </Key>
           <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
           <Property Name="Barcode" Type="int" />
@@ -3633,7 +3652,7 @@
           <Property Name="ExtraInfo" Type="nvarchar(max)" />
           <Property Name="ScienceWork" Type="nvarchar(max)" />
           <Property Name="PersonNum" Type="nvarchar" MaxLength="7" />
-          <Property Name="FIO" Type="nvarchar" MaxLength="152" />
+          <Property Name="FIO" Type="nvarchar" Nullable="false" MaxLength="152" />
           <Property Name="PassportData" Type="nvarchar" MaxLength="532" />
           <Property Name="EducDocument" Type="nvarchar" MaxLength="44" />
           <Property Name="HostelFacultyAcr" Type="nvarchar" MaxLength="50" />
@@ -3654,8 +3673,8 @@
           <Property Name="TRKICertificateNumber" Type="nvarchar" MaxLength="50" />
           <Property Name="RegionEducId" Type="int" />
         </EntityType>
-        <!--Errors Found During Generation:
-      warning 6002: The table/view 'Priem.ed.extProtocol' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+        <!--Ошибки, обнаруженные при создании:
+      предупреждение 6002: В таблице или представлении "Priem.ed.extProtocol" не определен первичный ключ. Ключ был выведен, а определение таблицы или представления было создано в режиме только для чтения.
       -->
         <EntityType Name="extProtocol">
           <Key>
@@ -3697,8 +3716,8 @@
           <Property Name="StudyFormAcr" Type="nvarchar" MaxLength="50" />
           <Property Name="StudyFormRodName" Type="nvarchar" MaxLength="50" />
         </EntityType>
-        <!--Errors Found During Generation:
-      warning 6002: The table/view 'Priem.ed.hlpAbiturientProf' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+        <!--Ошибки, обнаруженные при создании:
+      предупреждение 6002: В таблице или представлении "Priem.ed.hlpAbiturientProf" не определен первичный ключ. Ключ был выведен, а определение таблицы или представления было создано в режиме только для чтения.
       -->
         <EntityType Name="hlpAbiturientProf">
           <Key>
@@ -3707,8 +3726,8 @@
           <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
           <Property Name="Prof" Type="int" />
         </EntityType>
-        <!--Errors Found During Generation:
-      warning 6002: The table/view 'Priem.ed.hlpAbiturientProfAdd' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+        <!--Ошибки, обнаруженные при создании:
+      предупреждение 6002: В таблице или представлении "Priem.ed.hlpAbiturientProfAdd" не определен первичный ключ. Ключ был выведен, а определение таблицы или представления было создано в режиме только для чтения.
       -->
         <EntityType Name="hlpAbiturientProfAdd">
           <Key>
@@ -3717,8 +3736,8 @@
           <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
           <Property Name="ProfAdd" Type="int" />
         </EntityType>
-        <!--Errors Found During Generation:
-      warning 6002: The table/view 'Priem.ed.hlpAbiturientProfAVG' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+        <!--Ошибки, обнаруженные при создании:
+      предупреждение 6002: В таблице или представлении "Priem.ed.hlpAbiturientProfAVG" не определен первичный ключ. Ключ был выведен, а определение таблицы или представления было создано в режиме только для чтения.
       -->
         <EntityType Name="hlpAbiturientProfAVG">
           <Key>
@@ -3727,8 +3746,8 @@
           <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
           <Property Name="Prof" Type="int" />
         </EntityType>
-        <!--Errors Found During Generation:
-      warning 6002: The table/view 'Priem.ed.qAbitAll' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+        <!--Ошибки, обнаруженные при создании:
+      предупреждение 6002: В таблице или представлении "Priem.ed.qAbitAll" не определен первичный ключ. Ключ был выведен, а определение таблицы или представления было создано в режиме только для чтения.
       -->
         <EntityType Name="qAbitAll">
           <Key>
@@ -3815,8 +3834,8 @@
           <Property Name="StudyFormFISName" Type="nvarchar" MaxLength="50" />
           <Property Name="StudyLevelFISName" Type="nvarchar" MaxLength="50" />
         </EntityType>
-        <!--Errors Found During Generation:
-      warning 6002: The table/view 'Priem.ed.qAbiturient' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+        <!--Ошибки, обнаруженные при создании:
+      предупреждение 6002: В таблице или представлении "Priem.ed.qAbiturient" не определен первичный ключ. Ключ был выведен, а определение таблицы или представления было создано в режиме только для чтения.
       -->
         <EntityType Name="qAbiturient">
           <Key>
@@ -3916,8 +3935,8 @@
           <Property Name="IsViewed" Type="bit" Nullable="false" />
           <Property Name="IsCommonRussianCompetition" Type="bit" Nullable="false" />
         </EntityType>
-        <!--Errors Found During Generation:
-      warning 6002: The table/view 'Priem.ed.qCompetitiveGroup' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+        <!--Ошибки, обнаруженные при создании:
+      предупреждение 6002: В таблице или представлении "Priem.ed.qCompetitiveGroup" не определен первичный ключ. Ключ был выведен, а определение таблицы или представления было создано в режиме только для чтения.
       -->
         <EntityType Name="qCompetitiveGroup">
           <Key>
@@ -3941,8 +3960,8 @@
           <Property Name="ProfileId" Type="uniqueidentifier" />
           <Property Name="ProfileName" Type="nvarchar" MaxLength="1000" />
         </EntityType>
-        <!--Errors Found During Generation:
-      warning 6002: The table/view 'Priem.ed.qEntry' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+        <!--Ошибки, обнаруженные при создании:
+      предупреждение 6002: В таблице или представлении "Priem.ed.qEntry" не определен первичный ключ. Ключ был выведен, а определение таблицы или представления было создано в режиме только для чтения.
       -->
         <EntityType Name="qEntry">
           <Key>
@@ -3999,9 +4018,10 @@
           <Property Name="StudyLevelFISName" Type="nvarchar" MaxLength="50" />
           <Property Name="ObrazProgramPrintName" Type="nvarchar" MaxLength="150" />
           <Property Name="KCPCrimea" Type="int" />
+          <Property Name="KCPQuota" Type="int" />
         </EntityType>
-        <!--Errors Found During Generation:
-      warning 6002: The table/view 'Priem.ed.qEntryToCompetitiveGroup' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+        <!--Ошибки, обнаруженные при создании:
+      предупреждение 6002: В таблице или представлении "Priem.ed.qEntryToCompetitiveGroup" не определен первичный ключ. Ключ был выведен, а определение таблицы или представления было создано в режиме только для чтения.
       -->
         <EntityType Name="qEntryToCompetitiveGroup">
           <Key>
@@ -4012,8 +4032,8 @@
           <Property Name="CompetitiveGroupId" Type="uniqueidentifier" Nullable="false" />
           <Property Name="CompetitiveGroupName" Type="nvarchar" MaxLength="250" />
         </EntityType>
-        <!--Errors Found During Generation:
-      warning 6002: The table/view 'Priem.ed.qFaculty' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+        <!--Ошибки, обнаруженные при создании:
+      предупреждение 6002: В таблице или представлении "Priem.ed.qFaculty" не определен первичный ключ. Ключ был выведен, а определение таблицы или представления было создано в режиме только для чтения.
       -->
         <EntityType Name="qFaculty">
           <Key>
@@ -4026,8 +4046,8 @@
           <Property Name="DatName" Type="nvarchar" MaxLength="100" />
           <Property Name="VinName" Type="nvarchar" MaxLength="100" />
         </EntityType>
-        <!--Errors Found During Generation:
-      warning 6002: The table/view 'Priem.ed.qLicenseProgram' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+        <!--Ошибки, обнаруженные при создании:
+      предупреждение 6002: В таблице или представлении "Priem.ed.qLicenseProgram" не определен первичный ключ. Ключ был выведен, а определение таблицы или представления было создано в режиме только для чтения.
       -->
         <EntityType Name="qLicenseProgram">
           <Key>
@@ -4037,8 +4057,8 @@
           <Property Name="Name" Type="nvarchar" MaxLength="1000" />
           <Property Name="Code" Type="nvarchar" MaxLength="10" />
         </EntityType>
-        <!--Errors Found During Generation:
-      warning 6002: The table/view 'Priem.ed.qMark' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+        <!--Ошибки, обнаруженные при создании:
+      предупреждение 6002: В таблице или представлении "Priem.ed.qMark" не определен первичный ключ. Ключ был выведен, а определение таблицы или представления было создано в режиме только для чтения.
       -->
         <EntityType Name="qMark">
           <Key>
@@ -4076,9 +4096,10 @@
           <Property Name="EntranceTestType" Type="varchar" Nullable="false" MaxLength="74" />
           <Property Name="OlympiadId" Type="uniqueidentifier" />
           <Property Name="EgeCertificateId" Type="uniqueidentifier" />
+          <Property Name="OrderNumber" Type="tinyint" />
         </EntityType>
-        <!--Errors Found During Generation:
-      warning 6002: The table/view 'Priem.ed.qObrazProgram' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+        <!--Ошибки, обнаруженные при создании:
+      предупреждение 6002: В таблице или представлении "Priem.ed.qObrazProgram" не определен первичный ключ. Ключ был выведен, а определение таблицы или представления было создано в режиме только для чтения.
       -->
         <EntityType Name="qObrazProgram">
           <Key>
@@ -4094,8 +4115,8 @@
           <Property Name="LicenseProgramName" Type="nvarchar" Nullable="false" MaxLength="1000" />
           <Property Name="Number" Type="nvarchar" MaxLength="50" />
         </EntityType>
-        <!--Errors Found During Generation:
-      warning 6002: The table/view 'Priem.ed.qProfile' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+        <!--Ошибки, обнаруженные при создании:
+      предупреждение 6002: В таблице или представлении "Priem.ed.qProfile" не определен первичный ключ. Ключ был выведен, а определение таблицы или представления было создано в режиме только для чтения.
       -->
         <EntityType Name="qProfile">
           <Key>
@@ -4104,8 +4125,8 @@
           <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="1000" />
         </EntityType>
-        <!--Errors Found During Generation:
-      warning 6002: The table/view 'Priem.ed.qProtocol' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+        <!--Ошибки, обнаруженные при создании:
+      предупреждение 6002: В таблице или представлении "Priem.ed.qProtocol" не определен первичный ключ. Ключ был выведен, а определение таблицы или представления было создано в режиме только для чтения.
       -->
         <EntityType Name="qProtocol">
           <Key>
@@ -4127,8 +4148,8 @@
           <Property Name="IsSecond" Type="bit" />
           <Property Name="IsListener" Type="bit" />
         </EntityType>
-        <!--Errors Found During Generation:
-      warning 6002: The table/view 'Priem.ed.qProtocolHistory' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+        <!--Ошибки, обнаруженные при создании:
+      предупреждение 6002: В таблице или представлении "Priem.ed.qProtocolHistory" не определен первичный ключ. Ключ был выведен, а определение таблицы или представления было создано в режиме только для чтения.
       -->
         <EntityType Name="qProtocolHistory">
           <Key>
@@ -4157,8 +4178,8 @@
           <Property Name="IsListener" Type="bit" />
           <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
         </EntityType>
-        <!--Errors Found During Generation:
-      warning 6002: The table/view 'Priem.ed.qStudyLevel' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+        <!--Ошибки, обнаруженные при создании:
+      предупреждение 6002: В таблице или представлении "Priem.ed.qStudyLevel" не определен первичный ключ. Ключ был выведен, а определение таблицы или представления было создано в режиме только для чтения.
       -->
         <EntityType Name="qStudyLevel">
           <Key>
@@ -4588,6 +4609,18 @@
             </Principal>
             <Dependent Role="Mark">
               <PropertyRef Name="AbiturientId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Mark_EgeCertificate">
+          <End Role="EgeCertificate" Type="Priem2012Model.Store.EgeCertificate" Multiplicity="0..1" />
+          <End Role="Mark" Type="Priem2012Model.Store.Mark" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EgeCertificate">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Mark">
+              <PropertyRef Name="EgeCertificateId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -5395,6 +5428,7 @@
           <Parameter Name="Id" Type="uniqueidentifier" Mode="In" />
           <Parameter Name="KCP" Type="int" Mode="In" />
           <Parameter Name="KCPCrimea" Type="int" Mode="In" />
+          <Parameter Name="KCPQuota" Type="int" Mode="In" />
         </Function>
         <Function Name="EntryView_UpdateDisEntry" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="ed">
           <Parameter Name="disentryviewId" Type="uniqueidentifier" Mode="In" />
@@ -5422,6 +5456,7 @@
           <Parameter Name="egeMin" Type="int" Mode="In" />
           <Parameter Name="IsCrimea" Type="bit" Mode="In" />
           <Parameter Name="IsGosLine" Type="bit" Mode="In" />
+          <Parameter Name="OrderNumber" Type="tinyint" Mode="In" />
           <Parameter Name="id" Type="int" Mode="InOut" />
         </Function>
         <Function Name="ExamInEntry_Update" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="ed">
@@ -5430,6 +5465,7 @@
           <Parameter Name="egeMin" Type="int" Mode="In" />
           <Parameter Name="IsCrimea" Type="bit" Mode="In" />
           <Parameter Name="IsGosLine" Type="bit" Mode="In" />
+          <Parameter Name="OrderNumber" Type="tinyint" Mode="In" />
           <Parameter Name="id" Type="int" Mode="In" />
         </Function>
         <Function Name="ExamInEntry_UpdateMinEge" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="ed">
@@ -5522,12 +5558,25 @@
         <Function Name="FirstWave_DELETE" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="ed">
           <Parameter Name="EntryId" Type="uniqueidentifier" Mode="In" />
           <Parameter Name="IsCel" Type="bit" Mode="In" />
+          <Parameter Name="IsCrimea" Type="bit" Mode="In" />
         </Function>
         <Function Name="FirstWave_DELETE_DogEntryBack" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="ed" />
         <Function Name="FirstWave_DeleteByAbId" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="ed">
           <Parameter Name="Abiturientid" Type="uniqueidentifier" Mode="In" />
         </Function>
         <Function Name="FirstWave_INSERT" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="ed">
+          <Parameter Name="AbiturientId" Type="uniqueidentifier" Mode="In" />
+          <Parameter Name="SortNum" Type="int" Mode="In" />
+        </Function>
+        <Function Name="FirstWave_INSERTCEL" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="ed">
+          <Parameter Name="AbiturientId" Type="uniqueidentifier" Mode="In" />
+          <Parameter Name="SortNum" Type="int" Mode="In" />
+        </Function>
+        <Function Name="FirstWave_INSERTCRIMEA" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="ed">
+          <Parameter Name="AbiturientId" Type="uniqueidentifier" Mode="In" />
+          <Parameter Name="SortNum" Type="int" Mode="In" />
+        </Function>
+        <Function Name="FirstWave_INSERTQUOTA" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="ed">
           <Parameter Name="AbiturientId" Type="uniqueidentifier" Mode="In" />
           <Parameter Name="SortNum" Type="int" Mode="In" />
         </Function>
@@ -5566,6 +5615,8 @@
           <Parameter Name="IsCel" Type="bit" Mode="In" />
           <Parameter Name="DocNum" Type="int" Mode="In" />
           <Parameter Name="Locked" Type="bit" Mode="In" />
+          <Parameter Name="IsCrimea" Type="bit" Mode="In" />
+          <Parameter Name="IsQuota" Type="bit" Mode="In" />
           <Parameter Name="id" Type="uniqueidentifier" Mode="InOut" />
         </Function>
         <Function Name="FixierenView_UpdateLocked" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="ed">
@@ -5733,6 +5784,8 @@
           <Parameter Name="CustomerINN" Type="nvarchar" Mode="In" />
           <Parameter Name="CustomerRS" Type="nvarchar" Mode="In" />
           <Parameter Name="AbiturientId" Type="uniqueidentifier" Mode="In" />
+          <Parameter Name="SumTotal" Type="nvarchar" Mode="In" />
+          <Parameter Name="SrokIndividual" Type="nvarchar" Mode="In" />
           <Parameter Name="id" Type="uniqueidentifier" Mode="InOut" />
         </Function>
         <Function Name="PaidData_Update" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="ed">
@@ -5758,6 +5811,8 @@
           <Parameter Name="CustomerReason" Type="nvarchar" Mode="In" />
           <Parameter Name="CustomerINN" Type="nvarchar" Mode="In" />
           <Parameter Name="CustomerRS" Type="nvarchar" Mode="In" />
+          <Parameter Name="SumTotal" Type="nvarchar" Mode="In" />
+          <Parameter Name="SrokIndividual" Type="nvarchar" Mode="In" />
           <Parameter Name="id" Type="uniqueidentifier" Mode="In" />
         </Function>
         <Function Name="Person_deleteAllInfo" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="ed">
@@ -6526,6 +6581,8 @@
             <Parameter Name="CustomerINN" Mode="In" Type="String" />
             <Parameter Name="CustomerRS" Mode="In" Type="String" />
             <Parameter Name="AbiturientId" Mode="In" Type="Guid" />
+            <Parameter Name="SumTotal" Mode="In" Type="String" />
+            <Parameter Name="SrokIndividual" Mode="In" Type="String" />
             <Parameter Name="id" Mode="InOut" Type="Guid" />
           </FunctionImport>
           <FunctionImport Name="PaidData_Update">
@@ -6551,6 +6608,8 @@
             <Parameter Name="CustomerReason" Mode="In" Type="String" />
             <Parameter Name="CustomerINN" Mode="In" Type="String" />
             <Parameter Name="CustomerRS" Mode="In" Type="String" />
+            <Parameter Name="SumTotal" Mode="In" Type="String" />
+            <Parameter Name="SrokIndividual" Mode="In" Type="String" />
             <Parameter Name="id" Mode="In" Type="Guid" />
           </FunctionImport>
           <EntitySet Name="PayDataEntry" EntityType="Priem2012Model.PayDataEntry" />
@@ -6569,6 +6628,7 @@
             <Parameter Name="egeMin" Mode="In" Type="Int32" />
             <Parameter Name="IsCrimea" Mode="In" Type="Boolean" />
             <Parameter Name="IsGosLine" Mode="In" Type="Boolean" />
+            <Parameter Name="OrderNumber" Mode="In" Type="Byte" />
             <Parameter Name="id" Mode="InOut" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="ExamInEntry_Update">
@@ -6577,6 +6637,7 @@
             <Parameter Name="egeMin" Mode="In" Type="Int32" />
             <Parameter Name="IsCrimea" Mode="In" Type="Boolean" />
             <Parameter Name="IsGosLine" Mode="In" Type="Boolean" />
+            <Parameter Name="OrderNumber" Mode="In" Type="Byte" />
             <Parameter Name="id" Mode="In" Type="Int32" />
           </FunctionImport>
           <EntitySet Name="Mark" EntityType="Priem2012Model.Mark" />
@@ -6973,6 +7034,7 @@
             <Parameter Name="Id" Mode="In" Type="Guid" />
             <Parameter Name="KCP" Mode="In" Type="Int32" />
             <Parameter Name="KCPCrimea" Mode="In" Type="Int32" />
+            <Parameter Name="KCPQuota" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="Entry_UpdateCEl">
             <Parameter Name="Id" Mode="In" Type="Guid" />
@@ -7078,6 +7140,8 @@
             <Parameter Name="IsCel" Mode="In" Type="Boolean" />
             <Parameter Name="DocNum" Mode="In" Type="Int32" />
             <Parameter Name="Locked" Mode="In" Type="Boolean" />
+            <Parameter Name="IsCrimea" Mode="In" Type="Boolean" />
+            <Parameter Name="IsQuota" Mode="In" Type="Boolean" />
             <Parameter Name="id" Mode="InOut" Type="Guid" />
           </FunctionImport>
           <FunctionImport Name="FixierenView_UpdateLocked">
@@ -7097,6 +7161,7 @@
           <FunctionImport Name="FirstWave_DELETE">
             <Parameter Name="EntryId" Mode="In" Type="Guid" />
             <Parameter Name="IsCel" Mode="In" Type="Boolean" />
+            <Parameter Name="IsCrimea" Mode="In" Type="Boolean" />
           </FunctionImport>
           <FunctionImport Name="FirstWave_INSERT">
             <Parameter Name="AbiturientId" Mode="In" Type="Guid" />
@@ -7543,6 +7608,10 @@
           <FunctionImport Name="Abiturient_UpdateIsViewed">
           <Parameter Name="id" Mode="In" Type="Guid" />
           </FunctionImport>
+          <AssociationSet Name="FK_Mark_EgeCertificate" Association="Priem2012Model.FK_Mark_EgeCertificate">
+            <End Role="EgeCertificate" EntitySet="EgeCertificate" />
+            <End Role="Mark" EntitySet="Mark" />
+          </AssociationSet>
           </EntityContainer>
         <EntityType Name="C_SettingRoles">
           <Key>
@@ -7652,6 +7721,8 @@
           <Property Type="String" Name="Holder" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Type="Boolean" Name="NoNumber" />
           <NavigationProperty Name="Person" Relationship="Priem2012Model.FK_EgeCertificate_Person" FromRole="EgeCertificate" ToRole="Person" />
+          <Property Type="DateTime" Name="ImportDate" Nullable="false" />
+          <NavigationProperty Name="Mark" Relationship="Priem2012Model.FK_Mark_EgeCertificate" FromRole="EgeCertificate" ToRole="Mark" />
         </EntityType>
         <EntityType Name="EgeExamName">
           <Key>
@@ -7943,6 +8014,7 @@
           <NavigationProperty Name="Olympiads" Relationship="Priem2012Model.fk_Olympiads_OlympSubject" FromRole="OlympSubject" ToRole="Olympiads" />
           <Property Type="Boolean" Name="IsOpen" Nullable="false" />
           <Property Type="String" Name="Holder" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Type="Int32" Name="ExamId" />
         </EntityType>
         <EntityType Name="OlympValue">
           <Key>
@@ -7990,6 +8062,8 @@
           <NavigationProperty Name="PayPeriod" Relationship="Priem2012Model.FK_PaidData_PayPeriod" FromRole="PaidData" ToRole="PayPeriod" />
           <NavigationProperty Name="Prorektor" Relationship="Priem2012Model.FK_PaidData_Prorektor" FromRole="PaidData" ToRole="Prorektor" />
           <NavigationProperty Name="Abiturient" Relationship="Priem2012Model.FK_PaidData_Abiturient" FromRole="PaidData" ToRole="Abiturient" />
+          <Property Type="String" Name="SumTotal" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="SrokIndividual" MaxLength="150" FixedLength="false" Unicode="true" />
         </EntityType>
         <Association Name="FK_PaidData_DogovorType">
           <End Type="Priem2012Model.DogovorType" Role="DogovorType" Multiplicity="0..1" />
@@ -8105,6 +8179,8 @@
           <Property Type="Guid" Name="OlympiadId" />
           <Property Type="Guid" Name="EgeCertificateId" />
           <NavigationProperty Name="Abiturient" Relationship="Priem2012Model.fk_Mark_Abiturient" FromRole="Mark" ToRole="Abiturient" />
+          <Property Type="Byte" Name="FiveGradeValue" />
+          <NavigationProperty Name="EgeCertificate" Relationship="Priem2012Model.FK_Mark_EgeCertificate" FromRole="Mark" ToRole="EgeCertificate" />
         </EntityType>
         <EntityType Name="qStudyLevel">
           <Key>
@@ -8596,6 +8672,7 @@
           <Property Type="Boolean" Name="IsReduced" Nullable="false" />
           <Property Type="Boolean" Name="IsParallel" Nullable="false" />
           <Property Type="Guid" Name="ExamInEntryToCompetitiveGroupId" />
+          <Property Type="Byte" Name="OrderNumber" />
         </EntityType>
         <EntityType Name="qProtocol">
           <Key>
@@ -8889,6 +8966,8 @@
           <Property Type="Int32" Name="DocNum" />
           <Property Type="Boolean" Name="Locked" Nullable="false" />
           <NavigationProperty Name="Fixieren" Relationship="Priem2012Model.FK_Fixieren_FixierenView" FromRole="FixierenView" ToRole="Fixieren" />
+          <Property Type="Boolean" Name="IsCrimea" Nullable="false" />
+          <Property Type="Boolean" Name="IsQuota" Nullable="false" />
         </EntityType>
         <Association Name="FK_Fixieren_FixierenView">
           <End Type="Priem2012Model.FixierenView" Role="FixierenView" Multiplicity="1" />
@@ -8913,6 +8992,7 @@
           <Property Type="Int32" Name="TotalCount" />
           <Property Type="Int32" Name="StudyFormId" Nullable="false" />
           <Property Type="Int32" Name="StudyBasisId" Nullable="false" />
+          <Property Type="Int32" Name="TotalSumFiveGrade" />
         </EntityType>
         <EntityType Name="extEntryView">
           <Key>
@@ -9090,6 +9170,7 @@
           <Property Type="Int32" Name="KCPCrimea" />
           <NavigationProperty Name="SP_LicenseProgram" Relationship="Priem2012Model.FK_Entry_SP_LicenseProgram" FromRole="Entry" ToRole="SP_LicenseProgram" />
           <NavigationProperty Name="SP_ObrazProgram" Relationship="Priem2012Model.FK_Entry_SP_ObrazProgram" FromRole="Entry" ToRole="SP_ObrazProgram" />
+          <Property Type="Int32" Name="KCPQuota" />
         </EntityType>
         <Association Name="FK_PayDataStudyPlan_Entry">
           <End Type="Priem2012Model.Entry" Role="Entry" Multiplicity="1" />
@@ -9155,6 +9236,7 @@
           <Property Type="String" Name="StudyLevelFISName" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Type="String" Name="ObrazProgramPrintName" MaxLength="150" FixedLength="false" Unicode="true" />
           <Property Type="Int32" Name="KCPCrimea" />
+          <Property Type="Int32" Name="KCPQuota" />
         </EntityType>
         <EntityType Name="C_FirstWaveGreen">
           <Key>
@@ -9209,6 +9291,7 @@
           <Property Type="Guid" Name="ExamInEntryToCompetitiveGroupId" />
           <Property Type="Boolean" Name="IsGosLine" Nullable="false" />
           <Property Type="Boolean" Name="IsCrimea" Nullable="false" />
+          <Property Type="Byte" Name="OrderNumber" />
         </EntityType>
         <Association Name="FK_ExamInEntry_Entry">
           <End Type="Priem2012Model.Entry" Role="Entry" Multiplicity="1" />
@@ -9658,6 +9741,7 @@
           <Property Type="String" Name="EntranceTestType" Nullable="false" MaxLength="74" FixedLength="false" Unicode="false" />
           <Property Type="Guid" Name="OlympiadId" />
           <Property Type="Guid" Name="EgeCertificateId" />
+          <Property Type="Byte" Name="OrderNumber" />
         </EntityType>
         <EntityType Name="Signer">
           <Key>
@@ -9731,7 +9815,9 @@
           </Key>
           <Property Type="Guid" Name="AbiturientId" Nullable="false" />
           <Property Type="Int32" Name="SortNum" Nullable="false" />
-          <Property Type="Boolean" Name="IsCel" />
+          <Property Type="Boolean" Name="IsCel" Nullable="false" />
+          <Property Type="Boolean" Name="IsCrimea" Nullable="false" />
+          <Property Type="Boolean" Name="IsQuota" Nullable="false" />
         </EntityType>
         <EntityType Name="OrderNumbers">
           <Key>
@@ -9906,7 +9992,7 @@
           <Property Type="String" Name="ExtraInfo" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Type="String" Name="ScienceWork" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Type="String" Name="PersonNum" MaxLength="7" FixedLength="false" Unicode="true" />
-          <Property Type="String" Name="FIO" MaxLength="152" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="FIO" MaxLength="152" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Type="String" Name="PassportData" MaxLength="532" FixedLength="false" Unicode="true" />
           <Property Type="String" Name="EducDocument" MaxLength="44" FixedLength="false" Unicode="true" />
           <Property Type="String" Name="HostelFacultyAcr" MaxLength="50" FixedLength="false" Unicode="true" />
@@ -10809,7 +10895,7 @@
           <Property Type="String" Name="ExtraInfo" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Type="String" Name="ScienceWork" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Type="String" Name="PersonNum" MaxLength="7" FixedLength="false" Unicode="true" />
-          <Property Type="String" Name="FIO" MaxLength="152" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="FIO" MaxLength="152" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Type="String" Name="PassportData" MaxLength="532" FixedLength="false" Unicode="true" />
           <Property Type="String" Name="EducDocument" MaxLength="44" FixedLength="false" Unicode="true" />
           <Property Type="String" Name="HostelFacultyAcr" MaxLength="50" FixedLength="false" Unicode="true" />
@@ -10829,6 +10915,11 @@
           <Property Type="Int32" Name="RegionEducId" />
           <Property Type="String" Name="KladrCode" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Type="String" Name="EqualDocumentNumber" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Type="Int32" Name="ForeignNationalityId" />
+          <Property Type="Int32" Name="ForeignCountryId" />
+          <Property Type="Boolean" Name="HasTRKI" />
+          <Property Type="String" Name="TRKICertificateNumber" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Type="Int32" Name="ForeignCountryEducId" />
         </EntityType>
         <EntityType Name="extPersonSPO">
           <Key>
@@ -10914,7 +11005,7 @@
           <Property Type="String" Name="ExtraInfo" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Type="String" Name="ScienceWork" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Type="String" Name="PersonNum" MaxLength="7" FixedLength="false" Unicode="true" />
-          <Property Type="String" Name="FIO" MaxLength="152" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="FIO" MaxLength="152" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Type="String" Name="PassportData" MaxLength="532" FixedLength="false" Unicode="true" />
           <Property Type="String" Name="EducDocument" MaxLength="44" FixedLength="false" Unicode="true" />
           <Property Type="String" Name="HostelFacultyAcr" MaxLength="50" FixedLength="false" Unicode="true" />
@@ -11059,6 +11150,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Mark_EgeCertificate">
+          <End Type="Priem2012Model.EgeCertificate" Role="EgeCertificate" Multiplicity="0..1" />
+          <End Type="Priem2012Model.Mark" Role="Mark" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EgeCertificate">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Mark">
+              <PropertyRef Name="EgeCertificateId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -11117,7 +11220,8 @@
             <ScalarProperty Name="Name" ColumnName="Name" />
           </MappingFragment></EntityTypeMapping></EntitySetMapping>
           <EntitySetMapping Name="EgeCertificate"><EntityTypeMapping TypeName="Priem2012Model.EgeCertificate"><MappingFragment StoreEntitySet="EgeCertificate">
-            <ScalarProperty Name="NoNumber" ColumnName="NoNumber" />
+            <ScalarProperty Name="ImportDate" ColumnName="ImportDate" />
+                <ScalarProperty Name="NoNumber" ColumnName="NoNumber" />
                 <ScalarProperty Name="Holder" ColumnName="Holder" />
                 <ScalarProperty Name="IsOpen" ColumnName="IsOpen" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
@@ -11286,6 +11390,7 @@
           <EntitySetMapping Name="OlympSubject">
             <EntityTypeMapping TypeName="Priem2012Model.OlympSubject">
               <MappingFragment StoreEntitySet="OlympSubject">
+                <ScalarProperty Name="ExamId" ColumnName="ExamId" />
                 <ScalarProperty Name="Holder" ColumnName="Holder" />
                 <ScalarProperty Name="IsOpen" ColumnName="IsOpen" />
                 <ScalarProperty Name="NameDative" ColumnName="NameDative" />
@@ -11313,6 +11418,8 @@
           <EntitySetMapping Name="PaidData">
             <EntityTypeMapping TypeName="Priem2012Model.PaidData">
               <MappingFragment StoreEntitySet="PaidData">
+                <ScalarProperty Name="SrokIndividual" ColumnName="SrokIndividual" />
+                <ScalarProperty Name="SumTotal" ColumnName="SumTotal" />
                 <ScalarProperty Name="Holder" ColumnName="Holder" />
                 <ScalarProperty Name="IsOpen" ColumnName="IsOpen" />
                 <ScalarProperty Name="AbiturientId" ColumnName="AbiturientId" />
@@ -11383,6 +11490,7 @@
           <EntitySetMapping Name="Mark">
             <EntityTypeMapping TypeName="Priem2012Model.Mark">
               <MappingFragment StoreEntitySet="Mark">
+                <ScalarProperty Name="FiveGradeValue" ColumnName="FiveGradeValue" />
                 <ScalarProperty Name="EgeCertificateId" ColumnName="EgeCertificateId" />
                 <ScalarProperty Name="OlympiadId" ColumnName="OlympiadId" />
                 <ScalarProperty Name="ExamVedId" ColumnName="ExamVedId" />
@@ -11726,6 +11834,7 @@
           <EntitySetMapping Name="extExamInEntry">
             <EntityTypeMapping TypeName="Priem2012Model.extExamInEntry">
               <MappingFragment StoreEntitySet="extExamInEntry">
+                <ScalarProperty Name="OrderNumber" ColumnName="OrderNumber" />
                 <ScalarProperty Name="ExamInEntryToCompetitiveGroupId" ColumnName="ExamInEntryToCompetitiveGroupId" />
                 <ScalarProperty Name="IsParallel" ColumnName="IsParallel" />
                 <ScalarProperty Name="IsReduced" ColumnName="IsReduced" />
@@ -11918,6 +12027,8 @@
           <EntitySetMapping Name="FixierenView">
             <EntityTypeMapping TypeName="Priem2012Model.FixierenView">
               <MappingFragment StoreEntitySet="FixierenView">
+                <ScalarProperty Name="IsQuota" ColumnName="IsQuota" />
+                <ScalarProperty Name="IsCrimea" ColumnName="IsCrimea" />
                 <ScalarProperty Name="Locked" ColumnName="Locked" />
                 <ScalarProperty Name="DocNum" ColumnName="DocNum" />
                 <ScalarProperty Name="IsCel" ColumnName="IsCel" />
@@ -11950,6 +12061,7 @@
           <EntitySetMapping Name="extAbitMarksSum">
             <EntityTypeMapping TypeName="Priem2012Model.extAbitMarksSum">
               <MappingFragment StoreEntitySet="extAbitMarksSum">
+                <ScalarProperty Name="TotalSumFiveGrade" ColumnName="TotalSumFiveGrade" />
                 <ScalarProperty Name="StudyBasisId" ColumnName="StudyBasisId" />
                 <ScalarProperty Name="StudyFormId" ColumnName="StudyFormId" />
                 <ScalarProperty Name="TotalCount" ColumnName="TotalCount" />
@@ -12085,6 +12197,7 @@
           <EntitySetMapping Name="Entry">
             <EntityTypeMapping TypeName="Priem2012Model.Entry">
               <MappingFragment StoreEntitySet="Entry">
+                <ScalarProperty Name="KCPQuota" ColumnName="KCPQuota" />
                 <ScalarProperty Name="KCPCrimea" ColumnName="KCPCrimea" />
                 <ScalarProperty Name="CommissionId" ColumnName="CommissionId" />
                 <ScalarProperty Name="DateOfStart" ColumnName="DateOfStart" />
@@ -12120,6 +12233,7 @@
           <EntitySetMapping Name="qEntry">
             <EntityTypeMapping TypeName="Priem2012Model.qEntry">
               <MappingFragment StoreEntitySet="qEntry">
+                <ScalarProperty Name="KCPQuota" ColumnName="KCPQuota" />
                 <ScalarProperty Name="KCPCrimea" ColumnName="KCPCrimea" />
                 <ScalarProperty Name="ObrazProgramPrintName" ColumnName="ObrazProgramPrintName" />
                 <ScalarProperty Name="StudyLevelFISName" ColumnName="StudyLevelFISName" />
@@ -12197,6 +12311,7 @@
           <EntitySetMapping Name="ExamInEntry">
             <EntityTypeMapping TypeName="Priem2012Model.ExamInEntry">
               <MappingFragment StoreEntitySet="ExamInEntry">
+                <ScalarProperty Name="OrderNumber" ColumnName="OrderNumber" />
                 <ScalarProperty Name="IsCrimea" ColumnName="IsCrimea" />
                 <ScalarProperty Name="IsGosLine" ColumnName="IsGosLine" />
                 <ScalarProperty Name="ExamInEntryToCompetitiveGroupId" ColumnName="ExamInEntryToCompetitiveGroupId" />
@@ -12388,6 +12503,7 @@
           <EntitySetMapping Name="qMark">
             <EntityTypeMapping TypeName="Priem2012Model.qMark">
               <MappingFragment StoreEntitySet="qMark">
+                <ScalarProperty Name="OrderNumber" ColumnName="OrderNumber" />
                 <ScalarProperty Name="EgeCertificateId" ColumnName="EgeCertificateId" />
                 <ScalarProperty Name="OlympiadId" ColumnName="OlympiadId" />
                 <ScalarProperty Name="EntranceTestType" ColumnName="EntranceTestType" />
@@ -12479,6 +12595,8 @@
           <EntitySetMapping Name="C_FirstWave">
             <EntityTypeMapping TypeName="Priem2012Model.C_FirstWave">
               <MappingFragment StoreEntitySet="_FirstWave">
+                <ScalarProperty Name="IsQuota" ColumnName="IsQuota" />
+                <ScalarProperty Name="IsCrimea" ColumnName="IsCrimea" />
                 <ScalarProperty Name="IsCel" ColumnName="IsCel" />
                 <ScalarProperty Name="SortNum" ColumnName="SortNum" />
                 <ScalarProperty Name="AbiturientId" ColumnName="AbiturientId" />
@@ -13080,6 +13198,11 @@
           <EntitySetMapping Name="extPersonAll">
             <EntityTypeMapping TypeName="Priem2012Model.extPersonAll">
               <MappingFragment StoreEntitySet="extPersonAll">
+                <ScalarProperty Name="ForeignCountryEducId" ColumnName="ForeignCountryEducId" />
+                <ScalarProperty Name="TRKICertificateNumber" ColumnName="TRKICertificateNumber" />
+                <ScalarProperty Name="HasTRKI" ColumnName="HasTRKI" />
+                <ScalarProperty Name="ForeignCountryId" ColumnName="ForeignCountryId" />
+                <ScalarProperty Name="ForeignNationalityId" ColumnName="ForeignNationalityId" />
                 <ScalarProperty Name="EqualDocumentNumber" ColumnName="EqualDocumentNumber" />
                 <ScalarProperty Name="KladrCode" ColumnName="KladrCode" />
                 <ScalarProperty Name="RegionEducId" ColumnName="RegionEducId" />
@@ -13372,7 +13495,9 @@
           <ConnectorPoint PointX="8.25" PointY="30.547841796875" />
           <ConnectorPoint PointX="8.4126000000000012" PointY="30.547841796875" />
           <ConnectorPoint PointX="8.4126000000000012" PointY="26.182599999999997" />
-          <ConnectorPoint PointX="10.666666666666666" PointY="26.182599999999997" />
+          <ConnectorPoint PointX="10.479166666666666" PointY="26.182599999999997" />
+          <ConnectorPoint PointX="10.645833333333334" PointY="26.182599999999997" />
+          <ConnectorPoint PointX="10.791666666666666" PointY="26.182599999999997" />
           <ConnectorPoint PointX="10.958333333333334" PointY="26.182599999999997" />
           <ConnectorPoint PointX="10.962399999999999" PointY="26.182599999999997" />
           <ConnectorPoint PointX="10.962399999999999" PointY="3.3464" />
@@ -13400,33 +13525,35 @@
           <ConnectorPoint PointX="6.75" PointY="0.75" />
         </AssociationConnector>
         <AssociationConnector Association="Priem2012Model.fk_ed_EgeMark_EgeCertificate" ManuallyRouted="false">
-          <ConnectorPoint PointX="7.5" PointY="2.9564925130208337" />
-          <ConnectorPoint PointX="7.791666666666667" PointY="2.9564925130208328" />
-          <ConnectorPoint PointX="8.0121833333333345" PointY="2.9564925130208337" />
-          <ConnectorPoint PointX="15.65625" PointY="2.9564925130208337" />
+          <ConnectorPoint PointX="7.5" PointY="3.1824446614583333" />
+          <ConnectorPoint PointX="15.65625" PointY="3.1824446614583333" />
           <ConnectorPoint PointX="15.65625" PointY="8.5" />
         </AssociationConnector>
         <AssociationConnector Association="Priem2012Model.fk_ed_EgeMark_EgeExamName" ManuallyRouted="false">
           <ConnectorPoint PointX="1.5" PointY="12.5" />
           <ConnectorPoint PointX="1.5" PointY="12.125" />
-          <ConnectorPoint PointX="2.4166666666666665" PointY="12.124999999999998" />
-          <ConnectorPoint PointX="2.7083358333333334" PointY="12.125" />
+          <ConnectorPoint PointX="2.4166666666666665" PointY="12.125" />
+          <ConnectorPoint PointX="2.5833333333333335" PointY="12.125" />
+          <ConnectorPoint PointX="2.65625125" PointY="12.125" />
+          <ConnectorPoint PointX="2.8229179166666669" PointY="12.125" />
           <ConnectorPoint PointX="3.3666666666666667" PointY="12.125" />
           <ConnectorPoint PointX="3.5333333333333337" PointY="12.125" />
-          <ConnectorPoint PointX="4.916666666666667" PointY="12.125" />
-          <ConnectorPoint PointX="5.083333333333333" PointY="12.125" />
-          <ConnectorPoint PointX="5.1672916666666673" PointY="12.125" />
-          <ConnectorPoint PointX="5.3339583333333334" PointY="12.125" />
+          <ConnectorPoint PointX="5.166666666666667" PointY="12.124999999999998" />
+          <ConnectorPoint PointX="5.458333333333333" PointY="12.125" />
           <ConnectorPoint PointX="5.7650000000000015" PointY="12.125" />
           <ConnectorPoint PointX="5.7650000000000015" PointY="10.91" />
-          <ConnectorPoint PointX="7.8142666666666667" PointY="10.91" />
-          <ConnectorPoint PointX="7.9809333333333328" PointY="10.91" />
+          <ConnectorPoint PointX="7.4172916666666673" PointY="10.91" />
+          <ConnectorPoint PointX="7.5839583333333334" PointY="10.91" />
           <ConnectorPoint PointX="8.765" PointY="10.91" />
           <ConnectorPoint PointX="8.765" PointY="11.91" />
-          <ConnectorPoint PointX="10.506666666666666" PointY="11.909999999999998" />
+          <ConnectorPoint PointX="10.479166666666666" PointY="11.91" />
+          <ConnectorPoint PointX="10.726900288862181" PointY="11.91" />
+          <ConnectorPoint PointX="10.822916666666666" PointY="11.909999999999998" />
           <ConnectorPoint PointX="11.208333333333334" PointY="11.91" />
           <ConnectorPoint PointX="12.916666666666666" PointY="11.91" />
           <ConnectorPoint PointX="13.083333333333334" PointY="11.91" />
+          <ConnectorPoint PointX="13.166666666666666" PointY="11.91" />
+          <ConnectorPoint PointX="13.333333333333334" PointY="11.91" />
           <ConnectorPoint PointX="13.875" PointY="11.91" />
           <ConnectorPoint PointX="13.875" PointY="9.7785953776041659" />
           <ConnectorPoint PointX="14.25" PointY="9.7785953776041659" />
@@ -13438,32 +13565,30 @@
         <EntityTypeShape EntityType="Priem2012Model.OlympValue" Width="1.5" PointX="9" PointY="25.875" Height="1.7566536458333246" />
         <EntityTypeShape EntityType="Priem2012Model.PaidData" Width="1.5" PointX="11.25" PointY="17.125" Height="5.8653369140625031" />
         <AssociationConnector Association="Priem2012Model.FK_PaidData_DogovorType" >
-          <ConnectorPoint PointX="10.5" PointY="28.764999" />
-          <ConnectorPoint PointX="10.69107443490112" PointY="28.573924565098878" />
-          <ConnectorPoint PointX="10.808925565098878" PointY="28.456073434901121" />
-          <ConnectorPoint PointX="10.81607443490112" PointY="28.448924565098878" />
-          <ConnectorPoint PointX="11.05892556509888" PointY="28.206073434901121" />
-          <ConnectorPoint PointX="11.140625" PointY="28.124374000000003" />
-          <ConnectorPoint PointX="11.140625" PointY="22.903876774341569" />
-          <ConnectorPoint PointX="11.25" PointY="22.903876774341569" />
+          <ConnectorPoint PointX="10.5" PointY="28.75" />
+          <ConnectorPoint PointX="10.50357443490112" PointY="28.746425565098878" />
+          <ConnectorPoint PointX="10.621425565098878" PointY="28.628574434901122" />
+          <ConnectorPoint PointX="10.875" PointY="28.375" />
+          <ConnectorPoint PointX="10.875" PointY="23.122108141173694" />
+          <ConnectorPoint PointX="10.879066666666665" PointY="23.122108141173694" />
+          <ConnectorPoint PointX="11.130208333333334" PointY="23.122108141173694" />
+          <ConnectorPoint PointX="11.25" PointY="23.122108141173694" />
         </AssociationConnector>
         <AssociationConnector Association="Priem2012Model.FK_PaidData_PayPeriod" >
-          <ConnectorPoint PointX="10.5" PointY="31" />
-          <ConnectorPoint PointX="10.69107443490112" PointY="30.808925565098878" />
-          <ConnectorPoint PointX="10.808925565098878" PointY="30.691074434901122" />
-          <ConnectorPoint PointX="10.875" PointY="30.625" />
-          <ConnectorPoint PointX="10.875" PointY="21.482065393989842" />
-          <ConnectorPoint PointX="10.879066666666665" PointY="21.482065393989842" />
-          <ConnectorPoint PointX="11.098958333333334" PointY="21.482065393989842" />
-          <ConnectorPoint PointX="11.25" PointY="21.482065393989842" />
+          <ConnectorPoint PointX="10.5" PointY="31.031152846153844" />
+          <ConnectorPoint PointX="10.50357443490112" PointY="31.027578411252723" />
+          <ConnectorPoint PointX="10.621425565098878" PointY="30.909727281054966" />
+          <ConnectorPoint PointX="10.90625" PointY="30.624902846153844" />
+          <ConnectorPoint PointX="10.90625" PointY="22.173794083607689" />
+          <ConnectorPoint PointX="10.916666666666666" PointY="22.173794083607689" />
+          <ConnectorPoint PointX="11.130208333333334" PointY="22.173794083607689" />
+          <ConnectorPoint PointX="11.25" PointY="22.173794083607689" />
         </AssociationConnector>
         <AssociationConnector Association="Priem2012Model.FK_PaidData_Prorektor" >
-          <ConnectorPoint PointX="10.5" PointY="33.406152846153844" />
-          <ConnectorPoint PointX="10.90625" PointY="32.999902846153844" />
-          <ConnectorPoint PointX="10.90625" PointY="19.948051681369929" />
-          <ConnectorPoint PointX="10.932291666666666" PointY="19.948051681369929" />
-          <ConnectorPoint PointX="11.098958333333334" PointY="19.948051681369929" />
-          <ConnectorPoint PointX="11.25" PointY="19.948051681369929" />
+          <ConnectorPoint PointX="10.5" PointY="33.389999" />
+          <ConnectorPoint PointX="11.046875" PointY="32.843124" />
+          <ConnectorPoint PointX="11.046875" PointY="19.882263997395835" />
+          <ConnectorPoint PointX="11.25" PointY="19.882263997395835" />
         </AssociationConnector>
         <EntityTypeShape EntityType="Priem2012Model.PayDataEntry" Width="1.5" PointX="11.25" PointY="28.5" Height="3.0714322916666674" />
         <AssociationConnector Association="Priem2012Model.FK_PayDataStudyPlan_Prorektor" >
@@ -13477,45 +13602,45 @@
         <EntityTypeShape EntityType="Priem2012Model.ExamName" Width="1.5" PointX="1.5" PointY="9.625" Height="1.7566536458333353" />
         <EntityTypeShape EntityType="Priem2012Model.StudyLevel" Width="1.5" PointX="18.75" PointY="8.75" Height="1.7566536458333388" />
         <AssociationConnector Association="Priem2012Model.fk_Exam_ExamName" >
-          <ConnectorPoint PointX="2.6250025" PointY="11.605286458333332" />
-          <ConnectorPoint PointX="2.6250025" PointY="16.962967283947421" />
-          <ConnectorPoint PointX="2.5833333333333335" PointY="16.962967283947421" />
-          <ConnectorPoint PointX="2.4166666666666665" PointY="16.962967283947421" />
-          <ConnectorPoint PointX="2.25" PointY="16.962967283947421" />
+          <ConnectorPoint PointX="2.7395845833333334" PointY="11.605286458333332" />
+          <ConnectorPoint PointX="2.7395845833333334" PointY="17.245708927123555" />
+          <ConnectorPoint PointX="2.5833333333333335" PointY="17.245708927123555" />
+          <ConnectorPoint PointX="2.4166666666666665" PointY="17.245708927123555" />
+          <ConnectorPoint PointX="2.25" PointY="17.245708927123555" />
         </AssociationConnector>
         <EntityTypeShape EntityType="Priem2012Model.ProtocolHistory" Width="1.5" PointX="8.25" PointY="21.875" Height="2.4140429687500031" />
         <EntityTypeShape EntityType="Priem2012Model.ProtocolType" Width="1.5" PointX="3.75" PointY="36.25" Height="1.427958984374996" />
         <AssociationConnector Association="Priem2012Model.fk_Protocolhistory_EntryHeader" >
-          <ConnectorPoint PointX="7.5" PointY="11.820142729166665" />
-          <ConnectorPoint PointX="7.75" PointY="11.820142729166665" />
-          <ConnectorPoint PointX="7.75" PointY="16.125" />
-          <ConnectorPoint PointX="7.4809333333333328" PointY="16.125" />
-          <ConnectorPoint PointX="7.3142666666666667" PointY="16.125" />
-          <ConnectorPoint PointX="7.25" PointY="16.125" />
-          <ConnectorPoint PointX="7.25" PointY="23.179688" />
-          <ConnectorPoint PointX="7.3142666666666667" PointY="23.179688" />
-          <ConnectorPoint PointX="7.4809333333333328" PointY="23.179688" />
-          <ConnectorPoint PointX="8.25" PointY="23.179688" />
+          <ConnectorPoint PointX="7.5" PointY="11.740143229166666" />
+          <ConnectorPoint PointX="8.6816666666666666" PointY="11.740143229166666" />
+          <ConnectorPoint PointX="8.8483333333333345" PointY="11.740143229166666" />
+          <ConnectorPoint PointX="8.9375" PointY="11.740143229166666" />
+          <ConnectorPoint PointX="8.9375" PointY="11.9375" />
+          <ConnectorPoint PointX="10.5625" PointY="11.9375" />
+          <ConnectorPoint PointX="10.5625" PointY="22.489530586804346" />
+          <ConnectorPoint PointX="9.75" PointY="22.489530586804346" />
         </AssociationConnector>
         <EntityTypeShape EntityType="Priem2012Model.extEgeMark" Width="1.5" PointX="16.75" PointY="20.75" Height="2.5783902994791674" />
         <EntityTypeShape EntityType="Priem2012Model.EgeToExam" Width="1.5" PointX="14" PointY="14.25" Height="1.7566536458333388" />
         <AssociationConnector Association="Priem2012Model.FK_EgeToExam_EgeExamName" >
           <ConnectorPoint PointX="1.5" PointY="12.5" />
           <ConnectorPoint PointX="1.5" PointY="12.25" />
-          <ConnectorPoint PointX="2.4166666666666665" PointY="12.249999999999998" />
-          <ConnectorPoint PointX="2.7083358333333334" PointY="12.25" />
+          <ConnectorPoint PointX="2.4166666666666665" PointY="12.25" />
+          <ConnectorPoint PointX="2.5833333333333335" PointY="12.25" />
+          <ConnectorPoint PointX="2.65625125" PointY="12.25" />
+          <ConnectorPoint PointX="2.8229179166666669" PointY="12.25" />
           <ConnectorPoint PointX="3.3666666666666667" PointY="12.25" />
           <ConnectorPoint PointX="3.5333333333333337" PointY="12.25" />
-          <ConnectorPoint PointX="4.916666666666667" PointY="12.25" />
-          <ConnectorPoint PointX="5.083333333333333" PointY="12.25" />
           <ConnectorPoint PointX="5.25" PointY="12.25" />
           <ConnectorPoint PointX="5.25" PointY="18.476542968750003" />
-          <ConnectorPoint PointX="7.166666666666667" PointY="18.476542968750003" />
-          <ConnectorPoint PointX="7.4809333333333337" PointY="18.476542968750003" />
-          <ConnectorPoint PointX="10.666666666666666" PointY="18.476542968750003" />
-          <ConnectorPoint PointX="10.833333333333334" PointY="18.476542968750003" />
-          <ConnectorPoint PointX="10.875" PointY="18.476542968750003" />
-          <ConnectorPoint PointX="10.875" PointY="16.912903645833335" />
+          <ConnectorPoint PointX="5.291666666666667" PointY="18.476542968750003" />
+          <ConnectorPoint PointX="5.458333333333333" PointY="18.476542968750003" />
+          <ConnectorPoint PointX="9.7291666666666661" PointY="18.476542968750003" />
+          <ConnectorPoint PointX="9.8958333333333339" PointY="18.476542968750003" />
+          <ConnectorPoint PointX="10.479166666666666" PointY="18.476542968750003" />
+          <ConnectorPoint PointX="10.645833333333334" PointY="18.476542968750003" />
+          <ConnectorPoint PointX="10.879066666666665" PointY="18.476542968750003" />
+          <ConnectorPoint PointX="10.879066666666665" PointY="16.912903645833335" />
           <ConnectorPoint PointX="10.879066666666665" PointY="16.912903645833335" />
           <ConnectorPoint PointX="11.098958333333334" PointY="16.912903645833335" />
           <ConnectorPoint PointX="13.625" PointY="16.912903645833335" />
@@ -13531,12 +13656,14 @@
           <ConnectorPoint PointX="3.8333333333333335" PointY="18.492167968750003" />
           <ConnectorPoint PointX="4.6166666666666671" PointY="18.492167968750003" />
           <ConnectorPoint PointX="4.7833333333333332" PointY="18.492167968750003" />
-          <ConnectorPoint PointX="4.916666666666667" PointY="18.492167968750003" />
-          <ConnectorPoint PointX="5.083333333333333" PointY="18.492167968750003" />
-          <ConnectorPoint PointX="5.1672916666666673" PointY="18.492167968750003" />
-          <ConnectorPoint PointX="5.3339583333333334" PointY="18.492167968750003" />
-          <ConnectorPoint PointX="7.166666666666667" PointY="18.492167968750003" />
-          <ConnectorPoint PointX="7.4809333333333337" PointY="18.492167968750003" />
+          <ConnectorPoint PointX="5.166666666666667" PointY="18.492167968750003" />
+          <ConnectorPoint PointX="5.458333333333333" PointY="18.492167968750003" />
+          <ConnectorPoint PointX="5.666666666666667" PointY="18.492167968750003" />
+          <ConnectorPoint PointX="5.833333333333333" PointY="18.492167968750003" />
+          <ConnectorPoint PointX="9.7291666666666661" PointY="18.492167968750003" />
+          <ConnectorPoint PointX="9.8958333333333339" PointY="18.492167968750003" />
+          <ConnectorPoint PointX="10.479166666666666" PointY="18.492167968750003" />
+          <ConnectorPoint PointX="10.645833333333334" PointY="18.492167968750003" />
           <ConnectorPoint PointX="10.8125" PointY="18.492167968750003" />
           <ConnectorPoint PointX="10.8125" PointY="16.787903645833335" />
           <ConnectorPoint PointX="10.879066666666665" PointY="16.787903645833335" />
@@ -13556,9 +13683,9 @@
         </AssociationConnector>
         <AssociationConnector Association="Priem2012Model.fk_OlympBook_OlympSubject" >
           <ConnectorPoint PointX="10.5" PointY="12" />
-          <ConnectorPoint PointX="10.69107443490112" PointY="11.808925565098878" />
-          <ConnectorPoint PointX="10.808925565098878" PointY="11.691074434901122" />
-          <ConnectorPoint PointX="10.81607443490112" PointY="11.683925565098878" />
+          <ConnectorPoint PointX="10.50357443490112" PointY="11.996425565098878" />
+          <ConnectorPoint PointX="10.621425565098878" PointY="11.878574434901122" />
+          <ConnectorPoint PointX="10.84732443490112" PointY="11.652675565098878" />
           <ConnectorPoint PointX="11.021325565098877" PointY="11.478674434901123" />
           <ConnectorPoint PointX="11.125" PointY="11.375" />
           <ConnectorPoint PointX="11.125" PointY="12.009095052083332" />
@@ -13569,45 +13696,45 @@
         <AssociationConnector Association="Priem2012Model.FK_OlympBook_OlympType" >
           <ConnectorPoint PointX="9.718748" PointY="8.672587890625" />
           <ConnectorPoint PointX="9.718748" PointY="9.375" />
+          <ConnectorPoint PointX="10.479166666666666" PointY="9.375" />
+          <ConnectorPoint PointX="10.645833333333334" PointY="9.375" />
           <ConnectorPoint PointX="10.75" PointY="9.375" />
           <ConnectorPoint PointX="10.75" PointY="9.6583422903645939" />
-          <ConnectorPoint PointX="10.791666666666666" PointY="9.6583422903645939" />
+          <ConnectorPoint PointX="10.822916666666666" PointY="9.6583422903645939" />
           <ConnectorPoint PointX="11.045733333333333" PointY="9.6583422903645939" />
           <ConnectorPoint PointX="11.25" PointY="9.6583422903645939" />
         </AssociationConnector>
         <AssociationConnector Association="Priem2012Model.fk_Olympiads_OlympLevel" >
           <ConnectorPoint PointX="10.5" PointY="11.766433044471155" />
-          <ConnectorPoint PointX="10.691074434901122" PointY="11.957507479372275" />
-          <ConnectorPoint PointX="10.808925565098878" PointY="12.075358609570033" />
-          <ConnectorPoint PointX="10.816074434901122" PointY="12.082507479372275" />
+          <ConnectorPoint PointX="10.503574434901122" PointY="11.770007479372275" />
+          <ConnectorPoint PointX="10.621425565098878" PointY="11.887858609570033" />
+          <ConnectorPoint PointX="10.847324434901122" PointY="12.113757479372275" />
           <ConnectorPoint PointX="11.021325565098877" PointY="12.287758609570032" />
           <ConnectorPoint PointX="11.03125" PointY="12.297683044471155" />
           <ConnectorPoint PointX="11.03125" PointY="12.15625" />
           <ConnectorPoint PointX="11.25" PointY="12.375" />
         </AssociationConnector>
         <AssociationConnector Association="Priem2012Model.fk_Olympiads_OlympSubject" >
-          <ConnectorPoint PointX="10.5" PointY="13.405744687499993" />
-          <ConnectorPoint PointX="10.666666666666666" PointY="13.405744687499992" />
-          <ConnectorPoint PointX="11.045733333333333" PointY="13.405744687499993" />
-          <ConnectorPoint PointX="11.25" PointY="13.405744687499993" />
+          <ConnectorPoint PointX="10.5" PointY="13.49734787760416" />
+          <ConnectorPoint PointX="10.822916666666666" PointY="13.49734787760416" />
+          <ConnectorPoint PointX="11.045733333333333" PointY="13.49734787760416" />
+          <ConnectorPoint PointX="11.25" PointY="13.49734787760416" />
         </AssociationConnector>
         <AssociationConnector Association="Priem2012Model.FK_Olympiads_OlympType" >
-          <ConnectorPoint PointX="10.5" PointY="8.672587890625" />
-          <ConnectorPoint PointX="10.691074434901122" PointY="8.86366232552612" />
-          <ConnectorPoint PointX="10.808925565098878" PointY="8.9815134557238778" />
-          <ConnectorPoint PointX="10.875" PointY="9.047587890625" />
-          <ConnectorPoint PointX="10.875" PointY="14.554754461081839" />
-          <ConnectorPoint PointX="10.879066666666665" PointY="14.554754461081839" />
-          <ConnectorPoint PointX="11.045733333333333" PointY="14.554754461081839" />
-          <ConnectorPoint PointX="11.25" PointY="14.554754461081839" />
+          <ConnectorPoint PointX="10.5" PointY="8.6414330444711549" />
+          <ConnectorPoint PointX="10.90625" PointY="9.0476830444711549" />
+          <ConnectorPoint PointX="10.90625" PointY="14.583141857457948" />
+          <ConnectorPoint PointX="11.25" PointY="14.583141857457948" />
         </AssociationConnector>
         <AssociationConnector Association="Priem2012Model.fk_Olympiads_OlympValue" >
-          <ConnectorPoint PointX="10.5" PointY="25.889999" />
-          <ConnectorPoint PointX="10.69107443490112" PointY="25.698924565098878" />
-          <ConnectorPoint PointX="10.96517556509888" PointY="25.424823434901121" />
-          <ConnectorPoint PointX="11.015625" PointY="25.374374000000003" />
-          <ConnectorPoint PointX="11.015625" PointY="15.702581553457581" />
-          <ConnectorPoint PointX="11.25" PointY="15.702581553457581" />
+          <ConnectorPoint PointX="10.5" PointY="25.921152846153845" />
+          <ConnectorPoint PointX="10.50357443490112" PointY="25.917578411252723" />
+          <ConnectorPoint PointX="10.621425565098878" PointY="25.799727281054967" />
+          <ConnectorPoint PointX="10.78482443490112" PointY="25.636328411252723" />
+          <ConnectorPoint PointX="10.965175565098878" PointY="25.455977281054967" />
+          <ConnectorPoint PointX="11.015625" PointY="25.405527846153845" />
+          <ConnectorPoint PointX="11.015625" PointY="15.846576183937302" />
+          <ConnectorPoint PointX="11.25" PointY="15.846576183937302" />
         </AssociationConnector>
         <EntityTypeShape EntityType="Priem2012Model.extOlympBook" Width="1.5" PointX="18.75" PointY="19.75" Height="2.5783902994791674" />
         <EntityTypeShape EntityType="Priem2012Model.extEgeMarkMax" Width="1.5" PointX="20.75" PointY="2.75" Height="2.4140429687499996" />
@@ -13624,32 +13751,30 @@
         <EntityTypeShape EntityType="Priem2012Model.qProtocol" Width="1.5" PointX="22.75" PointY="26.75" Height="3.2357796223958317" />
         <EntityTypeShape EntityType="Priem2012Model.qProtocolHistory" Width="1.5" PointX="24.75" PointY="25.75" Height="3.893168945312496" />
         <AssociationConnector Association="Priem2012Model.fk_Protocol_ProtocolType" >
-          <ConnectorPoint PointX="5.25" PointY="37.047841796875" />
-          <ConnectorPoint PointX="5.604166666666667" PointY="37.047841796875" />
-          <ConnectorPoint PointX="5.833333333333333" PointY="37.047841796875" />
-          <ConnectorPoint PointX="6" PointY="37.047841796875" />
+          <ConnectorPoint PointX="5.25" PointY="37.339945485671173" />
+          <ConnectorPoint PointX="5.635416666666667" PointY="37.339945485671173" />
+          <ConnectorPoint PointX="5.833333333333333" PointY="37.339945485671173" />
+          <ConnectorPoint PointX="6" PointY="37.339945485671173" />
         </AssociationConnector>
         <AssociationConnector Association="Priem2012Model.fk_Protocol_StudyBasis" >
-          <ConnectorPoint PointX="3" PointY="35.453837890624996" />
-          <ConnectorPoint PointX="3.3541666666666665" PointY="35.453837890624996" />
-          <ConnectorPoint PointX="3.5833333333333335" PointY="35.453837890624996" />
-          <ConnectorPoint PointX="5.1672916666666673" PointY="35.453837890624996" />
-          <ConnectorPoint PointX="5.3339583333333334" PointY="35.453837890624996" />
-          <ConnectorPoint PointX="5.604166666666667" PointY="35.453837890624996" />
-          <ConnectorPoint PointX="5.770833333333333" PointY="35.453837890624996" />
-          <ConnectorPoint PointX="5.791666666666667" PointY="35.453837890624996" />
-          <ConnectorPoint PointX="5.958333333333333" PointY="35.453837890624996" />
-          <ConnectorPoint PointX="6.15625" PointY="35.453837890624996" />
-          <ConnectorPoint PointX="6.15625" PointY="36.25" />
+          <ConnectorPoint PointX="2.25" PointY="35.739889322916667" />
+          <ConnectorPoint PointX="2.25" PointY="38.204839089174996" />
+          <ConnectorPoint PointX="4.416666666666667" PointY="38.204839089174996" />
+          <ConnectorPoint PointX="4.583333333333333" PointY="38.204839089174996" />
+          <ConnectorPoint PointX="5.635416666666667" PointY="38.204839089174996" />
+          <ConnectorPoint PointX="5.802083333333333" PointY="38.204839089174996" />
+          <ConnectorPoint PointX="6" PointY="38.204839089174996" />
         </AssociationConnector>
         <AssociationConnector Association="Priem2012Model.fk_Protocol_StudyForm" >
           <ConnectorPoint PointX="5.25" PointY="39.744903971354162" />
+          <ConnectorPoint PointX="5.604166666666667" PointY="39.744903971354162" />
+          <ConnectorPoint PointX="5.802083333333333" PointY="39.744903971354162" />
           <ConnectorPoint PointX="6" PointY="39.744903971354162" />
         </AssociationConnector>
         <AssociationConnector Association="Priem2012Model.fk_ProtocolHistory_Protocol" >
-          <ConnectorPoint PointX="7.5" PointY="38.879591471354161" />
-          <ConnectorPoint PointX="8.3825" PointY="38.879591471354161" />
-          <ConnectorPoint PointX="8.3825" PointY="24.624492187500003" />
+          <ConnectorPoint PointX="7.5" PointY="38.682403971354162" />
+          <ConnectorPoint PointX="8.36255" PointY="38.682403971354162" />
+          <ConnectorPoint PointX="8.36255" PointY="24.624492187500003" />
         </AssociationConnector>
         <EntityTypeShape EntityType="Priem2012Model.extOlympiadsAll" Width="1.5" PointX="13.75" PointY="27.75" Height="3.2357796223958388" />
         <EntityTypeShape EntityType="Priem2012Model.AbitDoc" Width="1.5" PointX="6" PointY="13.375" Height="1.427958984374996" />
@@ -13679,20 +13804,21 @@
           <ConnectorPoint PointX="3" PointY="16.273793945312498" />
         </AssociationConnector>
         <AssociationConnector Association="Priem2012Model.FK_EgeToLanguage_Language" >
-          <ConnectorPoint PointX="2.25" PointY="20.240143229166669" />
-          <ConnectorPoint PointX="2.4166666666666665" PointY="20.240143229166669" />
-          <ConnectorPoint PointX="2.5833333333333335" PointY="20.240143229166669" />
-          <ConnectorPoint PointX="3.75" PointY="20.240143229166669" />
+          <ConnectorPoint PointX="2.25" PointY="20.008233421875" />
+          <ConnectorPoint PointX="2.4166666666666665" PointY="20.008233421875" />
+          <ConnectorPoint PointX="2.5833333333333335" PointY="20.008233421875" />
+          <ConnectorPoint PointX="3.75" PointY="20.008233421875" />
           <ConnectorPoint PointX="3.75" PointY="16.297587890625" />
         </AssociationConnector>
         <EntityTypeShape EntityType="Priem2012Model.Fixieren" Width="1.5" PointX="8.25" PointY="19.25" Height="1.7566536458333388" />
         <EntityTypeShape EntityType="Priem2012Model.FixierenView" Width="1.5" PointX="6" PointY="25.375" Height="3.4001269531250031" />
         <AssociationConnector Association="Priem2012Model.FK_Fixieren_FixierenView" >
-          <ConnectorPoint PointX="6.625" PointY="25.375" />
-          <ConnectorPoint PointX="6.625" PointY="20.028379720052087" />
-          <ConnectorPoint PointX="7.166666666666667" PointY="20.028379720052087" />
-          <ConnectorPoint PointX="7.4809333333333337" PointY="20.028379720052087" />
-          <ConnectorPoint PointX="8.25" PointY="20.028379720052087" />
+          <ConnectorPoint PointX="7.5" PointY="25.376152846153843" />
+          <ConnectorPoint PointX="7.875" PointY="25.001152846153843" />
+          <ConnectorPoint PointX="7.875" PointY="20.076650890625004" />
+          <ConnectorPoint PointX="7.916666666666667" PointY="20.076650890625004" />
+          <ConnectorPoint PointX="8.0833333333333339" PointY="20.076650890625004" />
+          <ConnectorPoint PointX="8.25" PointY="20.076650890625004" />
         </AssociationConnector>
         <EntityTypeShape EntityType="Priem2012Model.extAbitMarksSum" Width="1.5" PointX="26.75" PointY="11.75" Height="1.7566536458333317" />
         <EntityTypeShape EntityType="Priem2012Model.extEntryView" Width="1.5" PointX="26.75" PointY="14.75" Height="5.0436002604166656" />
@@ -13701,26 +13827,22 @@
         <EntityTypeShape EntityType="Priem2012Model.extDisEntryView" Width="1.5" PointX="28.75" PointY="2.75" Height="4.3862109375" />
         <EntityTypeShape EntityType="Priem2012Model.Entry" Width="2" PointX="3.75" PointY="24.75" Height="5.3722949218750031" />
         <AssociationConnector Association="Priem2012Model.FK_PayDataStudyPlan_Entry" >
-          <ConnectorPoint PointX="5.25" PointY="28.1625005" />
-          <ConnectorPoint PointX="5.3266666666666671" PointY="28.1625005" />
-          <ConnectorPoint PointX="5.5333333333333323" PointY="28.1625005" />
-          <ConnectorPoint PointX="5.625" PointY="28.1625005" />
-          <ConnectorPoint PointX="5.625" PointY="34.162985026041667" />
-          <ConnectorPoint PointX="5.791666666666667" PointY="34.162985026041667" />
-          <ConnectorPoint PointX="5.958333333333333" PointY="34.162985026041667" />
-          <ConnectorPoint PointX="6.041666666666667" PointY="34.162985026041667" />
-          <ConnectorPoint PointX="6.208333333333333" PointY="34.162985026041667" />
-          <ConnectorPoint PointX="8.2690666666666655" PointY="34.162985026041667" />
-          <ConnectorPoint PointX="8.4658333333333342" PointY="34.162985026041667" />
-          <ConnectorPoint PointX="8.5416666666666661" PointY="34.162985026041667" />
-          <ConnectorPoint PointX="8.7083333333333339" PointY="34.162985026041667" />
-          <ConnectorPoint PointX="8.75" PointY="34.162985026041667" />
-          <ConnectorPoint PointX="8.75" PointY="33.0625" />
-          <ConnectorPoint PointX="10.760319512820511" PointY="33.0625" />
-          <ConnectorPoint PointX="10.926986179487178" PointY="33.0625" />
-          <ConnectorPoint PointX="11" PointY="33.0625" />
-          <ConnectorPoint PointX="11" PointY="28.125" />
-          <ConnectorPoint PointX="12" PointY="28.125" />
+          <ConnectorPoint PointX="5.75" PointY="28.844943914713546" />
+          <ConnectorPoint PointX="5.87288" PointY="28.844943914713546" />
+          <ConnectorPoint PointX="5.87288" PointY="32.910783645833341" />
+          <ConnectorPoint PointX="6.29308" PointY="32.910783645833341" />
+          <ConnectorPoint PointX="6.29308" PointY="33.744905026041664" />
+          <ConnectorPoint PointX="7.854166666666667" PointY="33.744905026041664" />
+          <ConnectorPoint PointX="8.0208333333333339" PointY="33.744905026041664" />
+          <ConnectorPoint PointX="8.2792166666666667" PointY="33.744905026041664" />
+          <ConnectorPoint PointX="8.5833333333333321" PointY="33.744905026041664" />
+          <ConnectorPoint PointX="8.79308" PointY="33.744905026041664" />
+          <ConnectorPoint PointX="8.79308" PointY="33.29308" />
+          <ConnectorPoint PointX="10.513585666666666" PointY="33.29308" />
+          <ConnectorPoint PointX="10.680252333333334" PointY="33.29308" />
+          <ConnectorPoint PointX="11.12712" PointY="33.29308" />
+          <ConnectorPoint PointX="11.12712" PointY="28.37712" />
+          <ConnectorPoint PointX="12" PointY="28.37712" />
           <ConnectorPoint PointX="12" PointY="28.5" />
         </AssociationConnector>
         <EntityTypeShape EntityType="Priem2012Model.qEntry" Width="1.5" PointX="28.75" PointY="8.75" Height="5.86533691406251" />
@@ -13728,46 +13850,57 @@
         <EntityTypeShape EntityType="Priem2012Model.extEntryProtocols" Width="1.5" PointX="18.75" PointY="30.75" Height="4.2218636067708317" />
         <EntityTypeShape EntityType="Priem2012Model.ExamInEntry" Width="1.5" PointX="12" PointY="23.75" Height="2.5783902994791674" />
         <AssociationConnector Association="Priem2012Model.FK_ExamInEntry_Entry" >
-          <ConnectorPoint PointX="5.25" PointY="24.79875" />
-          <ConnectorPoint PointX="5.3266666666666671" PointY="24.79875" />
-          <ConnectorPoint PointX="5.645833333333333" PointY="24.79875" />
-          <ConnectorPoint PointX="5.666666666666667" PointY="24.79875" />
-          <ConnectorPoint PointX="5.958333333333333" PointY="24.79875" />
-          <ConnectorPoint PointX="6.541666666666667" PointY="24.79875" />
-          <ConnectorPoint PointX="6.708333333333333" PointY="24.79875" />
-          <ConnectorPoint PointX="8.2690666666666655" PointY="24.79875" />
-          <ConnectorPoint PointX="8.4658333333333342" PointY="24.79875" />
-          <ConnectorPoint PointX="10.666666666666666" PointY="24.798749999999995" />
-          <ConnectorPoint PointX="11.223958333333334" PointY="24.79875" />
-          <ConnectorPoint PointX="12" PointY="24.79875" />
+          <ConnectorPoint PointX="4.75" PointY="33.26853515625" />
+          <ConnectorPoint PointX="4.75" PointY="33.42213515625" />
+          <ConnectorPoint PointX="5.1672916666666673" PointY="33.42213515625" />
+          <ConnectorPoint PointX="5.3339583333333334" PointY="33.42213515625" />
+          <ConnectorPoint PointX="5.635416666666667" PointY="33.42213515625" />
+          <ConnectorPoint PointX="5.895833333333333" PointY="33.42213515625" />
+          <ConnectorPoint PointX="5.9036" PointY="33.42213515625" />
+          <ConnectorPoint PointX="5.9036" PointY="24.6268921875" />
+          <ConnectorPoint PointX="7.791666666666667" PointY="24.6268921875" />
+          <ConnectorPoint PointX="7.958333333333333" PointY="24.6268921875" />
+          <ConnectorPoint PointX="10.479166666666666" PointY="24.6268921875" />
+          <ConnectorPoint PointX="10.645833333333334" PointY="24.6268921875" />
+          <ConnectorPoint PointX="10.760416666666666" PointY="24.6268921875" />
+          <ConnectorPoint PointX="11.130208333333334" PointY="24.6268921875" />
+          <ConnectorPoint PointX="11.8464" PointY="24.6268921875" />
+          <ConnectorPoint PointX="11.8464" PointY="26.208130333533656" />
+          <ConnectorPoint PointX="12" PointY="26.208130333533656" />
         </AssociationConnector>
         <AssociationConnector Association="Priem2012Model.FK_ExamInEntry_Exam" >
           <ConnectorPoint PointX="1.9062519999999998" PointY="17.999492187500003" />
-          <ConnectorPoint PointX="1.9062519999999998" PointY="18.507792968750003" />
-          <ConnectorPoint PointX="2.4166666666666665" PointY="18.507792968750003" />
-          <ConnectorPoint PointX="2.5833333333333335" PointY="18.507792968750003" />
-          <ConnectorPoint PointX="3.6666666666666665" PointY="18.507792968750003" />
-          <ConnectorPoint PointX="3.8333333333333335" PointY="18.507792968750003" />
-          <ConnectorPoint PointX="4.6166666666666671" PointY="18.507792968750003" />
-          <ConnectorPoint PointX="4.7833333333333332" PointY="18.507792968750003" />
-          <ConnectorPoint PointX="4.916666666666667" PointY="18.507792968750003" />
-          <ConnectorPoint PointX="5.083333333333333" PointY="18.507792968750003" />
-          <ConnectorPoint PointX="5.1672916666666673" PointY="18.507792968750003" />
-          <ConnectorPoint PointX="5.3339583333333334" PointY="18.507792968750003" />
-          <ConnectorPoint PointX="7.166666666666667" PointY="18.507792968750003" />
-          <ConnectorPoint PointX="7.4809333333333337" PointY="18.507792968750003" />
-          <ConnectorPoint PointX="10.666666666666666" PointY="18.507792968750003" />
-          <ConnectorPoint PointX="10.833333333333334" PointY="18.507792968750003" />
-          <ConnectorPoint PointX="10.84375" PointY="18.507792968750003" />
-          <ConnectorPoint PointX="10.84375" PointY="25.684234526041671" />
-          <ConnectorPoint PointX="10.879066666666665" PointY="25.684234526041671" />
-          <ConnectorPoint PointX="11.223958333333334" PointY="25.684234526041671" />
-          <ConnectorPoint PointX="12" PointY="25.684234526041671" />
+          <ConnectorPoint PointX="1.9062519999999998" PointY="18.398417968750003" />
+          <ConnectorPoint PointX="2.4166666666666665" PointY="18.398417968750003" />
+          <ConnectorPoint PointX="2.5833333333333335" PointY="18.398417968750003" />
+          <ConnectorPoint PointX="3.6666666666666665" PointY="18.398417968750003" />
+          <ConnectorPoint PointX="3.8333333333333335" PointY="18.398417968750003" />
+          <ConnectorPoint PointX="4.6166666666666671" PointY="18.398417968750003" />
+          <ConnectorPoint PointX="4.7833333333333332" PointY="18.398417968750003" />
+          <ConnectorPoint PointX="5.166666666666667" PointY="18.398417968750003" />
+          <ConnectorPoint PointX="5.458333333333333" PointY="18.398417968750003" />
+          <ConnectorPoint PointX="5.75" PointY="18.398417968750003" />
+          <ConnectorPoint PointX="5.75" PointY="20.903300781250003" />
+          <ConnectorPoint PointX="7.791666666666667" PointY="20.903300781250003" />
+          <ConnectorPoint PointX="7.958333333333333" PointY="20.903300781250003" />
+          <ConnectorPoint PointX="8" PointY="20.903300781250003" />
+          <ConnectorPoint PointX="8" PointY="18.672587890624996" />
+          <ConnectorPoint PointX="9.7291666666666661" PointY="18.672587890624996" />
+          <ConnectorPoint PointX="9.8958333333333339" PointY="18.672587890624996" />
+          <ConnectorPoint PointX="10.479166666666666" PointY="18.672587890624996" />
+          <ConnectorPoint PointX="10.645833333333334" PointY="18.672587890624996" />
+          <ConnectorPoint PointX="10.84375" PointY="18.672587890624996" />
+          <ConnectorPoint PointX="10.84375" PointY="25.91046173958334" />
+          <ConnectorPoint PointX="10.879066666666665" PointY="25.91046173958334" />
+          <ConnectorPoint PointX="11.130208333333334" PointY="25.91046173958334" />
+          <ConnectorPoint PointX="11.763066666666665" PointY="25.91046173958334" />
+          <ConnectorPoint PointX="11.929733333333333" PointY="25.91046173958334" />
+          <ConnectorPoint PointX="12" PointY="25.91046173958334" />
         </AssociationConnector>
         <AssociationConnector Association="Priem2012Model.fk_Mark_ExamInEntry" >
-          <ConnectorPoint PointX="13.5" PointY="24.21875" />
-          <ConnectorPoint PointX="14.46875" PointY="24.21875" />
-          <ConnectorPoint PointX="14.46875" PointY="22.268697916666667" />
+          <ConnectorPoint PointX="13.5" PointY="27.030742187500003" />
+          <ConnectorPoint PointX="14.46875" PointY="27.030742187500003" />
+          <ConnectorPoint PointX="14.46875" PointY="22.653300781250003" />
         </AssociationConnector>
         <EntityTypeShape EntityType="Priem2012Model.qCompetitiveGroup" Width="1.5" PointX="20.75" PointY="30.75" Height="3.0714322916666674" />
         <EntityTypeShape EntityType="Priem2012Model.qEntryToCompetitiveGroup" Width="1.5" PointX="22.75" PointY="30.75" Height="1.4279589843749818" />
@@ -13784,24 +13917,24 @@
           <ConnectorPoint PointX="9" PointY="4.7870312499999983" />
         </AssociationConnector>
         <AssociationConnector Association="Priem2012Model.FK_Person_Contacts_Country" >
-          <ConnectorPoint PointX="1.2325749919400215" PointY="21.875" />
-          <ConnectorPoint PointX="1.2325749919400215" PointY="21.53125" />
-          <ConnectorPoint PointX="1.4867194736254314" PointY="21.53125" />
-          <ConnectorPoint PointX="1.653386140292098" PointY="21.53125" />
-          <ConnectorPoint PointX="1.8241972886441749" PointY="21.53125" />
-          <ConnectorPoint PointX="1.9908639553108414" PointY="21.53125" />
-          <ConnectorPoint PointX="4.6166666666666671" PointY="21.53125" />
-          <ConnectorPoint PointX="4.7833333333333332" PointY="21.53125" />
-          <ConnectorPoint PointX="5" PointY="21.53125" />
-          <ConnectorPoint PointX="5" PointY="11.922587890625" />
-          <ConnectorPoint PointX="5.1672916666666673" PointY="11.922587890625" />
-          <ConnectorPoint PointX="5.3339583333333334" PointY="11.922587890625" />
+          <ConnectorPoint PointX="1.2975133109887542" PointY="21.875" />
+          <ConnectorPoint PointX="1.2975133109887542" PointY="21.5" />
+          <ConnectorPoint PointX="4.0910382604166671" PointY="21.5" />
+          <ConnectorPoint PointX="4.2577049270833331" PointY="21.5" />
+          <ConnectorPoint PointX="4.6166666666666671" PointY="21.5" />
+          <ConnectorPoint PointX="4.7833333333333332" PointY="21.5" />
+          <ConnectorPoint PointX="5.25" PointY="21.5" />
+          <ConnectorPoint PointX="5.25" PointY="11.922587890625" />
+          <ConnectorPoint PointX="5.291666666666667" PointY="11.922587890625" />
+          <ConnectorPoint PointX="5.458333333333333" PointY="11.922587890625" />
           <ConnectorPoint PointX="5.5" PointY="11.922587890625" />
           <ConnectorPoint PointX="5.5" PointY="8.1631575520833337" />
           <ConnectorPoint PointX="6" PointY="8.1631575520833337" />
         </AssociationConnector>
         <AssociationConnector Association="Priem2012Model.FK_EgeCertificate_Person" >
           <ConnectorPoint PointX="5.25" PointY="3.67578125" />
+          <ConnectorPoint PointX="5.6816666666666675" PointY="3.6757812499999996" />
+          <ConnectorPoint PointX="5.8483333333333336" PointY="3.67578125" />
           <ConnectorPoint PointX="6" PointY="3.67578125" />
         </AssociationConnector>
         <AssociationConnector Association="Priem2012Model.FK_Person_PassportType" >
@@ -13812,22 +13945,20 @@
         </AssociationConnector>
         <AssociationConnector Association="Priem2012Model.FK_Person_AdditionalInfo_Person" >
           <ConnectorPoint PointX="4.5" PointY="2.875" />
-          <ConnectorPoint PointX="4.5" PointY="2.8125" />
-          <ConnectorPoint PointX="5.3125" PointY="2.8125" />
-          <ConnectorPoint PointX="5.3125" PointY="4.9724999999999966" />
-          <ConnectorPoint PointX="7.5475" PointY="4.9724999999999966" />
-          <ConnectorPoint PointX="7.5475" PointY="6.279293619791666" />
-          <ConnectorPoint PointX="7.8142666666666667" PointY="6.2792936197916651" />
-          <ConnectorPoint PointX="7.9809333333333328" PointY="6.279293619791666" />
-          <ConnectorPoint PointX="8.0416666666666661" PointY="6.2792936197916651" />
-          <ConnectorPoint PointX="8.2083333333333339" PointY="6.279293619791666" />
-          <ConnectorPoint PointX="10.041666666666666" PointY="6.2792936197916651" />
-          <ConnectorPoint PointX="10.208333333333334" PointY="6.279293619791666" />
-          <ConnectorPoint PointX="10.879066666666665" PointY="6.2792936197916651" />
-          <ConnectorPoint PointX="11.045733333333333" PointY="6.279293619791666" />
-          <ConnectorPoint PointX="13.90625" PointY="6.279293619791666" />
-          <ConnectorPoint PointX="13.90625" PointY="7.0197306033630875" />
-          <ConnectorPoint PointX="14" PointY="7.0197306033630875" />
+          <ConnectorPoint PointX="4.5" PointY="2.625" />
+          <ConnectorPoint PointX="5.7650000000000006" PointY="2.625" />
+          <ConnectorPoint PointX="5.7650000000000006" PointY="4.8033007812500017" />
+          <ConnectorPoint PointX="7.735" PointY="4.8033007812500017" />
+          <ConnectorPoint PointX="7.735" PointY="6.6590950520833312" />
+          <ConnectorPoint PointX="10.879066666666665" PointY="6.65909505208333" />
+          <ConnectorPoint PointX="11.045733333333333" PointY="6.6590950520833312" />
+          <ConnectorPoint PointX="12.416666666666666" PointY="6.65909505208333" />
+          <ConnectorPoint PointX="12.583333333333334" PointY="6.6590950520833312" />
+          <ConnectorPoint PointX="12.645128205128204" PointY="6.65909505208333" />
+          <ConnectorPoint PointX="12.811794871794872" PointY="6.6590950520833312" />
+          <ConnectorPoint PointX="13.625" PointY="6.6590950520833312" />
+          <ConnectorPoint PointX="13.625" PointY="6.9783605280354815" />
+          <ConnectorPoint PointX="14" PointY="6.9783605280354815" />
         </AssociationConnector>
         <AssociationConnector Association="Priem2012Model.FK_Person_Contacts_Person" >
           <ConnectorPoint PointX="5.25" PointY="9.2475187760417175" />
@@ -13850,15 +13981,15 @@
           <ConnectorPoint PointX="6" PointY="10.288157552083334" />
         </AssociationConnector>
         <AssociationConnector Association="Priem2012Model.FK_Person_Nationality" >
-          <ConnectorPoint PointX="1.9075306219775081" PointY="21.875" />
-          <ConnectorPoint PointX="1.9075306219775081" PointY="21.417786458333339" />
-          <ConnectorPoint PointX="2.5" PointY="21.417786458333339" />
+          <ConnectorPoint PointX="1.805008655494377" PointY="21.875" />
+          <ConnectorPoint PointX="1.805008655494377" PointY="21.480286458333339" />
+          <ConnectorPoint PointX="2.5" PointY="21.480286458333339" />
           <ConnectorPoint PointX="2.5" PointY="11.855286458333332" />
-          <ConnectorPoint PointX="2.5416691666666664" PointY="11.855286458333332" />
-          <ConnectorPoint PointX="2.7083358333333334" PointY="11.855286458333332" />
+          <ConnectorPoint PointX="2.65625125" PointY="11.855286458333332" />
+          <ConnectorPoint PointX="2.8229179166666669" PointY="11.855286458333332" />
           <ConnectorPoint PointX="3.25" PointY="11.855286458333332" />
-          <ConnectorPoint PointX="3.25" PointY="4.2282442565104805" />
-          <ConnectorPoint PointX="3.75" PointY="4.2282442565104805" />
+          <ConnectorPoint PointX="3.25" PointY="7.3311767542572372" />
+          <ConnectorPoint PointX="3.75" PointY="7.3311767542572372" />
         </AssociationConnector>
         <EntityTypeShape EntityType="Priem2012Model.ForeignCountry" Width="1.5" PointX="0.75" PointY="0.75" Height="2.0853483072916674" />
         <EntityTypeShape EntityType="Priem2012Model.Person_SPO_ExitClass" Width="1.5" PointX="2.75" PointY="0.75" Height="1.263611653645853" />
@@ -13866,26 +13997,31 @@
         <EntityTypeShape EntityType="Priem2012Model.PersonSportQualification" Width="1.5" PointX="8.75" PointY="0.75" Height="1.5923063151041674" />
         <EntityTypeShape EntityType="Priem2012Model.StudyLevelGroup" Width="1.5" PointX="10.75" PointY="0.75" Height="1.4279589843749818" />
         <AssociationConnector Association="Priem2012Model.FK_PersonEducationDirection_Person" >
-          <ConnectorPoint PointX="3.75" PointY="7.8769608216145208" />
-          <ConnectorPoint PointX="3.45" PointY="7.8769608216145208" />
+          <ConnectorPoint PointX="3.75" PointY="8.8167036583785556" />
+          <ConnectorPoint PointX="3.45" PointY="8.8167036583785556" />
           <ConnectorPoint PointX="3.45" PointY="13.925" />
           <ConnectorPoint PointX="4.7" PointY="13.925" />
-          <ConnectorPoint PointX="4.7" PointY="24.425" />
-          <ConnectorPoint PointX="5.1672916666666673" PointY="24.425" />
-          <ConnectorPoint PointX="5.3339583333333334" PointY="24.425" />
-          <ConnectorPoint PointX="5.45" PointY="24.425" />
-          <ConnectorPoint PointX="5.45" PointY="31.575" />
-          <ConnectorPoint PointX="5.479166666666667" PointY="31.575" />
-          <ConnectorPoint PointX="5.958333333333333" PointY="31.575" />
-          <ConnectorPoint PointX="7.125" PointY="31.575" />
-          <ConnectorPoint PointX="7.125" PointY="31.875" />
+          <ConnectorPoint PointX="4.7" PointY="24.55" />
+          <ConnectorPoint PointX="5.141666166666667" PointY="24.55" />
+          <ConnectorPoint PointX="5.4583333333333321" PointY="24.55" />
+          <ConnectorPoint PointX="5.95" PointY="24.55" />
+          <ConnectorPoint PointX="5.95" PointY="25.175" />
+          <ConnectorPoint PointX="5.8" PointY="25.175" />
+          <ConnectorPoint PointX="5.8" PointY="32.514887829427089" />
+          <ConnectorPoint PointX="5.8202666666666669" PointY="32.514887829427089" />
+          <ConnectorPoint PointX="5.986933333333333" PointY="32.514887829427089" />
+          <ConnectorPoint PointX="6.375" PointY="32.514887829427089" />
         </AssociationConnector>
         <AssociationConnector Association="Priem2012Model.FK_OlympBook_OlympName" >
-          <ConnectorPoint PointX="22.75" PointY="9.8362939453125" />
-          <ConnectorPoint PointX="22.5" PointY="9.8362939453125" />
-          <ConnectorPoint PointX="22.5" PointY="11.5" />
-          <ConnectorPoint PointX="17.673333333333332" PointY="11.5" />
-          <ConnectorPoint PointX="17.506666666666668" PointY="11.5" />
+          <ConnectorPoint PointX="22.75" PointY="9.9324446614583337" />
+          <ConnectorPoint PointX="22.5" PointY="9.9324446614583337" />
+          <ConnectorPoint PointX="22.5" PointY="11.7494921875" />
+          <ConnectorPoint PointX="19.958332833333333" PointY="11.749492187499998" />
+          <ConnectorPoint PointX="19.645128205128206" PointY="11.7494921875" />
+          <ConnectorPoint PointX="19.5" PointY="11.7494921875" />
+          <ConnectorPoint PointX="19.5" PointY="11.5" />
+          <ConnectorPoint PointX="15.083333333333334" PointY="11.5" />
+          <ConnectorPoint PointX="14.916666666666666" PointY="11.5" />
           <ConnectorPoint PointX="13.958333333333334" PointY="11.5" />
           <ConnectorPoint PointX="13.791666666666666" PointY="11.5" />
           <ConnectorPoint PointX="13" PointY="11.5" />
@@ -13894,73 +14030,55 @@
           <ConnectorPoint PointX="12.031252" PointY="11.884095052083332" />
         </AssociationConnector>
         <AssociationConnector Association="Priem2012Model.FK_Person_Contacts_ForeignCountry" >
-          <ConnectorPoint PointX="1.8046889999999998" PointY="0.875" />
-          <ConnectorPoint PointX="1.8046889999999998" PointY="0.875" />
-          <ConnectorPoint PointX="8.125" PointY="0.375" />
-          <ConnectorPoint PointX="8.125" PointY="8.677803861979168" />
-          <ConnectorPoint PointX="7.9809333333333328" PointY="8.677803861979168" />
-          <ConnectorPoint PointX="7.8142666666666667" PointY="8.677803861979168" />
-          <ConnectorPoint PointX="7.5" PointY="8.677803861979168" />
+          <ConnectorPoint PointX="1.8046889999999998" PointY="0.75" />
+          <ConnectorPoint PointX="1.8046889999999998" PointY="0.375" />
+          <ConnectorPoint PointX="5.7650000000000006" PointY="0.375" />
+          <ConnectorPoint PointX="5.7650000000000006" PointY="4.875" />
+          <ConnectorPoint PointX="6.9375005000000005" PointY="4.875" />
+          <ConnectorPoint PointX="6.9375005000000005" PointY="5.25" />
         </AssociationConnector>
         <AssociationConnector Association="Priem2012Model.FK_Entry_StudyBasis" >
           <ConnectorPoint PointX="3.0000000000000013" PointY="33.375" />
           <ConnectorPoint PointX="3.375" PointY="33" />
-          <ConnectorPoint PointX="3.375" PointY="33.835836588541667" />
-          <ConnectorPoint PointX="3.3785744349011204" PointY="33.832262153640549" />
-          <ConnectorPoint PointX="3.5589255650988791" PointY="33.651911023442786" />
-          <ConnectorPoint PointX="3.75" PointY="33.460836588541667" />
+          <ConnectorPoint PointX="3.375" PointY="33.64353515625" />
+          <ConnectorPoint PointX="3.3785744349011204" PointY="33.639960721348878" />
+          <ConnectorPoint PointX="3.5901755650988791" PointY="33.428359591151121" />
+          <ConnectorPoint PointX="3.75" PointY="33.26853515625" />
         </AssociationConnector>
         <AssociationConnector Association="Priem2012Model.FK_Entry_StudyForm" >
-          <ConnectorPoint PointX="5.25" PointY="38.437306692307693" />
-          <ConnectorPoint PointX="5.6875" PointY="37.999806692307693" />
-          <ConnectorPoint PointX="5.6875" PointY="33.897181742387822" />
-          <ConnectorPoint PointX="5.68392556509888" PointY="33.893607307486704" />
-          <ConnectorPoint PointX="5.5035744349011209" PointY="33.71325617728894" />
-          <ConnectorPoint PointX="5.4689255650988793" PointY="33.678607307486708" />
-          <ConnectorPoint PointX="5.351074434901121" PointY="33.560756177288944" />
-          <ConnectorPoint PointX="5.25" PointY="33.459681742387822" />
+          <ConnectorPoint PointX="5.25" PointY="40.562101295572909" />
+          <ConnectorPoint PointX="5.71875" PointY="40.562101295572909" />
+          <ConnectorPoint PointX="5.71875" PointY="33.26853515625" />
         </AssociationConnector>
         <AssociationConnector Association="Priem2012Model.FK_Entry_StudyLevel" >
-          <ConnectorPoint PointX="18.75" PointY="10.091094877604167" />
-          <ConnectorPoint PointX="18.51" PointY="10.091094877604167" />
-          <ConnectorPoint PointX="18.51" PointY="11.34" />
-          <ConnectorPoint PointX="17.59" PointY="11.34" />
-          <ConnectorPoint PointX="17.59" PointY="14.59" />
-          <ConnectorPoint PointX="16.59" PointY="14.59" />
-          <ConnectorPoint PointX="16.59" PointY="28.465" />
-          <ConnectorPoint PointX="16.534583333333334" PointY="28.465" />
-          <ConnectorPoint PointX="16.267289166666668" PointY="28.465" />
-          <ConnectorPoint PointX="16.22739258333333" PointY="28.465" />
-          <ConnectorPoint PointX="16.060725916666666" PointY="28.465" />
-          <ConnectorPoint PointX="15.41" PointY="28.465" />
-          <ConnectorPoint PointX="15.41" PointY="34.467190755208321" />
-          <ConnectorPoint PointX="13.708333333333334" PointY="34.467190755208321" />
-          <ConnectorPoint PointX="13.166666666666666" PointY="34.467190755208321" />
-          <ConnectorPoint PointX="12.083333333333334" PointY="34.467190755208321" />
-          <ConnectorPoint PointX="11.916666666666666" PointY="34.467190755208321" />
-          <ConnectorPoint PointX="10.66" PointY="34.467190755208321" />
-          <ConnectorPoint PointX="10.66" PointY="33.215" />
-          <ConnectorPoint PointX="8.9583333333333339" PointY="33.215" />
-          <ConnectorPoint PointX="8.5416666666666661" PointY="33.215" />
-          <ConnectorPoint PointX="8.4658333333333342" PointY="33.215" />
-          <ConnectorPoint PointX="8.2690666666666655" PointY="33.215" />
-          <ConnectorPoint PointX="8.2083333333333339" PointY="33.215" />
-          <ConnectorPoint PointX="8.0416666666666661" PointY="33.215" />
-          <ConnectorPoint PointX="8.035" PointY="33.215" />
-          <ConnectorPoint PointX="8.035" PointY="33.822985026041664" />
-          <ConnectorPoint PointX="6.208333333333333" PointY="33.822985026041664" />
-          <ConnectorPoint PointX="6.041666666666667" PointY="33.822985026041664" />
-          <ConnectorPoint PointX="5.958333333333333" PointY="33.822985026041664" />
-          <ConnectorPoint PointX="5.479166666666667" PointY="33.822985026041664" />
-          <ConnectorPoint PointX="5.41" PointY="33.822985026041664" />
-          <ConnectorPoint PointX="5.41" PointY="24.59" />
-          <ConnectorPoint PointX="5.3339583333333334" PointY="24.59" />
-          <ConnectorPoint PointX="5.1672916666666673" PointY="24.59" />
-          <ConnectorPoint PointX="4.583333333333333" PointY="24.59" />
-          <ConnectorPoint PointX="4.416666666666667" PointY="24.59" />
-          <ConnectorPoint PointX="3.51" PointY="24.59" />
-          <ConnectorPoint PointX="3.51" PointY="30.754522608911024" />
-          <ConnectorPoint PointX="3.75" PointY="30.754522608911024" />
+          <ConnectorPoint PointX="19.728461538461538" PointY="11.4994921875" />
+          <ConnectorPoint PointX="19.728461538461538" PointY="19.909999999999993" />
+          <ConnectorPoint PointX="18.515" PointY="19.909999999999993" />
+          <ConnectorPoint PointX="18.515" PointY="23.909999999999993" />
+          <ConnectorPoint PointX="16.770833333333332" PointY="23.909999999999993" />
+          <ConnectorPoint PointX="16.539012291666669" PointY="23.909999999999993" />
+          <ConnectorPoint PointX="16.455673958333332" PointY="23.909999999999993" />
+          <ConnectorPoint PointX="16.166666666666668" PointY="23.909999999999993" />
+          <ConnectorPoint PointX="14.552083333333334" PointY="23.909999999999993" />
+          <ConnectorPoint PointX="14.385416666666666" PointY="23.909999999999993" />
+          <ConnectorPoint PointX="12.985" PointY="23.909999999999993" />
+          <ConnectorPoint PointX="12.985" PointY="24.062822265624995" />
+          <ConnectorPoint PointX="11.130208333333334" PointY="24.062822265624995" />
+          <ConnectorPoint PointX="10.760416666666666" PointY="24.062822265624995" />
+          <ConnectorPoint PointX="10.645833333333334" PointY="24.062822265624995" />
+          <ConnectorPoint PointX="10.479166666666666" PointY="24.062822265624995" />
+          <ConnectorPoint PointX="9.985" PointY="24.062822265624995" />
+          <ConnectorPoint PointX="9.985" PointY="24.7744921875" />
+          <ConnectorPoint PointX="8.4458833333333345" PointY="24.7744921875" />
+          <ConnectorPoint PointX="8.2792166666666667" PointY="24.7744921875" />
+          <ConnectorPoint PointX="7.958333333333333" PointY="24.7744921875" />
+          <ConnectorPoint PointX="7.791666666666667" PointY="24.7744921875" />
+          <ConnectorPoint PointX="6.25" PointY="24.7744921875" />
+          <ConnectorPoint PointX="6.25" PointY="24.25" />
+          <ConnectorPoint PointX="5.458333333333333" PointY="24.25" />
+          <ConnectorPoint PointX="5.291666666666667" PointY="24.25" />
+          <ConnectorPoint PointX="5.2249995" PointY="24.25" />
+          <ConnectorPoint PointX="5.2249995" PointY="24.75" />
         </AssociationConnector>
         <EntityTypeShape EntityType="Priem2012Model.qMark" Width="1.5" PointX="8.5208850263249527" PointY="26.401894194261121" />
         <EntityTypeShape EntityType="Priem2012Model.Signer" Width="1.5" PointX="9.424922709085477" PointY="6.5500973791582959" />
@@ -13975,41 +14093,29 @@
           <ConnectorPoint PointX="10.125" PointY="5.588212890625" />
           <ConnectorPoint PointX="8.999375" PointY="5.588212890625" />
           <ConnectorPoint PointX="8.999375" PointY="4.6015625" />
-          <ConnectorPoint PointX="8.2083333333333339" PointY="4.6015624999999991" />
-          <ConnectorPoint PointX="8.0416666666666661" PointY="4.6015625" />
-          <ConnectorPoint PointX="7.9809333333333328" PointY="4.6015624999999991" />
-          <ConnectorPoint PointX="7.8142666666666667" PointY="4.6015625" />
-          <ConnectorPoint PointX="5.656249" PointY="4.6015625" />
-          <ConnectorPoint PointX="5.656249" PointY="4.625" />
+          <ConnectorPoint PointX="5.882499" PointY="4.6015625" />
+          <ConnectorPoint PointX="5.882499" PointY="4.625" />
         </AssociationConnector>
         <AssociationConnector Association="Priem2012Model.FK_Entry_SP_Faculty" >
-          <ConnectorPoint PointX="12.5" PointY="6.3167936197916656" />
-          <ConnectorPoint PointX="12.5" PointY="8.5379850260416656" />
-          <ConnectorPoint PointX="11.045733333333333" PointY="8.5379850260416656" />
-          <ConnectorPoint PointX="10.879066666666665" PointY="8.5379850260416656" />
-          <ConnectorPoint PointX="10.75" PointY="8.5379850260416656" />
-          <ConnectorPoint PointX="10.75" PointY="33.125" />
-          <ConnectorPoint PointX="8.9583333333333339" PointY="33.125" />
-          <ConnectorPoint PointX="8.7916666666666661" PointY="33.125" />
-          <ConnectorPoint PointX="8.4658333333333342" PointY="33.125" />
-          <ConnectorPoint PointX="8.2690666666666655" PointY="33.125" />
-          <ConnectorPoint PointX="8.125" PointY="33.125" />
-          <ConnectorPoint PointX="8.125" PointY="34.037985026041667" />
-          <ConnectorPoint PointX="6.208333333333333" PointY="34.037985026041667" />
-          <ConnectorPoint PointX="6.041666666666667" PointY="34.037985026041667" />
-          <ConnectorPoint PointX="5.958333333333333" PointY="34.037985026041667" />
-          <ConnectorPoint PointX="5.791666666666667" PointY="34.037985026041667" />
-          <ConnectorPoint PointX="5.770833333333333" PointY="34.037985026041667" />
-          <ConnectorPoint PointX="5.604166666666667" PointY="34.037985026041667" />
-          <ConnectorPoint PointX="5.5625" PointY="34.037985026041667" />
-          <ConnectorPoint PointX="5.5625" PointY="24.5" />
-          <ConnectorPoint PointX="5.3339583333333334" PointY="24.5" />
-          <ConnectorPoint PointX="5.1672916666666673" PointY="24.5" />
-          <ConnectorPoint PointX="3.375" PointY="24.5" />
-          <ConnectorPoint PointX="3.375" PointY="27.721009304455578" />
-          <ConnectorPoint PointX="3.4266666666666663" PointY="27.721009304455578" />
-          <ConnectorPoint PointX="3.5933333333333333" PointY="27.721009304455578" />
-          <ConnectorPoint PointX="3.75" PointY="27.721009304455578" />
+          <ConnectorPoint PointX="12.5" PointY="6.5090950520833317" />
+          <ConnectorPoint PointX="12.5" PointY="8.6875" />
+          <ConnectorPoint PointX="11.045733333333333" PointY="8.6875" />
+          <ConnectorPoint PointX="10.879066666666665" PointY="8.6875" />
+          <ConnectorPoint PointX="10.5625" PointY="8.6875" />
+          <ConnectorPoint PointX="10.5625" PointY="33.3125" />
+          <ConnectorPoint PointX="8.9583333333333339" PointY="33.3125" />
+          <ConnectorPoint PointX="8.7916666666666661" PointY="33.3125" />
+          <ConnectorPoint PointX="8.5833333333333339" PointY="33.3125" />
+          <ConnectorPoint PointX="8.2792166666666649" PointY="33.3125" />
+          <ConnectorPoint PointX="7.9375" PointY="33.3125" />
+          <ConnectorPoint PointX="7.9375" PointY="33.912985026041667" />
+          <ConnectorPoint PointX="5.8125" PointY="33.912985026041667" />
+          <ConnectorPoint PointX="5.8125" PointY="24.6875" />
+          <ConnectorPoint PointX="5.3339583333333334" PointY="24.6875" />
+          <ConnectorPoint PointX="5.1672916666666673" PointY="24.6875" />
+          <ConnectorPoint PointX="3.65625" PointY="24.6875" />
+          <ConnectorPoint PointX="3.65625" PointY="28.228244256510415" />
+          <ConnectorPoint PointX="3.75" PointY="28.228244256510415" />
         </AssociationConnector>
         <AssociationConnector Association="Priem2012Model.FK_StudyLevel_StudyLevelGroup" >
           <ConnectorPoint PointX="12.25" PointY="1.6439925130208333" />
@@ -14023,171 +14129,171 @@
         <AssociationConnector Association="Priem2012Model.FK_Person_EducationInfo_Country" >
           <ConnectorPoint PointX="1.5" PointY="24.624492187500003" />
           <ConnectorPoint PointX="1.5" PointY="25.75" />
-          <ConnectorPoint PointX="3.4375" PointY="25.75" />
-          <ConnectorPoint PointX="3.4375" PointY="36" />
+          <ConnectorPoint PointX="3.5" PointY="25.75" />
+          <ConnectorPoint PointX="3.5" PointY="36" />
           <ConnectorPoint PointX="5.1672916666666673" PointY="36" />
           <ConnectorPoint PointX="5.3339583333333334" PointY="36" />
-          <ConnectorPoint PointX="5.604166666666667" PointY="36" />
-          <ConnectorPoint PointX="5.770833333333333" PointY="36" />
-          <ConnectorPoint PointX="6.072916666666667" PointY="36" />
-          <ConnectorPoint PointX="6.239583333333333" PointY="36" />
-          <ConnectorPoint PointX="8.2690666666666655" PointY="36" />
-          <ConnectorPoint PointX="8.4658333333333342" PointY="36" />
+          <ConnectorPoint PointX="5.635416666666667" PointY="36" />
+          <ConnectorPoint PointX="5.802083333333333" PointY="36" />
+          <ConnectorPoint PointX="8.2792166666666667" PointY="36" />
+          <ConnectorPoint PointX="8.4458833333333345" PointY="36" />
           <ConnectorPoint PointX="11.125" PointY="36" />
           <ConnectorPoint PointX="11.125" PointY="35.5" />
-          <ConnectorPoint PointX="13.416666666666666" PointY="35.5" />
-          <ConnectorPoint PointX="13.583333333333334" PointY="35.5" />
-          <ConnectorPoint PointX="15.291666666666666" PointY="35.5" />
-          <ConnectorPoint PointX="15.708333333333334" PointY="35.5" />
+          <ConnectorPoint PointX="15.416666666666666" PointY="35.5" />
+          <ConnectorPoint PointX="15.645833333333334" PointY="35.5" />
           <ConnectorPoint PointX="15.75" PointY="35.5" />
-          <ConnectorPoint PointX="15.75" PointY="38.931946614583353" />
-          <ConnectorPoint PointX="15.791666666666666" PointY="38.931946614583353" />
-          <ConnectorPoint PointX="15.958333333333334" PointY="38.931946614583353" />
-          <ConnectorPoint PointX="16.666666666666668" PointY="38.931946614583353" />
-          <ConnectorPoint PointX="16.833333333333332" PointY="38.931946614583353" />
-          <ConnectorPoint PointX="17.072919166666669" PointY="38.931946614583353" />
-          <ConnectorPoint PointX="17.239585833333333" PointY="38.931946614583353" />
-          <ConnectorPoint PointX="17.666666666666668" PointY="38.931946614583353" />
-          <ConnectorPoint PointX="17.833333333333332" PointY="38.931946614583353" />
-          <ConnectorPoint PointX="18" PointY="38.931946614583353" />
-          <ConnectorPoint PointX="18" PointY="36.875" />
-          <ConnectorPoint PointX="18.041666666666668" PointY="36.875" />
-          <ConnectorPoint PointX="18.208333333333332" PointY="36.875" />
-          <ConnectorPoint PointX="22.416666666666668" PointY="36.875" />
-          <ConnectorPoint PointX="22.583333333333332" PointY="36.875" />
-          <ConnectorPoint PointX="22.625" PointY="36.875" />
-          <ConnectorPoint PointX="22.625" PointY="38.267410484375034" />
-          <ConnectorPoint PointX="23" PointY="38.267410484375034" />
+          <ConnectorPoint PointX="15.75" PointY="39.566549479166667" />
+          <ConnectorPoint PointX="16.494793416666671" PointY="39.566549479166667" />
+          <ConnectorPoint PointX="16.661460083333335" PointY="39.566549479166667" />
+          <ConnectorPoint PointX="16.98698254166667" PointY="39.566549479166667" />
+          <ConnectorPoint PointX="17.153649208333334" PointY="39.566549479166667" />
+          <ConnectorPoint PointX="17.791666666666668" PointY="39.566549479166667" />
+          <ConnectorPoint PointX="17.958333333333332" PointY="39.566549479166667" />
+          <ConnectorPoint PointX="18" PointY="39.566549479166667" />
+          <ConnectorPoint PointX="18" PointY="36.75" />
+          <ConnectorPoint PointX="22.291666666666668" PointY="36.75" />
+          <ConnectorPoint PointX="22.458333333333332" PointY="36.75" />
+          <ConnectorPoint PointX="22.625" PointY="36.75" />
+          <ConnectorPoint PointX="22.625" PointY="38.098278463901686" />
+          <ConnectorPoint PointX="23" PointY="38.098278463901686" />
         </AssociationConnector>
         <AssociationConnector Association="Priem2012Model.FK_Person_EducationInfo_ForeignCountry" >
-          <ConnectorPoint PointX="1.2968739999999999" PointY="0.75" />
-          <ConnectorPoint PointX="1.2968739999999999" PointY="0.25" />
-          <ConnectorPoint PointX="24.5" PointY="0.25" />
-          <ConnectorPoint PointX="24.5" PointY="32.75" />
-          <ConnectorPoint PointX="23.75" PointY="32.75" />
-          <ConnectorPoint PointX="23.75" PointY="33.125" />
-        </AssociationConnector>
-        <AssociationConnector Association="Priem2012Model.FK_Person_EducationInfo_Language" >
-          <ConnectorPoint PointX="1.5700528069587647" PointY="21.230286458333335" />
-          <ConnectorPoint PointX="1.5700528069587647" PointY="21.625" />
-          <ConnectorPoint PointX="1.8241972886441749" PointY="21.625" />
-          <ConnectorPoint PointX="1.9908639553108414" PointY="21.625" />
-          <ConnectorPoint PointX="4.6166666666666671" PointY="21.625" />
-          <ConnectorPoint PointX="4.7833333333333332" PointY="21.625" />
-          <ConnectorPoint PointX="5.1672916666666673" PointY="21.625" />
-          <ConnectorPoint PointX="5.3339583333333334" PointY="21.625" />
-          <ConnectorPoint PointX="5.875" PointY="21.625" />
-          <ConnectorPoint PointX="5.875" PointY="35.984375" />
-          <ConnectorPoint PointX="6.072916666666667" PointY="35.984375" />
-          <ConnectorPoint PointX="6.239583333333333" PointY="35.984375" />
-          <ConnectorPoint PointX="8.2690666666666655" PointY="35.984375" />
-          <ConnectorPoint PointX="8.4658333333333342" PointY="35.984375" />
+          <ConnectorPoint PointX="0.75" PointY="2.12474609375" />
+          <ConnectorPoint PointX="0.375" PointY="2.12474609375" />
+          <ConnectorPoint PointX="0.375" PointY="35.984375" />
+          <ConnectorPoint PointX="2.1666666666666665" PointY="35.984375" />
+          <ConnectorPoint PointX="2.3333333333333335" PointY="35.984375" />
+          <ConnectorPoint PointX="3.3854166666666665" PointY="35.984375" />
+          <ConnectorPoint PointX="3.5520833333333335" PointY="35.984375" />
+          <ConnectorPoint PointX="5.1672916666666673" PointY="35.984375" />
+          <ConnectorPoint PointX="5.3339583333333334" PointY="35.984375" />
+          <ConnectorPoint PointX="5.635416666666667" PointY="35.984375" />
+          <ConnectorPoint PointX="5.802083333333333" PointY="35.984375" />
+          <ConnectorPoint PointX="8.2792166666666667" PointY="35.984375" />
+          <ConnectorPoint PointX="8.4458833333333345" PointY="35.984375" />
           <ConnectorPoint PointX="10.875" PointY="35.984375" />
           <ConnectorPoint PointX="10.875" PointY="35.25" />
-          <ConnectorPoint PointX="13.416666666666666" PointY="35.25" />
-          <ConnectorPoint PointX="13.583333333333334" PointY="35.25" />
-          <ConnectorPoint PointX="15.291666666666666" PointY="35.25" />
-          <ConnectorPoint PointX="15.458333333333334" PointY="35.25" />
-          <ConnectorPoint PointX="15.5" PointY="35.25" />
-          <ConnectorPoint PointX="15.5" PointY="39.181946614583353" />
-          <ConnectorPoint PointX="16.666666666666668" PointY="39.181946614583353" />
-          <ConnectorPoint PointX="16.833333333333332" PointY="39.181946614583353" />
-          <ConnectorPoint PointX="17.072919166666669" PointY="39.181946614583353" />
-          <ConnectorPoint PointX="17.239585833333333" PointY="39.181946614583353" />
-          <ConnectorPoint PointX="17.75" PointY="39.181946614583353" />
-          <ConnectorPoint PointX="17.75" PointY="36.5" />
-          <ConnectorPoint PointX="22.5" PointY="36.5" />
-          <ConnectorPoint PointX="22.5" PointY="39.794423388020789" />
-          <ConnectorPoint PointX="23" PointY="39.794423388020789" />
+          <ConnectorPoint PointX="15.416666666666666" PointY="35.25" />
+          <ConnectorPoint PointX="15.583333333333334" PointY="35.25" />
+          <ConnectorPoint PointX="15.6875" PointY="35.25" />
+          <ConnectorPoint PointX="15.6875" PointY="39.441549479166667" />
+          <ConnectorPoint PointX="16.494793416666671" PointY="39.441549479166667" />
+          <ConnectorPoint PointX="16.661460083333335" PointY="39.441549479166667" />
+          <ConnectorPoint PointX="16.98698254166667" PointY="39.441549479166667" />
+          <ConnectorPoint PointX="17.153649208333334" PointY="39.441549479166667" />
+          <ConnectorPoint PointX="17.9375" PointY="39.441549479166667" />
+          <ConnectorPoint PointX="17.9375" PointY="36.875" />
+          <ConnectorPoint PointX="22.5625" PointY="36.875" />
+          <ConnectorPoint PointX="22.5625" PointY="34.005873851470731" />
+          <ConnectorPoint PointX="23" PointY="34.005873851470731" />
+        </AssociationConnector>
+        <AssociationConnector Association="Priem2012Model.FK_Person_EducationInfo_Language" >
+          <ConnectorPoint PointX="1.0237571554943772" PointY="21.230286458333335" />
+          <ConnectorPoint PointX="1.0237571554943772" PointY="21.625" />
+          <ConnectorPoint PointX="1.214179977655421" PointY="21.625" />
+          <ConnectorPoint PointX="1.3808466443220875" PointY="21.625" />
+          <ConnectorPoint PointX="1.7216753221610437" PointY="21.625" />
+          <ConnectorPoint PointX="1.8883419888277102" PointY="21.625" />
+          <ConnectorPoint PointX="3.4375" PointY="21.625" />
+          <ConnectorPoint PointX="3.4375" PointY="35.96875" />
+          <ConnectorPoint PointX="5.1672916666666673" PointY="35.96875" />
+          <ConnectorPoint PointX="5.3339583333333334" PointY="35.96875" />
+          <ConnectorPoint PointX="5.635416666666667" PointY="35.96875" />
+          <ConnectorPoint PointX="5.802083333333333" PointY="35.96875" />
+          <ConnectorPoint PointX="8.2792166666666667" PointY="35.96875" />
+          <ConnectorPoint PointX="8.4458833333333345" PointY="35.96875" />
+          <ConnectorPoint PointX="11.25" PointY="35.96875" />
+          <ConnectorPoint PointX="11.25" PointY="35.625" />
+          <ConnectorPoint PointX="15.416666666666666" PointY="35.625" />
+          <ConnectorPoint PointX="15.583333333333334" PointY="35.625" />
+          <ConnectorPoint PointX="15.625" PointY="35.625" />
+          <ConnectorPoint PointX="15.625" PointY="39.691549479166667" />
+          <ConnectorPoint PointX="16.494793416666671" PointY="39.691549479166667" />
+          <ConnectorPoint PointX="16.661460083333335" PointY="39.691549479166667" />
+          <ConnectorPoint PointX="16.98698254166667" PointY="39.691549479166667" />
+          <ConnectorPoint PointX="17.153649208333334" PointY="39.691549479166667" />
+          <ConnectorPoint PointX="17.875" PointY="39.691549479166667" />
+          <ConnectorPoint PointX="17.875" PointY="36.8125" />
+          <ConnectorPoint PointX="22.291666666666668" PointY="36.8125" />
+          <ConnectorPoint PointX="22.458333333333332" PointY="36.8125" />
+          <ConnectorPoint PointX="22.5" PointY="36.8125" />
+          <ConnectorPoint PointX="22.5" PointY="39.709857377784118" />
+          <ConnectorPoint PointX="23" PointY="39.709857377784118" />
         </AssociationConnector>
         <AssociationConnector Association="Priem2012Model.FK_Person_EducationInfo_Person" >
           <ConnectorPoint PointX="4.5" PointY="9.8551236979166656" />
-          <ConnectorPoint PointX="4.5" PointY="9.894375" />
           <ConnectorPoint PointX="5.250625" PointY="10.394375" />
-          <ConnectorPoint PointX="5.250625" PointY="36.644375" />
-          <ConnectorPoint PointX="5.6041997989429753" PointY="36.63440162626609" />
-          <ConnectorPoint PointX="5.8333002010570247" PointY="36.627939333309392" />
-          <ConnectorPoint PointX="8.2690997989429746" PointY="36.559232118306355" />
-          <ConnectorPoint PointX="8.465800201057025" PointY="36.553683740340048" />
-          <ConnectorPoint PointX="13.416699798942975" PointY="36.414032463845196" />
-          <ConnectorPoint PointX="13.583300201057025" PointY="36.409333124187874" />
-          <ConnectorPoint PointX="15.291699798942975" PointY="36.361143864864182" />
-          <ConnectorPoint PointX="15.958300201057025" PointY="36.342340898811919" />
-          <ConnectorPoint PointX="22.479199798942975" PointY="36.158404235436969" />
-          <ConnectorPoint PointX="22.708300201057025" PointY="36.151941942480271" />
-          <ConnectorPoint PointX="22.9765625" PointY="36.144375" />
-          <ConnectorPoint PointX="22.9765625" PointY="36.354733322916665" />
+          <ConnectorPoint PointX="5.250625" PointY="36.63440162626609" />
+          <ConnectorPoint PointX="5.6354484071696973" PointY="36.623777380853305" />
+          <ConnectorPoint PointX="5.8333015928303027" PointY="36.618315029133022" />
+          <ConnectorPoint PointX="8.2792484071696979" PointY="36.550787070235479" />
+          <ConnectorPoint PointX="8.4458515928303033" PointY="36.5461874718274" />
+          <ConnectorPoint PointX="11.104198407169697" PointY="36.472795551217459" />
+          <ConnectorPoint PointX="11.270801592830303" PointY="36.468195952809381" />
+          <ConnectorPoint PointX="15.291698407169697" PointY="36.357186607382019" />
+          <ConnectorPoint PointX="15.833301592830303" PointY="36.342233969227479" />
+          <ConnectorPoint PointX="22.291698407169697" PointY="36.163929865448139" />
+          <ConnectorPoint PointX="22.645801592830303" PointY="36.154153747166831" />
+          <ConnectorPoint PointX="23" PointY="36.144375" />
           <ConnectorPoint PointX="23" PointY="36.354733322916665" />
         </AssociationConnector>
         <AssociationConnector Association="Priem2012Model.FK_Person_EducationInfo_SchoolType" >
           <ConnectorPoint PointX="1.5" PointY="31.537985026041671" />
           <ConnectorPoint PointX="1.5" PointY="33.125" />
           <ConnectorPoint PointX="3.1666666666666692" PointY="33.125" />
-          <ConnectorPoint PointX="3.4583333333333335" PointY="33.125" />
-          <ConnectorPoint PointX="3.5" PointY="33.125" />
-          <ConnectorPoint PointX="3.5" PointY="35.96875" />
-          <ConnectorPoint PointX="5.1672916666666673" PointY="35.96875" />
-          <ConnectorPoint PointX="5.3339583333333334" PointY="35.96875" />
-          <ConnectorPoint PointX="5.604166666666667" PointY="35.96875" />
-          <ConnectorPoint PointX="5.770833333333333" PointY="35.96875" />
-          <ConnectorPoint PointX="6.072916666666667" PointY="35.96875" />
-          <ConnectorPoint PointX="6.239583333333333" PointY="35.96875" />
-          <ConnectorPoint PointX="8.2690666666666655" PointY="35.96875" />
-          <ConnectorPoint PointX="8.4658333333333342" PointY="35.96875" />
-          <ConnectorPoint PointX="11.25" PointY="35.96875" />
-          <ConnectorPoint PointX="11.25" PointY="35.625" />
-          <ConnectorPoint PointX="13.416666666666666" PointY="35.625" />
-          <ConnectorPoint PointX="13.583333333333334" PointY="35.625" />
-          <ConnectorPoint PointX="15.291666666666666" PointY="35.625" />
-          <ConnectorPoint PointX="15.833333333333334" PointY="35.625" />
-          <ConnectorPoint PointX="15.875" PointY="35.625" />
-          <ConnectorPoint PointX="15.875" PointY="39.056946614583353" />
-          <ConnectorPoint PointX="16.666666666666668" PointY="39.056946614583353" />
-          <ConnectorPoint PointX="16.833333333333332" PointY="39.056946614583353" />
-          <ConnectorPoint PointX="17.072919166666669" PointY="39.056946614583353" />
-          <ConnectorPoint PointX="17.239585833333333" PointY="39.056946614583353" />
-          <ConnectorPoint PointX="17.666666666666668" PointY="39.056946614583353" />
-          <ConnectorPoint PointX="17.833333333333332" PointY="39.056946614583353" />
-          <ConnectorPoint PointX="18.125" PointY="39.056946614583353" />
-          <ConnectorPoint PointX="18.125" PointY="36.75" />
-          <ConnectorPoint PointX="22.5625" PointY="36.75" />
-          <ConnectorPoint PointX="22.5625" PointY="35.0000005" />
-          <ConnectorPoint PointX="23" PointY="35.0000005" />
+          <ConnectorPoint PointX="3.5208333333333335" PointY="33.125" />
+          <ConnectorPoint PointX="3.53125" PointY="33.125" />
+          <ConnectorPoint PointX="3.53125" PointY="35.953125" />
+          <ConnectorPoint PointX="5.1672916666666673" PointY="35.953125" />
+          <ConnectorPoint PointX="5.3339583333333334" PointY="35.953125" />
+          <ConnectorPoint PointX="5.635416666666667" PointY="35.953125" />
+          <ConnectorPoint PointX="5.802083333333333" PointY="35.953125" />
+          <ConnectorPoint PointX="8.2792166666666667" PointY="35.953125" />
+          <ConnectorPoint PointX="8.4458833333333345" PointY="35.953125" />
+          <ConnectorPoint PointX="11" PointY="35.953125" />
+          <ConnectorPoint PointX="11" PointY="35.375" />
+          <ConnectorPoint PointX="15.5625" PointY="35.375" />
+          <ConnectorPoint PointX="15.5625" PointY="39.379049479166667" />
+          <ConnectorPoint PointX="15.666666666666666" PointY="39.379049479166667" />
+          <ConnectorPoint PointX="15.833333333333334" PointY="39.379049479166667" />
+          <ConnectorPoint PointX="16.494793416666671" PointY="39.379049479166667" />
+          <ConnectorPoint PointX="16.661460083333335" PointY="39.379049479166667" />
+          <ConnectorPoint PointX="16.98698254166667" PointY="39.379049479166667" />
+          <ConnectorPoint PointX="17.153649208333334" PointY="39.379049479166667" />
+          <ConnectorPoint PointX="17.8125" PointY="39.379049479166667" />
+          <ConnectorPoint PointX="17.8125" PointY="36.6875" />
+          <ConnectorPoint PointX="22.4375" PointY="36.6875" />
+          <ConnectorPoint PointX="22.4375" PointY="34.973667755416983" />
+          <ConnectorPoint PointX="22.479166666666668" PointY="34.973667755416983" />
+          <ConnectorPoint PointX="22.645833333333332" PointY="34.973667755416983" />
+          <ConnectorPoint PointX="23" PointY="34.973667755416983" />
         </AssociationConnector>
         <AssociationConnector Association="Priem2012Model.FK_Person_EducationInfo_StudyForm_HE_" >
           <ConnectorPoint PointX="4.5" PointY="38.375" />
           <ConnectorPoint PointX="4.5" PointY="38.095683593749996" />
-          <ConnectorPoint PointX="5.5082897652243643" PointY="38.095683593749996" />
-          <ConnectorPoint PointX="5.67495643189103" PointY="38.095683593749996" />
           <ConnectorPoint PointX="5.75" PointY="38.095683593749996" />
-          <ConnectorPoint PointX="5.75" PointY="35.953125" />
-          <ConnectorPoint PointX="6.072916666666667" PointY="35.953125" />
-          <ConnectorPoint PointX="6.239583333333333" PointY="35.953125" />
-          <ConnectorPoint PointX="8.2690666666666655" PointY="35.953125" />
-          <ConnectorPoint PointX="8.4658333333333342" PointY="35.953125" />
-          <ConnectorPoint PointX="11" PointY="35.953125" />
-          <ConnectorPoint PointX="11" PointY="35.375" />
-          <ConnectorPoint PointX="13.416666666666666" PointY="35.375" />
-          <ConnectorPoint PointX="13.583333333333334" PointY="35.375" />
-          <ConnectorPoint PointX="15.291666666666666" PointY="35.375" />
-          <ConnectorPoint PointX="15.583333333333334" PointY="35.375" />
-          <ConnectorPoint PointX="15.625" PointY="35.375" />
-          <ConnectorPoint PointX="15.625" PointY="38.806946614583353" />
-          <ConnectorPoint PointX="15.666666666666666" PointY="38.806946614583353" />
-          <ConnectorPoint PointX="15.958333333333334" PointY="38.806946614583353" />
-          <ConnectorPoint PointX="16.666666666666668" PointY="38.806946614583353" />
-          <ConnectorPoint PointX="16.833333333333332" PointY="38.806946614583353" />
-          <ConnectorPoint PointX="17.072919166666669" PointY="38.806946614583353" />
-          <ConnectorPoint PointX="17.239585833333333" PointY="38.806946614583353" />
-          <ConnectorPoint PointX="17.666666666666668" PointY="38.806946614583353" />
-          <ConnectorPoint PointX="17.833333333333332" PointY="38.806946614583353" />
-          <ConnectorPoint PointX="17.875" PointY="38.806946614583353" />
-          <ConnectorPoint PointX="17.875" PointY="36.625" />
-          <ConnectorPoint PointX="22.416666666666668" PointY="36.625" />
-          <ConnectorPoint PointX="22.583333333333332" PointY="36.625" />
-          <ConnectorPoint PointX="22.625" PointY="36.625" />
-          <ConnectorPoint PointX="22.625" PointY="35.968752749999936" />
-          <ConnectorPoint PointX="23" PointY="35.968752749999936" />
+          <ConnectorPoint PointX="5.75" PointY="35.9375" />
+          <ConnectorPoint PointX="8.2792166666666667" PointY="35.9375" />
+          <ConnectorPoint PointX="8.4458833333333345" PointY="35.9375" />
+          <ConnectorPoint PointX="10.75" PointY="35.9375" />
+          <ConnectorPoint PointX="10.75" PointY="35.125" />
+          <ConnectorPoint PointX="15.5" PointY="35.125" />
+          <ConnectorPoint PointX="15.5" PointY="39.191549479166667" />
+          <ConnectorPoint PointX="15.541666666666666" PointY="39.191549479166667" />
+          <ConnectorPoint PointX="15.833333333333334" PointY="39.191549479166667" />
+          <ConnectorPoint PointX="16.494793416666671" PointY="39.191549479166667" />
+          <ConnectorPoint PointX="16.661460083333335" PointY="39.191549479166667" />
+          <ConnectorPoint PointX="16.98698254166667" PointY="39.191549479166667" />
+          <ConnectorPoint PointX="17.153649208333334" PointY="39.191549479166667" />
+          <ConnectorPoint PointX="17.75" PointY="39.191549479166667" />
+          <ConnectorPoint PointX="17.75" PointY="36.9375" />
+          <ConnectorPoint PointX="17.791666666666668" PointY="36.9375" />
+          <ConnectorPoint PointX="18.083333333333332" PointY="36.9375" />
+          <ConnectorPoint PointX="22.375" PointY="36.9375" />
+          <ConnectorPoint PointX="22.375" PointY="35.893086377708428" />
+          <ConnectorPoint PointX="22.479166666666668" PointY="35.893086377708428" />
+          <ConnectorPoint PointX="22.645833333333332" PointY="35.893086377708428" />
+          <ConnectorPoint PointX="23" PointY="35.893086377708428" />
         </AssociationConnector>
         <EntityTypeShape EntityType="Priem2012Model.extForeignPerson" Width="1.5" PointX="25.375" PointY="33.75" Height="17.749003906249982" />
         <EntityTypeShape EntityType="Priem2012Model.extAbitSPO" Width="1.5" PointX="35.375" PointY="16.25" Height="13.133769531249982" />
@@ -14203,143 +14309,119 @@
         </AssociationConnector>
         <EntityTypeShape EntityType="Priem2012Model.Abiturient" Width="1.5" PointX="16" PointY="28.625" Height="10.056946614583353" />
         <AssociationConnector Association="Priem2012Model.FK_Abiturient_CelCompetition" >
-          <ConnectorPoint PointX="5.25" PointY="32.118992013020836" />
-          <ConnectorPoint PointX="5.3266666666666671" PointY="32.118992013020836" />
-          <ConnectorPoint PointX="5.958333333333333" PointY="32.118992013020836" />
-          <ConnectorPoint PointX="6.125" PointY="32.118992013020836" />
-          <ConnectorPoint PointX="6.125" PointY="34.287985026041667" />
-          <ConnectorPoint PointX="8.2690666666666655" PointY="34.287985026041667" />
-          <ConnectorPoint PointX="8.4658333333333342" PointY="34.287985026041667" />
-          <ConnectorPoint PointX="8.5416666666666661" PointY="34.287985026041667" />
-          <ConnectorPoint PointX="8.7083333333333339" PointY="34.287985026041667" />
-          <ConnectorPoint PointX="8.875" PointY="34.287985026041667" />
-          <ConnectorPoint PointX="8.875" PointY="33.037985026041667" />
-          <ConnectorPoint PointX="10.666666666666666" PointY="33.037985026041667" />
-          <ConnectorPoint PointX="10.833333333333334" PointY="33.037985026041667" />
-          <ConnectorPoint PointX="11.916666666666666" PointY="33.037985026041667" />
-          <ConnectorPoint PointX="12.083333333333334" PointY="33.037985026041667" />
-          <ConnectorPoint PointX="13.5" PointY="33.037985026041667" />
-          <ConnectorPoint PointX="13.5" PointY="39.306946614583353" />
-          <ConnectorPoint PointX="16.75" PointY="39.306946614583353" />
-          <ConnectorPoint PointX="16.75" PointY="38.681946614583353" />
+          <ConnectorPoint PointX="3.75" PointY="31.768992513020834" />
+          <ConnectorPoint PointX="3.46875" PointY="31.768992513020834" />
+          <ConnectorPoint PointX="3.46875" PointY="38.125" />
+          <ConnectorPoint PointX="5.6875" PointY="38.125" />
+          <ConnectorPoint PointX="5.6875" PointY="41.364807942708325" />
+          <ConnectorPoint PointX="11.1875" PointY="41.364807942708325" />
+          <ConnectorPoint PointX="11.1875" PointY="35.5625" />
+          <ConnectorPoint PointX="15.375" PointY="35.5625" />
+          <ConnectorPoint PointX="15.375" PointY="39.816549479166667" />
+          <ConnectorPoint PointX="16.578126750000003" PointY="39.816549479166667" />
+          <ConnectorPoint PointX="16.578126750000003" PointY="39.066549479166667" />
         </AssociationConnector>
         <AssociationConnector Association="Priem2012Model.FK_Abiturient_Competition" >
-          <ConnectorPoint PointX="4.5" PointY="35.489889322916667" />
-          <ConnectorPoint PointX="4.5" PointY="35.739889322916667" />
-          <ConnectorPoint PointX="5.1672916666666673" PointY="35.739889322916667" />
-          <ConnectorPoint PointX="5.3339583333333334" PointY="35.739889322916667" />
-          <ConnectorPoint PointX="5.604166666666667" PointY="35.739889322916667" />
-          <ConnectorPoint PointX="5.770833333333333" PointY="35.739889322916667" />
-          <ConnectorPoint PointX="5.791666666666667" PointY="35.739889322916667" />
-          <ConnectorPoint PointX="5.958333333333333" PointY="35.739889322916667" />
-          <ConnectorPoint PointX="6.072916666666667" PointY="35.739889322916667" />
-          <ConnectorPoint PointX="6.239583333333333" PointY="35.739889322916667" />
-          <ConnectorPoint PointX="8.2690666666666655" PointY="35.739889322916667" />
-          <ConnectorPoint PointX="8.4658333333333342" PointY="35.739889322916667" />
-          <ConnectorPoint PointX="8.625" PointY="35.739889322916667" />
-          <ConnectorPoint PointX="8.625" PointY="33.09375" />
-          <ConnectorPoint PointX="10.729069512820511" PointY="33.09375" />
-          <ConnectorPoint PointX="10.895736179487178" PointY="33.09375" />
+          <ConnectorPoint PointX="5.25" PointY="34.732687174479167" />
+          <ConnectorPoint PointX="5.635416666666667" PointY="34.732687174479167" />
+          <ConnectorPoint PointX="5.802083333333333" PointY="34.732687174479167" />
+          <ConnectorPoint PointX="8.2792166666666667" PointY="34.732687174479167" />
+          <ConnectorPoint PointX="8.4458833333333345" PointY="34.732687174479167" />
+          <ConnectorPoint PointX="8.5" PointY="34.732687174479167" />
+          <ConnectorPoint PointX="8.5" PointY="33.09375" />
+          <ConnectorPoint PointX="10.479166666666666" PointY="33.09375" />
+          <ConnectorPoint PointX="10.645833333333334" PointY="33.09375" />
+          <ConnectorPoint PointX="10.712915666666669" PointY="33.09375" />
+          <ConnectorPoint PointX="10.879582333333337" PointY="33.09375" />
+          <ConnectorPoint PointX="11.043786666666666" PointY="33.09375" />
+          <ConnectorPoint PointX="11.210453333333334" PointY="33.09375" />
           <ConnectorPoint PointX="11.916666666666666" PointY="33.09375" />
           <ConnectorPoint PointX="12.083333333333334" PointY="33.09375" />
           <ConnectorPoint PointX="13.25" PointY="33.09375" />
-          <ConnectorPoint PointX="13.25" PointY="34.807190755208325" />
-          <ConnectorPoint PointX="13.291666666666666" PointY="34.807190755208325" />
-          <ConnectorPoint PointX="13.583333333333334" PointY="34.807190755208325" />
-          <ConnectorPoint PointX="15.625" PointY="34.807190755208325" />
-          <ConnectorPoint PointX="15.625" PointY="32.0000005" />
-          <ConnectorPoint PointX="15.666666666666666" PointY="32.0000005" />
-          <ConnectorPoint PointX="15.833333333333334" PointY="32.0000005" />
-          <ConnectorPoint PointX="16" PointY="32.0000005" />
+          <ConnectorPoint PointX="13.25" PointY="31.710999348958339" />
+          <ConnectorPoint PointX="15.6875" PointY="31.710999348958339" />
+          <ConnectorPoint PointX="15.6875" PointY="28.375" />
+          <ConnectorPoint PointX="16.071584979166669" PointY="28.375" />
+          <ConnectorPoint PointX="16.238251645833333" PointY="28.375" />
+          <ConnectorPoint PointX="16.289007291666667" PointY="28.375" />
+          <ConnectorPoint PointX="16.705678958333333" PointY="28.375" />
+          <ConnectorPoint PointX="16.841874750000002" PointY="28.375" />
+          <ConnectorPoint PointX="16.841874750000002" PointY="28.625" />
         </AssociationConnector>
         <AssociationConnector Association="Priem2012Model.FK_Abiturient_Competition1" >
-          <ConnectorPoint PointX="4.906252" PointY="35.489889322916667" />
-          <ConnectorPoint PointX="4.906252" PointY="35.614889322916667" />
-          <ConnectorPoint PointX="5.1672916666666673" PointY="35.614889322916667" />
-          <ConnectorPoint PointX="5.3339583333333334" PointY="35.614889322916667" />
-          <ConnectorPoint PointX="5.604166666666667" PointY="35.614889322916667" />
-          <ConnectorPoint PointX="5.770833333333333" PointY="35.614889322916667" />
-          <ConnectorPoint PointX="5.791666666666667" PointY="35.614889322916667" />
-          <ConnectorPoint PointX="5.958333333333333" PointY="35.614889322916667" />
-          <ConnectorPoint PointX="6.072916666666667" PointY="35.614889322916667" />
-          <ConnectorPoint PointX="6.239583333333333" PointY="35.614889322916667" />
-          <ConnectorPoint PointX="8.2690666666666655" PointY="35.614889322916667" />
-          <ConnectorPoint PointX="8.4658333333333342" PointY="35.614889322916667" />
-          <ConnectorPoint PointX="8.5416666666666661" PointY="35.614889322916667" />
-          <ConnectorPoint PointX="8.7083333333333339" PointY="35.614889322916667" />
-          <ConnectorPoint PointX="8.8125" PointY="35.614889322916667" />
-          <ConnectorPoint PointX="8.8125" PointY="33.140625" />
-          <ConnectorPoint PointX="10.682194512820511" PointY="33.140625" />
-          <ConnectorPoint PointX="10.848861179487178" PointY="33.140625" />
-          <ConnectorPoint PointX="11.916666666666666" PointY="33.140625" />
-          <ConnectorPoint PointX="12.083333333333334" PointY="33.140625" />
-          <ConnectorPoint PointX="13.416666666666666" PointY="33.140625" />
-          <ConnectorPoint PointX="13.583333333333334" PointY="33.140625" />
-          <ConnectorPoint PointX="13.625" PointY="33.140625" />
-          <ConnectorPoint PointX="13.625" PointY="34.682190755208325" />
-          <ConnectorPoint PointX="15.541666666666666" PointY="34.682190755208325" />
-          <ConnectorPoint PointX="15.708333333333334" PointY="34.682190755208325" />
-          <ConnectorPoint PointX="15.75" PointY="34.682190755208325" />
-          <ConnectorPoint PointX="15.75" PointY="30.281248250000061" />
-          <ConnectorPoint PointX="16" PointY="30.281248250000061" />
+          <ConnectorPoint PointX="5.25" PointY="35.238690964843748" />
+          <ConnectorPoint PointX="5.635416666666667" PointY="35.238690964843748" />
+          <ConnectorPoint PointX="5.802083333333333" PointY="35.238690964843748" />
+          <ConnectorPoint PointX="8.2792166666666667" PointY="35.238690964843748" />
+          <ConnectorPoint PointX="8.4458833333333345" PointY="35.238690964843748" />
+          <ConnectorPoint PointX="8.875" PointY="35.238690964843748" />
+          <ConnectorPoint PointX="8.875" PointY="33.125" />
+          <ConnectorPoint PointX="10.479166666666666" PointY="33.125" />
+          <ConnectorPoint PointX="10.645833333333334" PointY="33.125" />
+          <ConnectorPoint PointX="10.681665666666669" PointY="33.125" />
+          <ConnectorPoint PointX="10.848332333333337" PointY="33.125" />
+          <ConnectorPoint PointX="11.043786666666666" PointY="33.125" />
+          <ConnectorPoint PointX="11.210453333333334" PointY="33.125" />
+          <ConnectorPoint PointX="11.916666666666666" PointY="33.125" />
+          <ConnectorPoint PointX="12.083333333333334" PointY="33.125" />
+          <ConnectorPoint PointX="13.5" PointY="33.125" />
+          <ConnectorPoint PointX="13.5" PointY="31.679749348958339" />
+          <ConnectorPoint PointX="15.75" PointY="31.679749348958339" />
+          <ConnectorPoint PointX="15.75" PointY="28.359375" />
+          <ConnectorPoint PointX="16.071584979166669" PointY="28.359375" />
+          <ConnectorPoint PointX="16.238251645833333" PointY="28.359375" />
+          <ConnectorPoint PointX="16.289007291666667" PointY="28.359375" />
+          <ConnectorPoint PointX="16.705678958333333" PointY="28.359375" />
+          <ConnectorPoint PointX="16.924791854166667" PointY="28.359375" />
+          <ConnectorPoint PointX="17.091458520833331" PointY="28.359375" />
+          <ConnectorPoint PointX="17.174375625" PointY="28.359375" />
+          <ConnectorPoint PointX="17.174375625" PointY="28.625" />
         </AssociationConnector>
         <AssociationConnector Association="Priem2012Model.FK_Abiturient_Entry" >
-          <ConnectorPoint PointX="4.5" PointY="24.75" />
-          <ConnectorPoint PointX="4.5" PointY="24.484375" />
-          <ConnectorPoint PointX="5.1672916666666673" PointY="24.484375" />
-          <ConnectorPoint PointX="5.3339583333333334" PointY="24.484375" />
-          <ConnectorPoint PointX="5.75" PointY="24.484375" />
-          <ConnectorPoint PointX="5.75" PointY="33.912985026041667" />
-          <ConnectorPoint PointX="5.791666666666667" PointY="33.912985026041667" />
-          <ConnectorPoint PointX="5.958333333333333" PointY="33.912985026041667" />
-          <ConnectorPoint PointX="6.041666666666667" PointY="33.912985026041667" />
-          <ConnectorPoint PointX="6.208333333333333" PointY="33.912985026041667" />
-          <ConnectorPoint PointX="8.0416666666666661" PointY="33.912985026041667" />
-          <ConnectorPoint PointX="8.2083333333333339" PointY="33.912985026041667" />
-          <ConnectorPoint PointX="8.2690666666666655" PointY="33.912985026041667" />
-          <ConnectorPoint PointX="8.4658333333333342" PointY="33.912985026041667" />
-          <ConnectorPoint PointX="8.6875" PointY="33.912985026041667" />
-          <ConnectorPoint PointX="8.6875" PointY="33.109375" />
-          <ConnectorPoint PointX="10.713444512820511" PointY="33.109375" />
-          <ConnectorPoint PointX="10.880111179487178" PointY="33.109375" />
-          <ConnectorPoint PointX="11.916666666666666" PointY="33.109375" />
-          <ConnectorPoint PointX="12.083333333333334" PointY="33.109375" />
-          <ConnectorPoint PointX="13.375" PointY="33.109375" />
-          <ConnectorPoint PointX="13.375" PointY="34.932190755208325" />
-          <ConnectorPoint PointX="13.416666666666666" PointY="34.932190755208325" />
-          <ConnectorPoint PointX="13.583333333333334" PointY="34.932190755208325" />
-          <ConnectorPoint PointX="15.375" PointY="34.932190755208325" />
-          <ConnectorPoint PointX="15.375" PointY="37.153472807291678" />
-          <ConnectorPoint PointX="15.416666666666666" PointY="37.153472807291678" />
-          <ConnectorPoint PointX="15.958333333333334" PointY="37.153472807291678" />
-          <ConnectorPoint PointX="16" PointY="37.153472807291678" />
+          <ConnectorPoint PointX="4.6612481875" PointY="24.75" />
+          <ConnectorPoint PointX="4.6612481875" PointY="24.6875" />
+          <ConnectorPoint PointX="5.1672916666666673" PointY="24.6875" />
+          <ConnectorPoint PointX="5.3339583333333334" PointY="24.6875" />
+          <ConnectorPoint PointX="5.8125" PointY="24.6875" />
+          <ConnectorPoint PointX="5.8125" PointY="33.845774739583334" />
+          <ConnectorPoint PointX="8.2792166666666667" PointY="33.845774739583334" />
+          <ConnectorPoint PointX="8.5833333333333321" PointY="33.845774739583334" />
+          <ConnectorPoint PointX="8.9375" PointY="33.845774739583334" />
+          <ConnectorPoint PointX="8.9375" PointY="33.3125" />
+          <ConnectorPoint PointX="10.494165666666669" PointY="33.3125" />
+          <ConnectorPoint PointX="10.660832333333337" PointY="33.3125" />
+          <ConnectorPoint PointX="11.916666666666666" PointY="33.3125" />
+          <ConnectorPoint PointX="12.083333333333334" PointY="33.3125" />
+          <ConnectorPoint PointX="13.6875" PointY="33.3125" />
+          <ConnectorPoint PointX="13.6875" PointY="34.369690755208325" />
+          <ConnectorPoint PointX="15.90625" PointY="34.369690755208325" />
+          <ConnectorPoint PointX="15.90625" PointY="33.845774739583334" />
+          <ConnectorPoint PointX="16" PointY="33.845774739583334" />
         </AssociationConnector>
         <AssociationConnector Association="Priem2012Model.FK_Abiturient_Language" >
-          <ConnectorPoint PointX="2.25" PointY="20.766466843750003" />
-          <ConnectorPoint PointX="2.4166666666666665" PointY="20.766466843750003" />
-          <ConnectorPoint PointX="2.5833333333333335" PointY="20.766466843750003" />
-          <ConnectorPoint PointX="4.6166666666666671" PointY="20.766466843750003" />
-          <ConnectorPoint PointX="4.7833333333333332" PointY="20.766466843750003" />
-          <ConnectorPoint PointX="4.916666666666667" PointY="20.766466843750003" />
-          <ConnectorPoint PointX="5.083333333333333" PointY="20.766466843750003" />
-          <ConnectorPoint PointX="5.1672916666666673" PointY="20.766466843750003" />
-          <ConnectorPoint PointX="5.3339583333333334" PointY="20.766466843750003" />
-          <ConnectorPoint PointX="6.541666666666667" PointY="20.766466843750003" />
-          <ConnectorPoint PointX="6.708333333333333" PointY="20.766466843750003" />
-          <ConnectorPoint PointX="7.166666666666667" PointY="20.766466843750003" />
-          <ConnectorPoint PointX="7.4809333333333337" PointY="20.766466843750003" />
-          <ConnectorPoint PointX="8" PointY="20.766466843750003" />
-          <ConnectorPoint PointX="8" PointY="21.287985026041667" />
-          <ConnectorPoint PointX="10.666666666666666" PointY="21.287985026041667" />
-          <ConnectorPoint PointX="10.989583333333334" PointY="21.287985026041667" />
+          <ConnectorPoint PointX="2.25" PointY="20.4870196015625" />
+          <ConnectorPoint PointX="2.4166666666666665" PointY="20.4870196015625" />
+          <ConnectorPoint PointX="2.5833333333333335" PointY="20.4870196015625" />
+          <ConnectorPoint PointX="4.0910382604166671" PointY="20.4870196015625" />
+          <ConnectorPoint PointX="4.2577049270833331" PointY="20.4870196015625" />
+          <ConnectorPoint PointX="4.6166666666666671" PointY="20.4870196015625" />
+          <ConnectorPoint PointX="4.7833333333333332" PointY="20.4870196015625" />
+          <ConnectorPoint PointX="5.166666666666667" PointY="20.4870196015625" />
+          <ConnectorPoint PointX="5.458333333333333" PointY="20.4870196015625" />
+          <ConnectorPoint PointX="5.5" PointY="20.4870196015625" />
+          <ConnectorPoint PointX="5.5" PointY="21.287985026041667" />
+          <ConnectorPoint PointX="7.791666666666667" PointY="21.287985026041667" />
+          <ConnectorPoint PointX="7.958333333333333" PointY="21.287985026041667" />
+          <ConnectorPoint PointX="10.479166666666666" PointY="21.287985026041667" />
+          <ConnectorPoint PointX="10.645833333333334" PointY="21.287985026041667" />
+          <ConnectorPoint PointX="10.760416666666666" PointY="21.287985026041667" />
+          <ConnectorPoint PointX="10.927083333333334" PointY="21.287985026041667" />
           <ConnectorPoint PointX="11" PointY="21.287985026041667" />
-          <ConnectorPoint PointX="11" PointY="27.134095052083339" />
-          <ConnectorPoint PointX="11.057291666666666" PointY="27.134095052083339" />
-          <ConnectorPoint PointX="11.223958333333334" PointY="27.134095052083339" />
-          <ConnectorPoint PointX="16.267289166666668" PointY="27.134095052083339" />
-          <ConnectorPoint PointX="16.722083333333334" PointY="27.134095052083339" />
-          <ConnectorPoint PointX="17.0449995" PointY="27.134095052083339" />
-          <ConnectorPoint PointX="17.0449995" PointY="28.625" />
+          <ConnectorPoint PointX="11" PointY="27.5" />
+          <ConnectorPoint PointX="16.289007291666667" PointY="27.5" />
+          <ConnectorPoint PointX="16.705678958333333" PointY="27.5" />
+          <ConnectorPoint PointX="17.0081251875" PointY="27.5" />
+          <ConnectorPoint PointX="17.0081251875" PointY="28.625" />
         </AssociationConnector>
         <AssociationConnector Association="Priem2012Model.FK_Abiturient_Person" />
         <AssociationConnector Association="Priem2012Model.FK_ApplicationDetails_Abiturient" >
@@ -14354,61 +14436,184 @@
           <ConnectorPoint PointX="18.25" PointY="41.336293945312505" />
         </AssociationConnector>
         <AssociationConnector Association="Priem2012Model.fk_DocInventory_Abiturient" >
-          <ConnectorPoint PointX="16.45125" PointY="28.625" />
-          <ConnectorPoint PointX="16.45125" PointY="17.0237939453125" />
-          <ConnectorPoint PointX="16.333333333333332" PointY="17.0237939453125" />
-          <ConnectorPoint PointX="16.166666666666668" PointY="17.0237939453125" />
-          <ConnectorPoint PointX="11.098958333333334" PointY="17.0237939453125" />
-          <ConnectorPoint PointX="10.666666666666666" PointY="17.0237939453125" />
-          <ConnectorPoint PointX="9.75" PointY="17.0237939453125" />
+          <ConnectorPoint PointX="16.49468625" PointY="28.625" />
+          <ConnectorPoint PointX="16.49468625" PointY="24.009095052083339" />
+          <ConnectorPoint PointX="16.6875" PointY="24.009095052083339" />
+          <ConnectorPoint PointX="16.6875" PointY="17.110006510416667" />
+          <ConnectorPoint PointX="16.333333333333332" PointY="17.110006510416667" />
+          <ConnectorPoint PointX="16.166666666666668" PointY="17.110006510416667" />
+          <ConnectorPoint PointX="15.665253333333334" PointY="17.110006510416667" />
+          <ConnectorPoint PointX="15.498586666666666" PointY="17.110006510416667" />
+          <ConnectorPoint PointX="11.098958333333334" PointY="17.110006510416667" />
+          <ConnectorPoint PointX="10.729166666666666" PointY="17.110006510416667" />
+          <ConnectorPoint PointX="10.645833333333334" PointY="17.110006510416667" />
+          <ConnectorPoint PointX="10.479166666666666" PointY="17.110006510416667" />
+          <ConnectorPoint PointX="9.84375" PointY="17.110006510416667" />
+          <ConnectorPoint PointX="9.84375" PointY="17.211293945312498" />
+          <ConnectorPoint PointX="9.75" PointY="17.211293945312498" />
         </AssociationConnector>
         <AssociationConnector Association="Priem2012Model.fk_Mark_Abiturient" >
-          <ConnectorPoint PointX="16.63875" PointY="28.625" />
-          <ConnectorPoint PointX="16.63875" PointY="20.3362939453125" />
-          <ConnectorPoint PointX="16.534583333333334" PointY="20.3362939453125" />
+          <ConnectorPoint PointX="16.622345625" PointY="28.625" />
+          <ConnectorPoint PointX="16.622345625" PointY="20.3362939453125" />
+          <ConnectorPoint PointX="16.455673958333332" PointY="20.3362939453125" />
           <ConnectorPoint PointX="16.166666666666668" PointY="20.3362939453125" />
           <ConnectorPoint PointX="15.75" PointY="20.3362939453125" />
         </AssociationConnector>
         <AssociationConnector Association="Priem2012Model.FK_Olympiads_Abiturient" >
-          <ConnectorPoint PointX="17.30375175" PointY="28.625" />
-          <ConnectorPoint PointX="17.30375175" PointY="24.134095052083339" />
-          <ConnectorPoint PointX="16.722083333333334" PointY="24.134095052083339" />
-          <ConnectorPoint PointX="16.267289166666668" PointY="24.134095052083339" />
-          <ConnectorPoint PointX="16.25" PointY="24.134095052083339" />
+          <ConnectorPoint PointX="17.3684398125" PointY="28.625" />
+          <ConnectorPoint PointX="17.3684398125" PointY="24.384095052083339" />
+          <ConnectorPoint PointX="16.705678958333333" PointY="24.384095052083339" />
+          <ConnectorPoint PointX="16.289007291666667" PointY="24.384095052083339" />
+          <ConnectorPoint PointX="16.25" PointY="24.384095052083339" />
           <ConnectorPoint PointX="16.25" PointY="14" />
+          <ConnectorPoint PointX="15.665253333333334" PointY="14" />
+          <ConnectorPoint PointX="15.498586666666666" PointY="14" />
           <ConnectorPoint PointX="13.125" PointY="14" />
-          <ConnectorPoint PointX="13.125" PointY="14.581452322916668" />
-          <ConnectorPoint PointX="12.75" PointY="14.581452322916668" />
+          <ConnectorPoint PointX="13.125" PointY="14.650868806352612" />
+          <ConnectorPoint PointX="12.75" PointY="14.650868806352612" />
         </AssociationConnector>
         <AssociationConnector Association="Priem2012Model.FK_PaidData_Abiturient" >
-          <ConnectorPoint PointX="16.3506225" PointY="28.625" />
-          <ConnectorPoint PointX="16.3506225" PointY="17.40625" />
+          <ConnectorPoint PointX="16.372340625" PointY="28.625" />
+          <ConnectorPoint PointX="16.372340625" PointY="17.40625" />
           <ConnectorPoint PointX="16.333333333333332" PointY="17.40625" />
           <ConnectorPoint PointX="16.166666666666668" PointY="17.40625" />
+          <ConnectorPoint PointX="15.665253333333334" PointY="17.40625" />
+          <ConnectorPoint PointX="15.498586666666666" PointY="17.40625" />
           <ConnectorPoint PointX="12.75" PointY="17.40625" />
         </AssociationConnector>
         <AssociationConnector Association="Priem2012Model.fk_ProtocolHistory_Abiturient" >
-          <ConnectorPoint PointX="16.144059249999998" PointY="28.625" />
-          <ConnectorPoint PointX="16.144059249999998" PointY="27.5" />
-          <ConnectorPoint PointX="11.223958333333334" PointY="27.5" />
-          <ConnectorPoint PointX="11.057291666666666" PointY="27.5" />
-          <ConnectorPoint PointX="10.989583333333334" PointY="27.5" />
-          <ConnectorPoint PointX="10.791666666666666" PointY="27.5" />
-          <ConnectorPoint PointX="10.75" PointY="27.5" />
-          <ConnectorPoint PointX="10.75" PointY="23.1562505" />
-          <ConnectorPoint PointX="9.75" PointY="23.1562505" />
+          <ConnectorPoint PointX="16.1549183125" PointY="28.625" />
+          <ConnectorPoint PointX="16.1549183125" PointY="27.6875" />
+          <ConnectorPoint PointX="11.130208333333334" PointY="27.6875" />
+          <ConnectorPoint PointX="10.791666666666666" PointY="27.6875" />
+          <ConnectorPoint PointX="10.5625" PointY="27.6875" />
+          <ConnectorPoint PointX="10.5625" PointY="23.307428926214662" />
+          <ConnectorPoint PointX="9.75" PointY="23.307428926214662" />
         </AssociationConnector>
         <EntityTypeShape EntityType="Priem2012Model.extPersonAll" Width="1.5" PointX="29.375" PointY="22.125" Height="18.325908203124982" />
         <EntityTypeShape EntityType="Priem2012Model.extPersonSPO" Width="1.5" PointX="35.375" PointY="31.125" Height="18.710511067708353" />
-        <AssociationConnector Association="Priem2012Model.FK_Olympiads_OlympName" />
+        <AssociationConnector Association="Priem2012Model.FK_Olympiads_OlympName" >
+          <ConnectorPoint PointX="22.75" PointY="10.554918992187496" />
+          <ConnectorPoint PointX="22.625" PointY="10.554918992187496" />
+          <ConnectorPoint PointX="22.625" PointY="11.7494921875" />
+          <ConnectorPoint PointX="19.958332833333333" PointY="11.749492187499998" />
+          <ConnectorPoint PointX="19.645128205128206" PointY="11.7494921875" />
+          <ConnectorPoint PointX="19.5" PointY="11.7494921875" />
+          <ConnectorPoint PointX="19.5" PointY="11.5" />
+          <ConnectorPoint PointX="15.083333333333334" PointY="11.5" />
+          <ConnectorPoint PointX="14.916666666666666" PointY="11.5" />
+          <ConnectorPoint PointX="13.958333333333334" PointY="11.5" />
+          <ConnectorPoint PointX="13.791666666666666" PointY="11.5" />
+          <ConnectorPoint PointX="13.25" PointY="11.5" />
+          <ConnectorPoint PointX="13.25" PointY="12.149720052083332" />
+          <ConnectorPoint PointX="12.3906255" PointY="12.149720052083332" />
+          <ConnectorPoint PointX="12.3906255" PointY="12.375" />
+        </AssociationConnector>
         <EntityTypeShape EntityType="Priem2012Model.SP_LicenseProgram" Width="1.5" PointX="6.0138273602415939" PointY="16.75882443075945" />
         <EntityTypeShape EntityType="Priem2012Model.SP_ObrazProgram" Width="1.5" PointX="0.74559761804789193" PointY="9.9087372319347864" />
         <EntityTypeShape EntityType="Priem2012Model.SP_Profile" Width="1.5" PointX="6.8569736400884453" PointY="0.59283213345000152" />
-        <AssociationConnector Association="Priem2012Model.FK_Entry_SP_LicenseProgram" />
-        <AssociationConnector Association="Priem2012Model.FK_Entry_SP_ObrazProgram" />
-        <AssociationConnector Association="Priem2012Model.FK_SP_ObrazProgram_SP_Faculty" />
-        <AssociationConnector Association="Priem2012Model.FK_SP_LicenseProgram_StudyLevel" />
-        <AssociationConnector Association="Priem2012Model.FK_SP_ObrazProgram_SP_LicenseProgram" />
+        <AssociationConnector Association="Priem2012Model.FK_Entry_SP_LicenseProgram" >
+          <ConnectorPoint PointX="6" PointY="19.686866792968686" />
+          <ConnectorPoint PointX="5.833333333333333" PointY="19.686866792968686" />
+          <ConnectorPoint PointX="5.666666666666667" PointY="19.686866792968686" />
+          <ConnectorPoint PointX="5.458333333333333" PointY="19.686866792968686" />
+          <ConnectorPoint PointX="5.166666666666667" PointY="19.686866792968686" />
+          <ConnectorPoint PointX="4.7833333333333332" PointY="19.686866792968686" />
+          <ConnectorPoint PointX="4.6166666666666671" PointY="19.686866792968686" />
+          <ConnectorPoint PointX="4.17437159375" PointY="19.686866792968686" />
+          <ConnectorPoint PointX="4.17437159375" PointY="24.75" />
+        </AssociationConnector>
+        <AssociationConnector Association="Priem2012Model.FK_Entry_SP_ObrazProgram" >
+          <ConnectorPoint PointX="2.25" PointY="11.795187174479166" />
+          <ConnectorPoint PointX="2.65625125" PointY="11.795187174479166" />
+          <ConnectorPoint PointX="2.8229179166666669" PointY="11.795187174479166" />
+          <ConnectorPoint PointX="3.3666666666666667" PointY="11.795187174479166" />
+          <ConnectorPoint PointX="3.5333333333333337" PointY="11.795187174479166" />
+          <ConnectorPoint PointX="5.1672916666666673" PointY="11.795187174479166" />
+          <ConnectorPoint PointX="5.3339583333333334" PointY="11.795187174479166" />
+          <ConnectorPoint PointX="5.375" PointY="11.795187174479166" />
+          <ConnectorPoint PointX="5.375" PointY="24.75" />
+        </AssociationConnector>
+        <AssociationConnector Association="Priem2012Model.FK_SP_ObrazProgram_SP_Faculty" >
+          <ConnectorPoint PointX="12.728461538461538" PointY="6.5090950520833317" />
+          <ConnectorPoint PointX="12.728461538461538" PointY="9.1443749999999948" />
+          <ConnectorPoint PointX="11.045733333333333" PointY="9.1443749999999948" />
+          <ConnectorPoint PointX="10.822916666666666" PointY="9.1443749999999948" />
+          <ConnectorPoint PointX="10.645833333333334" PointY="9.1443749999999948" />
+          <ConnectorPoint PointX="10.479166666666666" PointY="9.1443749999999948" />
+          <ConnectorPoint PointX="9.8020813333333336" PointY="9.1443749999999948" />
+          <ConnectorPoint PointX="9.6354146666666658" PointY="9.1443749999999948" />
+          <ConnectorPoint PointX="7.500625" PointY="9.1443749999999948" />
+          <ConnectorPoint PointX="7.500625" PointY="11.144375" />
+          <ConnectorPoint PointX="5.8483333333333345" PointY="11.144375" />
+          <ConnectorPoint PointX="5.6816666666666684" PointY="11.144375" />
+          <ConnectorPoint PointX="5.583333333333333" PointY="11.144375" />
+          <ConnectorPoint PointX="5.416666666666667" PointY="11.144375" />
+          <ConnectorPoint PointX="5.250625" PointY="11.144375" />
+          <ConnectorPoint PointX="5.250625" PointY="12.658142403645833" />
+          <ConnectorPoint PointX="3.5333333333333337" PointY="12.658142403645833" />
+          <ConnectorPoint PointX="3.3666666666666667" PointY="12.658142403645833" />
+          <ConnectorPoint PointX="2.8229179166666669" PointY="12.658142403645833" />
+          <ConnectorPoint PointX="2.65625125" PointY="12.658142403645833" />
+          <ConnectorPoint PointX="2.5833333333333335" PointY="12.658142403645833" />
+          <ConnectorPoint PointX="2.4166666666666665" PointY="12.658142403645833" />
+          <ConnectorPoint PointX="2.25" PointY="12.658142403645833" />
+        </AssociationConnector>
+        <AssociationConnector Association="Priem2012Model.FK_SP_LicenseProgram_StudyLevel" >
+          <ConnectorPoint PointX="19.8749995" PointY="11.4994921875" />
+          <ConnectorPoint PointX="19.8749995" PointY="17.110006510416667" />
+          <ConnectorPoint PointX="16.333333333333332" PointY="17.110006510416667" />
+          <ConnectorPoint PointX="16.166666666666668" PointY="17.110006510416667" />
+          <ConnectorPoint PointX="15.665253333333334" PointY="17.110006510416667" />
+          <ConnectorPoint PointX="15.498586666666666" PointY="17.110006510416667" />
+          <ConnectorPoint PointX="11.098958333333334" PointY="17.110006510416667" />
+          <ConnectorPoint PointX="10.729166666666666" PointY="17.110006510416667" />
+          <ConnectorPoint PointX="10.645833333333334" PointY="17.110006510416667" />
+          <ConnectorPoint PointX="10.479166666666666" PointY="17.110006510416667" />
+          <ConnectorPoint PointX="9.8125" PointY="17.110006510416667" />
+          <ConnectorPoint PointX="9.8125" PointY="18.867543945312498" />
+          <ConnectorPoint PointX="8.0833333333333339" PointY="18.867543945312498" />
+          <ConnectorPoint PointX="7.916666666666667" PointY="18.867543945312498" />
+          <ConnectorPoint PointX="7.5" PointY="18.867543945312498" />
+        </AssociationConnector>
+        <AssociationConnector Association="Priem2012Model.FK_SP_ObrazProgram_SP_LicenseProgram" >
+          <ConnectorPoint PointX="6" PointY="18.824208984375" />
+          <ConnectorPoint PointX="5.833333333333333" PointY="18.824208984375" />
+          <ConnectorPoint PointX="5.666666666666667" PointY="18.824208984375" />
+          <ConnectorPoint PointX="5.458333333333333" PointY="18.824208984375" />
+          <ConnectorPoint PointX="5.166666666666667" PointY="18.824208984375" />
+          <ConnectorPoint PointX="4.7833333333333332" PointY="18.824208984375" />
+          <ConnectorPoint PointX="4.6166666666666671" PointY="18.824208984375" />
+          <ConnectorPoint PointX="3.8333333333333335" PointY="18.824208984375" />
+          <ConnectorPoint PointX="3.6666666666666665" PointY="18.824208984375" />
+          <ConnectorPoint PointX="2.5833333333333335" PointY="18.824208984375" />
+          <ConnectorPoint PointX="2.4166666666666665" PointY="18.824208984375" />
+          <ConnectorPoint PointX="0.5" PointY="18.824208984375" />
+          <ConnectorPoint PointX="0.5" PointY="11.634348958333334" />
+          <ConnectorPoint PointX="0.75" PointY="11.634348958333334" />
+        </AssociationConnector>
+        <AssociationConnector Association="Priem2012Model.FK_Mark_EgeCertificate" >
+          <ConnectorPoint PointX="7.2187497500000006" PointY="5.0379036458333326" />
+          <ConnectorPoint PointX="7.2187497500000006" PointY="5.160783645833332" />
+          <ConnectorPoint PointX="7.6516666666666673" PointY="5.1607836458333312" />
+          <ConnectorPoint PointX="7.8183333333333334" PointY="5.160783645833332" />
+          <ConnectorPoint PointX="8.91808" PointY="5.160783645833332" />
+          <ConnectorPoint PointX="8.91808" PointY="5.754507890625" />
+          <ConnectorPoint PointX="10.041666666666666" PointY="5.7545078906249989" />
+          <ConnectorPoint PointX="10.208333333333334" PointY="5.754507890625" />
+          <ConnectorPoint PointX="10.879066666666665" PointY="5.7545078906249989" />
+          <ConnectorPoint PointX="11.045733333333333" PointY="5.754507890625" />
+          <ConnectorPoint PointX="11.66808" PointY="5.754507890625" />
+          <ConnectorPoint PointX="11.66808" PointY="6.5910150520833319" />
+          <ConnectorPoint PointX="13.91808" PointY="6.5910150520833319" />
+          <ConnectorPoint PointX="13.91808" PointY="11.139110755208332" />
+          <ConnectorPoint PointX="15" PointY="11.139110755208332" />
+          <ConnectorPoint PointX="15" PointY="11.66808" />
+          <ConnectorPoint PointX="15.58192" PointY="11.66808" />
+          <ConnectorPoint PointX="15.58192" PointY="18.62712" />
+          <ConnectorPoint PointX="15" PointY="18.62712" />
+          <ConnectorPoint PointX="15" PointY="18.75" />
+        </AssociationConnector>
         </Diagram>
     </Diagrams>
   </Designer>

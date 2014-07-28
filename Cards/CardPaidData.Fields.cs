@@ -67,8 +67,12 @@ namespace Priem
                 if (value.HasValue)
                     dtDateFinish.Value = value.Value;                
             }
-        }       
-
+        }
+        public string SumTotal
+        {
+            get { return tbSumTotal.Text.Trim(); }
+            set { tbSumTotal.Text = value; }
+        }
         public string SumFirstYear
         {
             get { return tbSumFirstYear.Text.Trim(); }

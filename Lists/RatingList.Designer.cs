@@ -68,6 +68,8 @@
             this.btnUpdateGrid = new System.Windows.Forms.Button();
             this.btnFixieren = new System.Windows.Forms.Button();
             this.chbWithOlymps = new System.Windows.Forms.CheckBox();
+            this.chbIsCrimea = new System.Windows.Forms.CheckBox();
+            this.chbIsQuota = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.dgvAbits)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.gbPasha.SuspendLayout();
@@ -102,9 +104,9 @@
             this.dgvAbits.AllowUserToAddRows = false;
             this.dgvAbits.AllowUserToDeleteRows = false;
             this.dgvAbits.AllowUserToResizeRows = false;
-            this.dgvAbits.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.dgvAbits.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
             dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
@@ -496,11 +498,33 @@
             this.chbWithOlymps.Text = "c олимпиадами";
             this.chbWithOlymps.UseVisualStyleBackColor = true;
             // 
+            // chbIsCrimea
+            // 
+            this.chbIsCrimea.AutoSize = true;
+            this.chbIsCrimea.Location = new System.Drawing.Point(99, 275);
+            this.chbIsCrimea.Name = "chbIsCrimea";
+            this.chbIsCrimea.Size = new System.Drawing.Size(55, 17);
+            this.chbIsCrimea.TabIndex = 140;
+            this.chbIsCrimea.Text = "Крым";
+            this.chbIsCrimea.UseVisualStyleBackColor = true;
+            // 
+            // chbIsQuota
+            // 
+            this.chbIsQuota.AutoSize = true;
+            this.chbIsQuota.Location = new System.Drawing.Point(17, 293);
+            this.chbIsQuota.Name = "chbIsQuota";
+            this.chbIsQuota.Size = new System.Drawing.Size(82, 17);
+            this.chbIsQuota.TabIndex = 141;
+            this.chbIsQuota.Text = "Квота (в/к)";
+            this.chbIsQuota.UseVisualStyleBackColor = true;
+            // 
             // RatingList
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(848, 633);
+            this.Controls.Add(this.chbIsQuota);
+            this.Controls.Add(this.chbIsCrimea);
             this.Controls.Add(this.chbWithOlymps);
             this.Controls.Add(this.btnFixieren);
             this.Controls.Add(this.btnUpdateGrid);
@@ -566,6 +590,8 @@
             this.Controls.SetChildIndex(this.btnUpdateGrid, 0);
             this.Controls.SetChildIndex(this.btnFixieren, 0);
             this.Controls.SetChildIndex(this.chbWithOlymps, 0);
+            this.Controls.SetChildIndex(this.chbIsCrimea, 0);
+            this.Controls.SetChildIndex(this.chbIsQuota, 0);
             ((System.ComponentModel.ISupportInitialize)(this.dgvAbits)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.gbPasha.ResumeLayout(false);
@@ -612,5 +638,7 @@
         private System.Windows.Forms.Button btnUpdateGrid;
         private System.Windows.Forms.Button btnFixieren;
         private System.Windows.Forms.CheckBox chbWithOlymps;
+        private System.Windows.Forms.CheckBox chbIsCrimea;
+        private System.Windows.Forms.CheckBox chbIsQuota;
     }
 }

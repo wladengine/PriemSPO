@@ -1962,6 +1962,7 @@ namespace Priem
                          pd.Srok,
                          pd.DateStart,
                          pd.DateFinish,
+                         pd.SumTotal,
                          pd.SumFirstYear,
                          pd.SumFirstPeriod,
                          pd.Parent,
@@ -1993,23 +1994,28 @@ namespace Priem
 
                 WordDoc wd = new WordDoc(string.Format(@"{0}\Dogovor{1}.dot", MainClass.dirTemplates, dogType), !forPrint);
 
+                ////
                 //вступление
                 wd.SetFields("DogovorNum", dogovorInfo.DogovorNum.ToString());
                 wd.SetFields("DogovorDate", dogovorInfo.DogovorDate.Value.ToLongDateString());
 
                 //проректор и студент
                 wd.SetFields("Lico", dogovorInfo.Prorector);
-                wd.SetFields("LicoDateNum", dogovorInfo.DateDov.ToString() + "г. " + dogovorInfo.NumberDov.ToString());
+                wd.SetFields("LicoDate", dogovorInfo.DateDov.ToString() + "г.");
+                wd.SetFields("LicoNum", dogovorInfo.NumberDov.ToString());
                 wd.SetFields("FIO", person.FIO);
+                wd.SetFields("Sex", (person.Sex) ? "ый" : "ая");
 
+
+                ////
                 string programcode = abit.ObrazProgramCrypt.Trim();
                 string profcode = abit.LicenseProgramCode.Trim();
                 string level = "подготовка специалиста";
 
-                wd.SetFields("ObrazProgramName", abit.ObrazProgramPrintName.Trim());
-                wd.SetFields("ObrazProgramName1", abit.ObrazProgramPrintName.Trim());
-                wd.SetFields("ProgramCode", programcode);
-                wd.SetFields("Profession", abit.LicenseProgramName);
+                wd.SetFields("ObrazProgramName", "(" + programcode + ") " + abit.ObrazProgramName.Trim());
+                //wd.SetFields("ObrazProgramName1", abit.ObrazProgramPrintName.Trim());
+                //wd.SetFields("ProgramCode", programcode);
+                wd.SetFields("Profession", "(" + profcode + ") " + abit.LicenseProgramName);
 
                 wd.SetFields("StudyCourse", "1");
                 wd.SetFields("StudyFaculty", abit.FacultyName);
@@ -2027,24 +2033,28 @@ namespace Priem
                 wd.SetFields("DateFinish", dFinish.ToLongDateString());
 
                 //суммы обучения
-                wd.SetFields("SumFirstYear", dogovorInfo.SumFirstYear);
+                wd.SetFields("SumTotal", dogovorInfo.SumTotal);
+                //wd.SetFields("SumFirstYear", dogovorInfo.SumFirstYear);
                 wd.SetFields("SumFirstPeriod", dogovorInfo.SumFirstPeriod);
-                wd.SetFields("PayPeriod", dogovorInfo.PayPeriod);
+                //wd.SetFields("PayPeriod", dogovorInfo.PayPeriod);
                 
-                wd.SetFields("Parent", dogovorInfo.Parent);
-                if (dogovorInfo.Parent.Trim().Length > 0)
-                    wd.SetFields("AbitFIORod", dogovorInfo.AbitFIORod);
+                //wd.SetFields("Parent", dogovorInfo.Parent);
+                //if (dogovorInfo.Parent.Trim().Length > 0)
+                //    wd.SetFields("AbitFIORod", dogovorInfo.AbitFIORod);
 
                 wd.SetFields("Address1", string.Format("{0} {1} {2}, {3}, ", person.Code, person.CountryName, person.RegionName, person.City));
                 wd.SetFields("Address2", string.Format("{0} дом {1} {2} кв. {3}", person.Street, person.House, person.Korpus == string.Empty ? "" : "корп. " + person.Korpus, person.Flat));
 
-                wd.SetFields("Passport", "серия " + person.PassportSeries + "№ " + person.PassportNumber);
-                wd.SetFields("PassportAuthor", "выдан " + person.PassportDate.Value.ToShortDateString() + " " + person.PassportAuthor);
+                wd.SetFields("Passport", "серия " + person.PassportSeries + " № " + person.PassportNumber);
+                wd.SetFields("PassportAuthorDate", person.PassportDate.Value.ToShortDateString());
+                wd.SetFields("PassportAuthor", person.PassportAuthor);
+
+                wd.SetFields("PhoneNumber", person.Phone + (String.IsNullOrEmpty(person.Mobiles) ? "" : ", доп.: " + person.Mobiles));
 
                 wd.SetFields("UniverName", dogovorInfo.UniverName);
                 wd.SetFields("UniverAddress", dogovorInfo.UniverAddress);
                 wd.SetFields("UniverINN", dogovorInfo.UniverINN);
-                wd.SetFields("UniverRS", dogovorInfo.UniverRS);
+                //wd.SetFields("UniverRS", dogovorInfo.UniverRS);
                 wd.SetFields("Props", dogovorInfo.Props);
                 
                 switch (dogType)
@@ -2055,10 +2065,10 @@ namespace Priem
                         }
                     case "2":
                         {
-                            wd.SetFields("Customer", dogovorInfo.Customer);
+                            wd.SetFields("CustomerLico", dogovorInfo.Customer);
                             wd.SetFields("CustomerAddress", dogovorInfo.CustomerAddress);
-                            wd.SetFields("CustomerINN", dogovorInfo.CustomerPassport);
-                            wd.SetFields("CustomerRS", dogovorInfo.CustomerPassportAuthor);
+                            wd.SetFields("CustomerINN", "Паспорт: " + dogovorInfo.CustomerPassport);
+                            wd.SetFields("CustomerRS", "Выдан: " + dogovorInfo.CustomerPassportAuthor);
                             break;
                         }
                     case "4":
@@ -2075,8 +2085,8 @@ namespace Priem
                             wd.SetFields("CustomerLico", dogovorInfo.CustomerLico);
                             wd.SetFields("CustomerReason", dogovorInfo.CustomerReason);
                             wd.SetFields("CustomerAddress", dogovorInfo.CustomerAddress);
-                            wd.SetFields("CustomerINN", dogovorInfo.CustomerINN);
-                            wd.SetFields("CustomerRS", dogovorInfo.CustomerRS);
+                            wd.SetFields("CustomerINN", "ИНН " + dogovorInfo.CustomerINN);
+                            wd.SetFields("CustomerRS", "Р/С " + dogovorInfo.CustomerRS);
                             break;
                         }
                 }
@@ -2125,7 +2135,7 @@ namespace Priem
             }
         }
 
-        public static void PrintRatingProtocol(int? iStudyFormId, int? iStudyBasisId, int? iFacultyId, int? iLicenseProgramId, int? iObrazProgramId, Guid? gProfileId, bool isCel, int plan, string savePath, bool isSecond, bool isReduced, bool isParallel)
+        public static void PrintRatingProtocol(int? iStudyFormId, int? iStudyBasisId, int? iFacultyId, int? iLicenseProgramId, int? iObrazProgramId, Guid? gProfileId, bool isCel, bool isCrimea, int plan, string savePath, bool isSecond, bool isReduced, bool isParallel)
         {
             FileStream fileS = null;
             try
@@ -2142,7 +2152,7 @@ namespace Priem
                 {
                     fixId = (from fixierenView in ctx.FixierenView
                              where fixierenView.StudyFormId == iStudyFormId && fixierenView.StudyBasisId == iStudyBasisId && fixierenView.FacultyId == iFacultyId && fixierenView.LicenseProgramId == iLicenseProgramId &&
-                             fixierenView.ObrazProgramId == iObrazProgramId && (gProfileId.HasValue ? fixierenView.ProfileId == gProfileId : true) && fixierenView.IsCel == isCel && fixierenView.IsSecond == isSecond && fixierenView.IsParallel == isParallel && fixierenView.IsReduced == isReduced
+                             fixierenView.ObrazProgramId == iObrazProgramId && (gProfileId.HasValue ? fixierenView.ProfileId == gProfileId : true) && fixierenView.IsCel == isCel && fixierenView.IsCrimea == isCrimea && fixierenView.IsSecond == isSecond && fixierenView.IsParallel == isParallel && fixierenView.IsReduced == isReduced
                              select fixierenView.Id).FirstOrDefault();
 
                     docNum = (from fixierenView in ctx.FixierenView

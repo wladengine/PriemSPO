@@ -277,18 +277,26 @@ namespace Priem
 
         protected override void InsertRec(PriemEntities context, System.Data.Objects.ObjectParameter idParam)
         {
-            context.PaidData_Insert(DogovorNum, DogovorDate, DogovorTypeId, ProrektorId, Qualification, Srok, 
+           /* context.PaidData_Insert(DogovorNum, DogovorDate, DogovorTypeId, ProrektorId, Qualification, Srok, 
                 DateStart, DateFinish, SumFirstYear, PayPeriodId, SumFirstPeriod, AbitFIORod, AbitParent, null, 
                 Customer, CustomerAddress, CustomerPassport, CustomerPassportAuthor, CustomerLico, CustomerReason, 
-                CustomerINN, CustomerRS, _abitId, idParam);
+                CustomerINN, CustomerRS, _abitId, idParam);*/
+            context.PaidData_Insert(DogovorNum, DogovorDate, DogovorTypeId, ProrektorId, Qualification, Srok,
+                DateStart, DateFinish, SumFirstYear, PayPeriodId, SumFirstPeriod, AbitFIORod, AbitParent, null,
+                Customer, CustomerAddress, CustomerPassport, CustomerPassportAuthor, CustomerLico, CustomerReason,
+                CustomerINN, CustomerRS, _abitId, SumTotal, null, idParam);
         }
 
         protected override void UpdateRec(PriemEntities context, Guid id)
         {
+            /*context.PaidData_Update(DogovorNum, DogovorDate, DogovorTypeId, ProrektorId, Qualification, Srok,
+                DateStart, DateFinish, SumFirstYear, PayPeriodId, SumFirstPeriod, AbitFIORod, AbitParent, null,
+                Customer, CustomerAddress, CustomerPassport, CustomerPassportAuthor, CustomerLico, CustomerReason,
+                CustomerINN, CustomerRS, id);*/
             context.PaidData_Update(DogovorNum, DogovorDate, DogovorTypeId, ProrektorId, Qualification, Srok,
                 DateStart, DateFinish, SumFirstYear, PayPeriodId, SumFirstPeriod, AbitFIORod, AbitParent, null,
                 Customer, CustomerAddress, CustomerPassport, CustomerPassportAuthor, CustomerLico, CustomerReason,
-                CustomerINN, CustomerRS, id);
+                CustomerINN, CustomerRS, SumTotal, null, id);
         }
 
         protected override void OnSaveNew()
