@@ -107,6 +107,7 @@ namespace Priem
                     Srok = paiddata.Srok;
                     DateStart = paiddata.DateStart;
                     DateFinish = paiddata.DateFinish;
+                    SumTotal = paiddata.SumTotal;
                     ProrektorId = paiddata.ProrektorId;
                     SumFirstYear = paiddata.SumFirstYear;
                     PayPeriodId = paiddata.PayPeriodId;
