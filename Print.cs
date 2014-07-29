@@ -1934,14 +1934,14 @@ namespace Priem
         {
             using (PriemEntities context = new PriemEntities())
             {
-                var abit = context.extAbitSPO.Where(x => x.Id == abitId).FirstOrDefault();
+                var abit = context.extAbit.Where(x => x.Id == abitId).FirstOrDefault();
                 if (abit == null)
                 {
                     WinFormsServ.Error("Не удалось загрузить данные заявления");
                     return;
                 }
 
-                var person = context.extPersonAll.Where(x => x.Id == abit.PersonId).FirstOrDefault();
+                var person = context.extPerson.Where(x => x.Id == abit.PersonId).FirstOrDefault();
                 if (person == null)
                 {
                     WinFormsServ.Error("Не удалось загрузить данные абитуриента");
@@ -1960,6 +1960,7 @@ namespace Priem
                          pd.DogovorDate,
                          pd.Qualification,
                          pd.Srok,
+                         pd.SrokIndividual,
                          pd.DateStart,
                          pd.DateFinish,
                          pd.SumTotal,
@@ -1990,14 +1991,24 @@ namespace Priem
                          pi.Props
                      }).FirstOrDefault();
 
+                //bool IsCommonWithParent = false;
                 string dogType = dogovorInfo.DogovorTypeId.ToString();
+                //if (dogType.Equals("1"))
+                //    if (!String.IsNullOrEmpty(dogovorInfo.Parent))
+                //    {
+                //        dogType = "2";
+                //       IsCommonWithParent = true;
+                //    }
 
                 WordDoc wd = new WordDoc(string.Format(@"{0}\Dogovor{1}.dot", MainClass.dirTemplates, dogType), !forPrint);
 
-                ////
                 //вступление
                 wd.SetFields("DogovorNum", dogovorInfo.DogovorNum.ToString());
                 wd.SetFields("DogovorDate", dogovorInfo.DogovorDate.Value.ToLongDateString());
+
+                //wd.SetFields("DogovorDay", ((DateTime)dsRow["DogovorDate"]).Date.Day.ToString());
+                //wd.SetFields("DogovorMonth", ((DateTime)dsRow["DogovorDate"]).Date.Month.ToString());
+                //wd.SetFields("DogovorYear", ((DateTime)dsRow["DogovorDate"]).Date.Year.ToString());
 
                 //проректор и студент
                 wd.SetFields("Lico", dogovorInfo.Prorector);
@@ -2007,42 +2018,86 @@ namespace Priem
                 wd.SetFields("Sex", (person.Sex) ? "ый" : "ая");
 
 
-                ////
-                string programcode = abit.ObrazProgramCrypt.Trim();
-                string profcode = abit.LicenseProgramCode.Trim();
-                string level = "подготовка специалиста";
 
-                wd.SetFields("ObrazProgramName", "(" + programcode + ") " + abit.ObrazProgramName.Trim());
-                //wd.SetFields("ObrazProgramName1", abit.ObrazProgramPrintName.Trim());
-                //wd.SetFields("ProgramCode", programcode);
-                wd.SetFields("Profession", "(" + profcode + ") " + abit.LicenseProgramName);
+                //                DataSet dsProgram = _bdc.GetDataSet(string.Format(@"SELECT hlpStudyPlan.ProgramCode, hlpStudyPlan.ProfessionCode, hlpStudyPlan.ObrazProgram, hlpStudyPlan.Profession, hlpStudyPlan.Specialization, 
+                //            (Case When hlpStudyPlan.FacultyId IN (4,6,7,12,13,14,15,16) then 'факультет ' + hlpStudyPlan.Faculty 
+                //            else (case when hlpStudyPlan.FacultyId IN (1,2,5,8,9,10,17,18,19,20,21,22) then hlpStudyPlan.Faculty + ' факультет' 
+                //                 else hlpStudyPlan.Faculty end) end) AS FacultyName,
+                //            hlpStudyPlan.ProfessionCode, StudyForm.Acronym AS StudyForm FROM qAbiturient 
+                //            INNER JOIN hlpStudyPlan ON hlpStudyPlan.StudyPlanId = qAbiturient.StudyPlanId 
+                //            INNER JOIN StudyForm ON hlpStudyPlan.StudyFormId = StudyForm.Id WHERE qAbiturient.Id = '{0}' ", abitId));
+                //                DataRow drPr = dsProgram.Tables[0].Rows[0];
+
+                string programcode = abit.ObrazProgramCrypt.Trim();// drPr["ProgramCode"].ToString().Trim();
+                string profcode = abit.LicenseProgramCode.Trim();// drPr["ProfessionCode"].ToString().Trim();
+                string level = "";
+
+                if (MainClass.dbType == PriemType.PriemMag)
+                {
+                    //prof = "направление";
+                    //spec = "программа";
+                    //level = " (уровень, вид: II, магистратура)";
+                    level = "магистратура";
+                }
+                else if (profcode.Length > 2 && profcode.EndsWith("00"))
+                {
+                    //prof = "направление";
+                    //spec = "профиль";
+                    //level = " (уровень, вид: I, бакалавриат)";
+                    level = "бакалавриат";
+                }
+                else
+                {
+                    //prof = "Направление";
+                    //spec = "Профиль";
+                    //level = " (уровень, вид: II, подготовка специалиста)";
+                    level = "подготовка специалиста";
+                }
+
+                wd.SetFields("ObrazProgramName", "(" + programcode + ") " + abit.ObrazProgramName.Trim());//drPr["ObrazProgram"].ToString().Trim()
+                // wd.SetFields("ObrazProgramName1", abit.ObrazProgramName.Trim());//drPr["ObrazProgram"].ToString().Trim()
+
+                // wd.SetFields("ProgramCode", programcode);
+
+                wd.SetFields("Profession", "(" + profcode + ") " + abit.LicenseProgramName);//drPr["Profession"].ToString().Trim()
 
                 wd.SetFields("StudyCourse", "1");
                 wd.SetFields("StudyFaculty", abit.FacultyName);
                 string form = context.StudyForm.Where(x => x.Id == abit.StudyFormId).Select(x => x.Name).FirstOrDefault().ToLower();
+                //_bdc.GetStringValue("SELECT Acronym FROM StudyForm WHERE Id = " + abit.StudyForm);
                 wd.SetFields("StudyForm", form.ToLower());
-                wd.SetFields("StudyLevel", level);
+                //wd.SetFields("StudyLevel", level);
 
-                wd.SetFields("Qualification", dogovorInfo.Qualification);
+                //wd.SetFields("Program", programName + level + ", 1 курс " + drPr["FacultyName"].ToString() + ", " + prof + " " + profcode + " " + programName + ", " + drPr["StudyForm"].ToString().ToLower() + " форма обучения");
+
+                wd.SetFields("Qualification", dogovorInfo.Qualification);//dsRow["Qualification"].ToString()
 
                 //сроки обучения
-                wd.SetFields("Srok", dogovorInfo.Srok);
-                DateTime dStart = dogovorInfo.DateStart.Value;
+                wd.SetFields("Srok", dogovorInfo.Srok); //dsRow["Srok"].ToString()
+                //wd.SetFields("SrokIndividual", dogovorInfo.SrokIndividual); //dsRow["Srok"].ToString()
+
+                DateTime dStart = dogovorInfo.DateStart.Value; //(DateTime)dsRow["DateStart"];
+                //wd.SetFields("DateStart", "\"" + dStart.Date.Day.ToString() + "\" " + dStart.Date.Month.ToString() + " " + dStart.Date.Year.ToString());
                 wd.SetFields("DateStart", dStart.ToLongDateString());
-                DateTime dFinish = dogovorInfo.DateFinish.Value;
+                DateTime dFinish = dogovorInfo.DateFinish.Value; //(DateTime)dsRow["DateFinish"];
+                //wd.SetFields("DateFinish", "\"" + dFinish.Date.Day.ToString() + "\" " + dFinish.Date.Month.ToString() + " " + dFinish.Date.Year.ToString());
                 wd.SetFields("DateFinish", dFinish.ToLongDateString());
 
                 //суммы обучения
-                wd.SetFields("SumTotal", dogovorInfo.SumTotal);
-                //wd.SetFields("SumFirstYear", dogovorInfo.SumFirstYear);
-                wd.SetFields("SumFirstPeriod", dogovorInfo.SumFirstPeriod);
-                //wd.SetFields("PayPeriod", dogovorInfo.PayPeriod);
-                
-                //wd.SetFields("Parent", dogovorInfo.Parent);
-                //if (dogovorInfo.Parent.Trim().Length > 0)
-                //    wd.SetFields("AbitFIORod", dogovorInfo.AbitFIORod);
+                wd.SetFields("SumTotal", dogovorInfo.SumTotal);//dsRow["SumFirstYear"].ToString()
 
-                wd.SetFields("Address1", string.Format("{0} {1} {2}, {3}, ", person.Code, person.CountryName, person.RegionName, person.City));
+                //wd.SetFields("SumFirstYear", dogovorInfo.SumFirstYear);//dsRow["SumFirstYear"].ToString()
+                wd.SetFields("SumFirstPeriod", dogovorInfo.SumFirstPeriod);//dsRow["SumFirstPeriod"].ToString()
+
+                //wd.SetFields("PayPeriod", dogovorInfo.PayPeriod);//dsRow["PayPeriod"].ToString()
+
+
+                //wd.SetFields("Parent", dogovorInfo.Parent);//dsRow["Parent"].ToString()
+
+                /*if (dogovorInfo.Parent.Trim().Length > 0)
+                    wd.SetFields("AbitFIORod", dogovorInfo.AbitFIORod);//dsRow["AbitFIORod"].ToString()
+                */
+                wd.SetFields("Address1", string.Format("{0} {1}, {2}, {3}, ", person.Code, person.CountryName, person.RegionName, person.City));
                 wd.SetFields("Address2", string.Format("{0} дом {1} {2} кв. {3}", person.Street, person.House, person.Korpus == string.Empty ? "" : "корп. " + person.Korpus, person.Flat));
 
                 wd.SetFields("Passport", "серия " + person.PassportSeries + " № " + person.PassportNumber);
@@ -2051,42 +2106,55 @@ namespace Priem
 
                 wd.SetFields("PhoneNumber", person.Phone + (String.IsNullOrEmpty(person.Mobiles) ? "" : ", доп.: " + person.Mobiles));
 
-                wd.SetFields("UniverName", dogovorInfo.UniverName);
-                wd.SetFields("UniverAddress", dogovorInfo.UniverAddress);
-                wd.SetFields("UniverINN", dogovorInfo.UniverINN);
-                //wd.SetFields("UniverRS", dogovorInfo.UniverRS);
-                wd.SetFields("Props", dogovorInfo.Props);
-                
+                //string studyPlanId = _bdc.GetStringValue(string.Format("SELECT qAbiturient.StudyPlanId FROM qAbiturient WHERE Id = '{0}'", abitId));
+                //DataRow dr = _bdc.GetDataSet("SELECT * FROM PayDataStudyPlan WHERE StudyPlanId = " + studyPlanId).Tables[0].Rows[0];
+
+                wd.SetFields("UniverName", dogovorInfo.UniverName);//dr["UniverName"].ToString()
+                wd.SetFields("UniverAddress", dogovorInfo.UniverAddress);//dr["UniverAddress"].ToString()
+                wd.SetFields("UniverINN", dogovorInfo.UniverINN);//dr["UniverINN"].ToString()
+                //wd.SetFields("UniverRS", dogovorInfo.UniverRS);//dr["UniverRS"].ToString()
+                wd.SetFields("Props", dogovorInfo.Props);//dr["UniverDop"].ToString()
+
                 switch (dogType)
                 {
+                    // обычный
                     case "1":
                         {
                             break;
                         }
+                    // физ лицо
                     case "2":
                         {
-                            wd.SetFields("CustomerLico", dogovorInfo.Customer);
-                            wd.SetFields("CustomerAddress", dogovorInfo.CustomerAddress);
-                            wd.SetFields("CustomerINN", "Паспорт: " + dogovorInfo.CustomerPassport);
-                            wd.SetFields("CustomerRS", "Выдан: " + dogovorInfo.CustomerPassportAuthor);
+                            wd.SetFields("CustomerLico", dogovorInfo.Customer);//dsRow["Customer"].ToString()
+                            //wd.SetFields("AbitFIORod2", dsRow["AbitFIORod"].ToString());
+                            wd.SetFields("CustomerAddress", dogovorInfo.CustomerAddress);//dsRow["CustomerAddress"].ToString()
+                            wd.SetFields("CustomerINN", "Паспорт: " + dogovorInfo.CustomerPassport);//dsRow["CustomerPassport"].ToString()
+                            wd.SetFields("CustomerRS", "Выдан: " + dogovorInfo.CustomerPassportAuthor);//dsRow["CustomerPassportAuthor"].ToString()
+
                             break;
                         }
+                    // мат кап
                     case "4":
                         {
-                            wd.SetFields("Customer", dogovorInfo.Customer);
-                            wd.SetFields("CustomerAddress", dogovorInfo.CustomerAddress);
-                            wd.SetFields("CustomerINN", dogovorInfo.CustomerPassport);
-                            wd.SetFields("CustomerRS", dogovorInfo.CustomerPassportAuthor);
+                            wd.SetFields("Customer", dogovorInfo.Customer);//dsRow["Customer"].ToString()
+                            //wd.SetFields("AbitFIORod2", dsRow["AbitFIORod"].ToString());
+                            wd.SetFields("CustomerAddress", dogovorInfo.CustomerAddress);//dsRow["CustomerAddress"].ToString()
+                            wd.SetFields("CustomerINN", dogovorInfo.CustomerPassport);//dsRow["CustomerPassport"].ToString()
+                            wd.SetFields("CustomerRS", dogovorInfo.CustomerPassportAuthor);//dsRow["CustomerPassportAuthor"].ToString()
+
                             break;
                         }
+                    // юридическое лицо
                     case "3":
                         {
-                            wd.SetFields("Customer", dogovorInfo.Customer);
-                            wd.SetFields("CustomerLico", dogovorInfo.CustomerLico);
-                            wd.SetFields("CustomerReason", dogovorInfo.CustomerReason);
-                            wd.SetFields("CustomerAddress", dogovorInfo.CustomerAddress);
-                            wd.SetFields("CustomerINN", "ИНН " + dogovorInfo.CustomerINN);
-                            wd.SetFields("CustomerRS", "Р/С " + dogovorInfo.CustomerRS);
+                            wd.SetFields("Customer", dogovorInfo.Customer);//dsRow["Customer"].ToString()
+                            wd.SetFields("CustomerLico", dogovorInfo.CustomerLico);//dsRow["CustomerLico"].ToString()
+                            wd.SetFields("CustomerReason", dogovorInfo.CustomerReason);//dsRow["CustomerReason"].ToString()
+                            //wd.SetFields("AbitFIORod2", dsRow["AbitFIORod"].ToString());
+                            wd.SetFields("CustomerAddress", dogovorInfo.CustomerAddress);//dsRow["CustomerAddress"].ToString()
+                            wd.SetFields("CustomerINN", "ИНН " + dogovorInfo.CustomerINN);//dsRow["CustomerINN"].ToString()
+                            wd.SetFields("CustomerRS", "Р/С " + dogovorInfo.CustomerRS);//dsRow["CustomerRS"].ToString()
+
                             break;
                         }
                 }
@@ -2098,6 +2166,21 @@ namespace Priem
                 }
 
             }
+            //AbiturientClass abit = AbiturientClass.GetInstanceFromDBForPrint(abitId);
+            //PersonClass person = PersonClass.GetInstanceFromDBForPrint(abit.PersonId);
+
+            //DataSet ds = _bdc.GetDataSet(string.Format("SELECT PaidData.DogovorNum, PaidData.DogovorTypeId, PaidData.DogovorDate, " +
+            //    "PaidData.Qualification, PaidData.Srok, PaidData.DateStart, PaidData.DateFinish, " +
+            //    "PaidData.SumFirstYear, PaidData.SumFirstPeriod, PaidData.Parent, " +
+            //    "PaidData.ProrektorId, PaidData.PayPeriodId, PaidData.AbitFIORod, PaidData.AbiturientId, " +
+            //    "PaidData.Customer, PaidData.CustomerLico, PaidData.CustomerAddress, PaidData.CustomerPassport, " +
+            //    "PaidData.CustomerPassportAuthor, PaidData.CustomerReason, PaidData.CustomerINN, PaidData.CustomerRS, " +
+            //    "Prorektor.NameFull AS Prorektor, Prorektor.DateDov, Prorektor.NumberDov, PayPeriod.Name AS PayPeriod, PayPeriod.NamePad AS PayPeriodPad " +
+            //    "FROM PaidData LEFT JOIN Prorektor ON PaidData.ProrektorId = Prorektor.Id " +
+            //    "LEFT JOIN PayPeriod ON PaidData.PayPeriodId = PayPeriod.Id " +
+            //    "WHERE PaidData.Id = '{0}'", dogId));
+
+            //DataRow dsRow = ds.Tables[0].Rows[0];
         }
 
         public static void PrintDocInventory(IList<int> ids, Guid? _abitId)
@@ -2319,8 +2402,11 @@ namespace Priem
                                    from hlpabiturientProf in hlpabiturientProf2.DefaultIfEmpty()
                                    join extabitMarksSum in ctx.extAbitMarksSum on extabit.Id equals extabitMarksSum.Id into extabitMarksSum2
                                    from extabitMarksSum in extabitMarksSum2.DefaultIfEmpty()
-                                   where fixierenView.StudyFormId == iStudyFormId && fixierenView.StudyBasisId == iStudyBasisId && fixierenView.FacultyId == iFacultyId && fixierenView.LicenseProgramId == iLicenseProgramId &&
+                                   where fixierenView.Id == fixId
+                                   /*
+                                    * fixierenView.StudyFormId == iStudyFormId && fixierenView.StudyBasisId == iStudyBasisId && fixierenView.FacultyId == iFacultyId && fixierenView.LicenseProgramId == iLicenseProgramId &&
                                    fixierenView.ObrazProgramId == iObrazProgramId && (gProfileId.HasValue ? fixierenView.ProfileId == gProfileId : true) && fixierenView.IsCel == isCel && fixierenView.IsSecond == isSecond && fixierenView.IsParallel == isParallel && fixierenView.IsReduced == isReduced
+                                    */
                                    orderby fixieren.Number
                                    select new
                                    {
