@@ -24,8 +24,8 @@ namespace Priem
                 using (PriemEntities context = new PriemEntities())
                 {
                     extPersonSPO person = (from per in context.extPersonSPO
-                                        where per.Id == persId
-                                        select per).FirstOrDefault();                   
+                                           where per.Id == persId
+                                           select per).FirstOrDefault();
 
                     FileStream fileS = null;
                     using (FileStream fs = new FileStream(string.Format(@"{0}\HostelDirection.pdf", MainClass.dirTemplates), FileMode.Open, FileAccess.Read))
@@ -100,9 +100,9 @@ namespace Priem
                 using (PriemEntities context = new PriemEntities())
                 {
                     extPersonSPO person = (from per in context.extPersonSPO
-                                        where per.Id == persId
-                                        select per).FirstOrDefault();
-                    
+                                           where per.Id == persId
+                                           select per).FirstOrDefault();
+
                     FileStream fileS = null;
 
                     using (FileStream fs = new FileStream(string.Format(@"{0}\ExamPass.pdf", MainClass.dirTemplates), FileMode.Open, FileAccess.Read))
@@ -189,8 +189,8 @@ namespace Priem
                                     select ab).FirstOrDefault();
 
                     extPersonSPO person = (from per in context.extPersonSPO
-                                        where per.Id == abit.PersonId
-                                        select per).FirstOrDefault();                   
+                                           where per.Id == abit.PersonId
+                                           select per).FirstOrDefault();
 
                     WordDoc wd = new WordDoc(string.Format(@"{0}\ExamSheet.dot", MainClass.dirTemplates), !forPrint);
                     TableDoc td = wd.Tables[0];
@@ -198,21 +198,21 @@ namespace Priem
                     td[0, 0] = abit.FacultyName;
                     td[0, 1] = abit.LicenseProgramName;
                     td[0, 2] = abit.ProfileName;
-                    td[1, 1] = MainClass.PriemYear;                   
+                    td[1, 1] = MainClass.PriemYear;
                     td[1, 0] = abit.StudyBasisName.Substring(0, 1).ToUpper() + abit.StudyFormOldName.Substring(0, 1).ToUpper();
                     td[0, 10] = person.Surname;
                     td[0, 11] = person.Name;
                     td[0, 12] = person.SecondName;
 
                     td[2, 13] = abit.RegNum;
-                    td[1, 14] = abit.FacultyAcr;    
+                    td[1, 14] = abit.FacultyAcr;
                     td[1, 10] = person.PassportSeries + "   " + person.PassportNumber;
 
                     // экзамены!!! 
                     int row = 4;
                     IEnumerable<extExamInEntry> exams = from ex in context.extExamInEntry
                                                         where ex.EntryId == abit.EntryId
-                                                        orderby ex.ExamName                     
+                                                        orderby ex.ExamName
                                                         select ex;
 
                     foreach (extExamInEntry ex in exams)
@@ -227,9 +227,9 @@ namespace Priem
 
                         td[0, row] = sItem;
                         td[1, row] = mark;
-                        row++; 
+                        row++;
                     }
-                    
+
                     if (forPrint)
                     {
                         wd.Print();
@@ -260,8 +260,8 @@ namespace Priem
                                     select ab).FirstOrDefault();
 
                     extPersonSPO person = (from per in context.extPersonSPO
-                                        where per.Id == abit.PersonId
-                                        select per).FirstOrDefault();                    
+                                           where per.Id == abit.PersonId
+                                           select per).FirstOrDefault();
 
                     using (FileStream fs = new FileStream(string.Format(@"{0}\ExamList.pdf", MainClass.dirTemplates), FileMode.Open, FileAccess.Read))
                     {
@@ -306,16 +306,16 @@ namespace Priem
                         acrFlds.SetField("Name", person.Name);
                         acrFlds.SetField("SecondName", person.SecondName);
                         acrFlds.SetField("RegNumber", abit.RegNum);
-                                               
+
                         acrFlds.SetField("FacultyAcr", abit.FacultyAcr);
                         acrFlds.SetField("Passport", person.PassportSeries + "   " + person.PassportNumber);
 
                         // экзамены!!! 
                         int i = 1;
                         IEnumerable<extExamInEntry> exams = from ex in context.extExamInEntry
-                                                        where ex.EntryId == abit.EntryId
-                                                        orderby ex.ExamName                     
-                                                        select ex;
+                                                            where ex.EntryId == abit.EntryId
+                                                            orderby ex.ExamName
+                                                            select ex;
 
                         foreach (extExamInEntry ex in exams)
                         {
@@ -331,7 +331,7 @@ namespace Priem
                             acrFlds.SetField("Mark" + i, mark);
                             i++;
                         }
-                        
+
                         pdfStm.FormFlattening = true;
                         pdfStm.Close();
                         pdfRd.Close();
@@ -377,8 +377,8 @@ namespace Priem
                                     select ab).FirstOrDefault();
 
                     extPersonSPO person = (from per in context.extPersonSPO
-                                        where per.Id == abit.PersonId
-                                        select per).FirstOrDefault();
+                                           where per.Id == abit.PersonId
+                                           select per).FirstOrDefault();
 
                     WordDoc wd = new WordDoc(string.Format(@"{0}\Spravka.dot", MainClass.dirTemplates), !forPrint);
                     TableDoc td = wd.Tables[0];
@@ -408,10 +408,10 @@ namespace Priem
                     IEnumerable<qMark> marks = from mrk in context.qMark
                                                where mrk.AbiturientId == abit.Id
                                                select mrk;
-                   
+
 
                     string query = string.Format("SELECT qMark.Value, qMark.PassDate, extExamInProgram.ExamName as Name FROM (qMark INNER JOIN extExamInProgram ON qMark.ExamInProgramId = extExamInProgram.Id) INNER JOIN qAbiturient ON qMark.AbiturientId = qAbiturient.Id WHERE qAbiturient.Id = '{0}'", abitId);
-                  
+
                     int i = 1;
                     foreach (qMark m in marks)
                     {
@@ -461,8 +461,8 @@ namespace Priem
                     var abit = context.extAbitSPO.Where(x => x.Id == abitId).First();
                     //PersonClass person = PersonClass.GetInstanceFromDBForPrint(abit.PersonId);
                     var person = context.extPersonSPO.Where(x => x.Id == abit.PersonId).First();
-                    
-                    
+
+
                     WordDoc wd = new WordDoc(string.Format(@"{0}\{1}.dot", MainClass.dirTemplates, dotName), !forPrint);
 
                     wd.SetFields("Faculty", abit.FacultyName);
@@ -470,7 +470,7 @@ namespace Priem
                     wd.SetFields("Surname", person.Surname);
                     wd.SetFields("Name", person.Name);
                     wd.SetFields("SecondName", person.SecondName);
-                    wd.SetFields("Profession", "("+ abit.LicenseProgramCode + ") " + abit.LicenseProgramName + ", " + abit.ObrazProgramName);
+                    wd.SetFields("Profession", "(" + abit.LicenseProgramCode + ") " + abit.LicenseProgramName + ", " + abit.ObrazProgramName);
                     wd.SetFields("Specialization", abit.ProfileName);
                     wd.SetFields("Citizen", person.NationalityName);
                     wd.SetFields("Phone", person.Phone + "; " + person.Mobiles);
@@ -507,9 +507,9 @@ namespace Priem
                         string sPrevYear = DateTime.Now.AddYears(-1).Year.ToString();
                         string sCurrYear = DateTime.Now.Year.ToString();
                         string egePrevYear = context.EgeCertificate.Where(x => x.PersonId == person.Id && x.Year == sPrevYear).Select(x => x.Number).FirstOrDefault();
-                            //_bdc.GetStringValue(string.Format("SELECT TOP 1 EgeCertificate.Number FROM EgeCertificate WHERE EgeCertificate.Year = '{1}' AND PersonId = '{0}' ", abit.PersonId, DateTime.Now.Year - 1));
+                        //_bdc.GetStringValue(string.Format("SELECT TOP 1 EgeCertificate.Number FROM EgeCertificate WHERE EgeCertificate.Year = '{1}' AND PersonId = '{0}' ", abit.PersonId, DateTime.Now.Year - 1));
                         string egeCurYear = context.EgeCertificate.Where(x => x.PersonId == person.Id && x.Year == sCurrYear).Select(x => x.Number).FirstOrDefault();
-                            //_bdc.GetStringValue(string.Format("SELECT TOP 1 EgeCertificate.Number FROM EgeCertificate WHERE EgeCertificate.Year = '{1}' AND PersonId = '{0}' ", abit.PersonId, DateTime.Now.Year));
+                        //_bdc.GetStringValue(string.Format("SELECT TOP 1 EgeCertificate.Number FROM EgeCertificate WHERE EgeCertificate.Year = '{1}' AND PersonId = '{0}' ", abit.PersonId, DateTime.Now.Year));
 
                         wd.SetFields("EgeNamePrevYear", egePrevYear);
                         wd.SetFields("EgeNameCurYear", egeCurYear);
@@ -647,18 +647,18 @@ namespace Priem
             {
                 using (PriemEntities context = new PriemEntities())
                 {
-                    extAbitSPO abit = (from ab in context.extAbitSPO
+                    extAbit abit = (from ab in context.extAbit
                                        where ab.Id == abitId
                                        select ab).FirstOrDefault();
-
-                    extPersonSPO person = (from per in context.extPersonSPO
-                                  where per.Id == abit.PersonId
-                                  select per).FirstOrDefault();
+                    
+                    extPerson person = (from per in context.extPerson
+                                        where per.Id == abit.PersonId
+                                           select per).FirstOrDefault();
 
                     string tmp;
                     string dotName;
 
-                    dotName = "Application_SPO";
+                    dotName = "ApplicationSPO_2014";
 
                     using (FileStream fs = new FileStream(string.Format(@"{0}\{1}.pdf", MainClass.dirTemplates, dotName), FileMode.Open, FileAccess.Read))
                     {
@@ -684,8 +684,8 @@ namespace Priem
 
                         PdfStamper pdfStm = new PdfStamper(pdfRd, fileS);
                         pdfStm.SetEncryption(PdfWriter.STRENGTH128BITS, "", "",
-        PdfWriter.ALLOW_SCREENREADERS | PdfWriter.ALLOW_PRINTING |
-        PdfWriter.AllowPrinting);
+                        PdfWriter.ALLOW_SCREENREADERS | PdfWriter.ALLOW_PRINTING |
+                        PdfWriter.AllowPrinting);
                         AcroFields acrFlds = pdfStm.AcroFields;
 
                         //чей мы рисуем штрих-код??
@@ -699,205 +699,45 @@ namespace Priem
                         //iTextSharp.text.Image img = barcode.CreateImageWithBarcode(cb, null, null);
                         //img.SetAbsolutePosition(420, 720);
                         //cb.AddImage(img);
+                        //acrFlds.SetField("RegNum", abit.PersonNum + @"\" + abit.RegNum);
+                        string[] splitStr;
 
-                        acrFlds.SetField("RegNum", abit.PersonNum + @"\" + abit.RegNum);
+                        // ФИО
                         acrFlds.SetField("FIO", person.FIO);
-
-                        acrFlds.SetField("Profession", "(" + abit.LicenseProgramCode + ") " + abit.LicenseProgramName);
-                        acrFlds.SetField("Specialization", abit.ProfileName);
-                        acrFlds.SetField("Faculty", abit.FacultyName);
-                        acrFlds.SetField("ObrazProgram", abit.ObrazProgramCrypt + " " + abit.ObrazProgramName);
-
-                        if (MainClass.dbType == PriemType.PriemMag)
-                        {
-                            //acrFlds.SetField("StudyForm1", "1");
-                            acrFlds.SetField("ExitYear", person.HEExitYear.ToString());
-
-                            string[] HEInfo = new string[3];
-                            string tmpStr = person.HighEducation + " : " + person.HEProfession;
-
-                            string[] splitted = tmpStr.Split(' ');
-                            string tmpFiller = "";
-                            int ind = 0;
-                            foreach (string s in splitted)
-                            {
-                                if (ind > 1)
-                                    break;
-
-                                if (tmpFiller.Length < 60 && ind == 0 || tmpFiller.Length < 90 && ind == 1)
-                                {
-                                    tmpFiller += s + " ";
-                                }
-                                else
-                                {
-                                    HEInfo[ind++] = tmpFiller;
-                                    tmpFiller = s + " ";
-                                }
-                                HEInfo[ind] = tmpFiller;
-                            }
-
-                            acrFlds.SetField("School", HEInfo[0]);
-                            acrFlds.SetField("Attestat", string.Format("диплом серия {0} № {1}", person.DiplomSeries, person.DiplomNum));
-
-                            acrFlds.SetField("HighEducation", HEInfo[1]);
-                            acrFlds.SetField("Qualification", person.HEQualification);
-                        }
-                        else
-                        {
-                            tmp = abit.StudyLevelId == 16 ? "chbBak" : "chbSpec";
-                            acrFlds.SetField(tmp, "1");
-
-                            tmp = person.StartEnglish ?? false ? "Yes" : "No";
-                            acrFlds.SetField("chbEnglish" + tmp, "1");
-                            acrFlds.SetField("EnglishMark", person.EnglishMark.ToString());
-
-
-                            //IEnumerable<extEgeMark> eges = from eg in context.extEgeMark
-                            //                               join eex in context.EgeToExam
-                            //                               on eg.EgeExamNameId equals eex.EgeExamNameId into exam
-                            //                               from ex in exam.DefaultIfEmpty()
-
-                            //                               join ec in context.EgeCertificate
-                            //                               on eg.EgeCertificateId equals ec.Id
-
-                            //                               join p in context.Person
-                            //                               on ec.PersonId equals p.Id
-                            //                               join 
-
-
-                            string queryEge = "SELECT TOP 5 EgeMark.Id, EgeExamName.Name AS ExamName, EgeMark.Value, " +
-                                          "EgeCertificate.Number, EgeMark.EgeCertificateId " +
-                                          "FROM ed.EgeMark LEFT JOIN ed.EgeExamName ON EgeMark.EgeExamNameId = EgeExamName.Id " +
-                                          "LEFT JOIN ed.EgeToExam ON EgeExamName.Id = EgeToExam.EgeExamNameId " +
-                                          "LEFT JOIN ed.EgeCertificate ON EgeMark.EgeCertificateId = EgeCertificate.Id " +
-                                          "LEFT JOIN ed.extPersonSPO ON EgeCertificate.PersonId = extPersonSPO.Id " +
-                                          "LEFT JOIN ed.qAbiturient ON qAbiturient.PersonId = extPersonSPO.Id " +
-                                          "WHERE qAbiturient.Id = '" + abitId + "'" +
-                                          "AND EgeToExam.ExamId IN (SELECT ExamId FROM ed.ExamInEntry WHERE ExamInEntry.EntryId = qAbiturient.EntryId) " +
-                                          "ORDER BY EgeMark.EgeCertificateId ";
-
-                            DataSet dsEge = MainClass.Bdc.GetDataSet(queryEge);
-
-                            int i = 1;
-
-                            foreach (DataRow dre in dsEge.Tables[0].Rows)
-                            {
-                                acrFlds.SetField("TableName" + i, dre["ExamName"].ToString());
-                                acrFlds.SetField("TableValue" + i, dre["Value"].ToString());
-                                acrFlds.SetField("TableNumber" + i, dre["Number"].ToString());
-                                i++;
-                            }
-
-                            acrFlds.SetField("Language", abit.LanguageName);
-
-                            string SchoolTypeName = context.SchoolType.Where(x => x.Id == person.SchoolTypeId).Select(x => x.Name).First();
-
-                            if (SchoolTypeName + person.SchoolName + person.SchoolNum + person.SchoolCity != string.Empty)
-                                acrFlds.SetField("chbSchoolFinished", "1");
-                            acrFlds.SetField("School", string.Format("{0} {1} {2} {3}", SchoolTypeName, person.SchoolName, person.SchoolNum == string.Empty ? "" : "номер " + person.SchoolNum, person.SchoolCity == string.Empty ? "" : "города " + person.SchoolCity));
-                            string attreg = person.AttestatRegion;
-
-                            acrFlds.SetField("ExitYear", person.SchoolExitYear.ToString());
-
-                            if (SchoolTypeName == "Школа")
-                                acrFlds.SetField("Attestat", string.Format("аттестат  {0} серия {1} № {2}", attreg == string.Empty ? "" : "регион " + attreg, person.AttestatSeries, person.AttestatNum));
-                            else
-                                acrFlds.SetField("Attestat", string.Format("диплом серия {0} № {1}", person.DiplomSeries, person.DiplomNum));
-
-                            if (person.HighEducation != string.Empty)
-                            {
-                                acrFlds.SetField("HasEduc", "1");
-                                acrFlds.SetField("HighEducation", person.HighEducation + " " + person.HEProfession);
-                            }
-                            else
-                                acrFlds.SetField("NoEduc", "1");
-
-                        }
-
-                        string SportQualification = "";
-                        if (person.SportQualificationId.HasValue && person.SportQualificationId > 0)
-                            SportQualification = person.SportQualificationName + " разряд:" + person.SportQualificationLevel;
-                        else if (!person.SportQualificationId.HasValue || person.SportQualificationId == 0)
-                            SportQualification = "нет";
-                        else if (!person.SportQualificationId.HasValue || person.SportQualificationId == 44)
-                            SportQualification = person.OtherSportQualification;
-                        acrFlds.SetField("SportQualification", SportQualification);
-
-                        tmp = abit.StudyBasisId.ToString();
-                        acrFlds.SetField("StudyBasis" + tmp, "1");
-                        tmp = abit.StudyFormId.ToString();
-                        acrFlds.SetField("StudyForm" + tmp, "1");
-
-                        acrFlds.SetField("HostelEducYes", person.HostelEduc ?? false ? "1" : "0");
-                        acrFlds.SetField("HostelEducNo", person.HostelEduc ?? false ? "0" : "1");
-
-                        acrFlds.SetField("HostelAbitYes", person.HostelAbit ?? false ? "1" : "0");
-                        acrFlds.SetField("HostelAbitNo", person.HostelAbit ?? false ? "0" : "1");
-
-                        //дробилка даты и места рождения
-                        tmp = person.BirthDate.ToShortDateString() + " " + person.BirthPlace;
-                        string[] birthFieldsTmp = tmp.Split(' ');
-                        string[] birthFields = new string[2];
-                        int index = 0;
-                        string strb = "";
-                        foreach (string str in birthFieldsTmp)
-                        {
-                            if (index > 1)
-                                break;
-                            if (strb.Length + str.Length < 45 && index == 0 || strb.Length < 80 && index != 0)
-                                strb += str + " ";
-                            else
-                            {
-                                birthFields[index] = strb + str + " ";
-                                index++;
-                                strb = "";
-                                continue;
-                            }
-                            birthFields[index] = strb;
-                        }
-
-                        acrFlds.SetField("BirthDate", /*person.BirthDate.ToShortDateString()*/ birthFields[0]);
-                        acrFlds.SetField("BirthPlace", /*person.BirthPlace*/ birthFields[1]);
-
                         acrFlds.SetField("Male", person.Sex ? "1" : "0");
                         acrFlds.SetField("Female", person.Sex ? "0" : "1");
-
+                        // дата рождения
+                        acrFlds.SetField("BirthDateYear", person.BirthDate.Year.ToString("D2"));
+                        acrFlds.SetField("BirthDateMonth", person.BirthDate.Month.ToString("D2"));
+                        acrFlds.SetField("BirthDateDay", person.BirthDate.Day.ToString());
+                        acrFlds.SetField("BirthPlace", person.BirthPlace);
+                        // паспорт
                         acrFlds.SetField("Nationality", person.NationalityName);
+                        if (person.NationalityId == 1)
+                            acrFlds.SetField("HasRussianNationalityYes", "1");
                         acrFlds.SetField("PassportSeries", person.PassportSeries);
                         acrFlds.SetField("PassportNumber", person.PassportNumber);
-                        acrFlds.SetField("PassportDate", person.PassportDate.Value.ToShortDateString());
-                        acrFlds.SetField("PassportAuthor", person.PassportAuthor);
-
-                        acrFlds.SetField("Address1", string.Format("{0} {1} {2}, {3}, ", person.Code, person.CountryName, person.RegionName, person.City));
-                        acrFlds.SetField("Address2", string.Format("{0} дом {1} {2} кв. {3}", person.Street, person.House, (person.Korpus == string.Empty || person.Korpus == "-") ? "" : "корп. " + person.Korpus, person.Flat));
-
-                        string addInfo = person.Mobiles.Replace('\r', ',').Replace('\n', ' ').Trim();//если начнут вбивать построчно, то хотя бы в одну строку сведём
-                        if (addInfo.Length > 100)
-                        {
-                            int cutpos = 0;
-                            cutpos = addInfo.Substring(0, 100).LastIndexOf(',');
-                            addInfo = addInfo.Substring(0, cutpos) + "; ";
-                        }
-
-                        string email = person.Email == "" ? "" : "E-mail: " + person.Email;
-                        if (person.Phone != string.Empty)
-                        {
-                            acrFlds.SetField("Phone1", person.Phone);
-                            acrFlds.SetField("Phone2", email);
-                        }
-                        else
-                        {
-                            acrFlds.SetField("Phone1", person.Email);
-                            acrFlds.SetField("Phone2", "");
-                        }
-
-                        acrFlds.SetField("Orig", abit.HasOriginals ? "1" : "0");
-                        acrFlds.SetField("Copy", abit.HasOriginals ? "0" : "1");
-
-                        string CountryEducName = context.Country.Where(x => x.Id == person.CountryEducId).Select(x => x.Name).FirstOrDefault();
-
-                        acrFlds.SetField("CountryEduc", CountryEducName);
-
+                        splitStr = GetSplittedStrings(person.PassportAuthor + " " + person.PassportDate.Value.ToString("dd.MM.yyyy"), 60, 70, 2);
+                        for (int ii = 1; ii <= 2; ii++)
+                            acrFlds.SetField("PassportAuthor" + ii, splitStr[ii - 1]);
+                        // адрес
+                        string Address = string.Format("{0} {1}{2},", (person.Code) ?? "", (person.NationalityId == 1 ? (person.RegionName + ", ") ?? "" : person.CountryName + ", "), (person.City + ", ") ?? "") +
+                        string.Format("{0} {1} {2} {3}", person.Street ?? "", person.House == string.Empty ? "" : "дом " + person.House,
+                        person.Korpus == string.Empty ? "" : "корп. " + person.Korpus,
+                        person.Flat == string.Empty ? "" : "кв. " + person.Flat);
+                        splitStr = GetSplittedStrings(Address, 50, 70, 3);
+                        for (int ii = 1; ii <= 3; ii++)
+                            acrFlds.SetField("Address" + ii, splitStr[ii - 1]);
+                        // телефон
+                        acrFlds.SetField("Phone", person.Phone);
+                        acrFlds.SetField("Email", person.Email);
+                        acrFlds.SetField("Mobiles", person.Mobiles);
+                        // общежитие
+                        acrFlds.SetField("HostelEducYes", person.HostelEduc ?? false ? "1" : "0");
+                        acrFlds.SetField("HostelEducNo", person.HostelEduc ?? false ? "0" : "1");
+                        acrFlds.SetField("HostelAbitYes", person.HostelAbit ?? false ? "1" : "0");
+                        acrFlds.SetField("HostelAbitNo", person.HostelAbit ?? false ? "0" : "1");
+                        // стаж
                         if (person.Stag != string.Empty)
                         {
                             acrFlds.SetField("HasStag", "1");
@@ -910,6 +750,97 @@ namespace Priem
                         if ((int)person.Privileges > 0)
                             acrFlds.SetField("Privileges", "1");
 
+
+                        acrFlds.SetField("Language", abit.LanguageName);
+
+                        if (person.HighEducation != string.Empty)
+                        {
+                            acrFlds.SetField("HasEduc", "1");
+                            acrFlds.SetField("HighEducation", person.HighEducation + " " + person.HEProfession);
+                        }
+                        else
+                            acrFlds.SetField("NoEduc", "1");
+                        tmp = person.StartEnglish ?? false ? "Yes" : "No";  //+
+                        acrFlds.SetField("chbEnglish" + tmp, "1");          //+
+                        acrFlds.SetField("EnglishMark", person.EnglishMark.ToString());  
+                        // спорт
+                        string SportQualification = "";
+                        extPersonSPO personSPO = (from per in context.extPersonSPO
+                                                  where per.Id == abit.PersonId
+                                                  select per).FirstOrDefault();
+                        if (personSPO != null)
+                        {
+                            if (personSPO.SportQualificationId.HasValue && personSPO.SportQualificationId > 0)
+                                SportQualification = personSPO.SportQualificationName + ((!String.IsNullOrEmpty(personSPO.SportQualificationLevel)) ? " разряд:" + personSPO.SportQualificationLevel : "");
+
+                            else if (!personSPO.SportQualificationId.HasValue || personSPO.SportQualificationId == 0)
+                                SportQualification = "нет";
+
+                            else if (!personSPO.SportQualificationId.HasValue || personSPO.SportQualificationId == 44)
+                                SportQualification = personSPO.OtherSportQualification;
+                       
+                            acrFlds.SetField("SportQualification", SportQualification); 
+                        }
+                        // Полученное образование
+                        string SchoolTypeName = context.SchoolType.Where(x => x.Id == person.SchoolTypeId).Select(x => x.Name).First();
+                        if (SchoolTypeName + person.SchoolName + person.SchoolNum + person.SchoolCity != string.Empty)
+                            acrFlds.SetField("chbSchoolFinished", "1");
+
+                        string CountryEducName = context.Country.Where(x => x.Id == person.CountryEducId).Select(x => x.Name).FirstOrDefault();
+                        acrFlds.SetField("CountryEduc", CountryEducName);
+
+                        acrFlds.SetField("ExitYear", person.SchoolExitYear.ToString());
+                        splitStr = GetSplittedStrings(person.SchoolName ?? "", 50, 70, 2);
+                        for (int ii = 1; ii <= 2; ii++)
+                            acrFlds.SetField("School" + ii, splitStr[ii - 1]);
+
+                        string attreg = person.AttestatRegion;
+                        if (person.SchoolTypeId == 1)
+                            acrFlds.SetField("Attestat", string.Format("аттестат  {0} серия {1} № {2}", attreg == string.Empty ? "" : "регион " + attreg, person.AttestatSeries, person.AttestatNum));
+                        else
+                            acrFlds.SetField("Attestat", string.Format("диплом серия {0} № {1}", person.DiplomSeries, person.DiplomNum));
+
+                        string queryEge = "SELECT TOP 5 EgeMark.Id, EgeExamName.Name AS ExamName, EgeMark.Value, " +
+                                      "EgeCertificate.Number, EgeMark.EgeCertificateId " +
+                                      "FROM ed.EgeMark LEFT JOIN ed.EgeExamName ON EgeMark.EgeExamNameId = EgeExamName.Id " +
+                                      "LEFT JOIN ed.EgeToExam ON EgeExamName.Id = EgeToExam.EgeExamNameId " +
+                                      "LEFT JOIN ed.EgeCertificate ON EgeMark.EgeCertificateId = EgeCertificate.Id " +
+                                      "LEFT JOIN ed.extPersonSPO ON EgeCertificate.PersonId = extPersonSPO.Id " +
+                                      "LEFT JOIN ed.qAbiturient ON qAbiturient.PersonId = extPersonSPO.Id " +
+                                      "WHERE qAbiturient.Id = '" + abitId + "'" +
+                                      "AND EgeToExam.ExamId IN (SELECT ExamId FROM ed.ExamInEntry WHERE ExamInEntry.EntryId = qAbiturient.EntryId) " +
+                                      "ORDER BY EgeMark.EgeCertificateId ";
+
+                        DataSet dsEge = MainClass.Bdc.GetDataSet(queryEge);
+
+                        int i = 1;
+
+                        foreach (DataRow dre in dsEge.Tables[0].Rows)
+                        {
+                            acrFlds.SetField("TableName" + i, dre["ExamName"].ToString());
+                            acrFlds.SetField("TableValue" + i, dre["Value"].ToString());
+                            acrFlds.SetField("TableNumber" + i, dre["Number"].ToString());
+                            i++;
+                        }
+                         
+                        acrFlds.SetField("Priority1", abit.Priority.ToString()); 
+                        acrFlds.SetField("Profession1", "(" + abit.LicenseProgramCode + ") " + abit.LicenseProgramName);
+                        acrFlds.SetField("Specialization1", abit.ProfileName);
+                        acrFlds.SetField("ObrazProgram1", abit.ObrazProgramCrypt + " " + abit.ObrazProgramName);
+                        acrFlds.SetField("StudyBasis" + abit.StudyBasisId.ToString() + "1", "1");
+                        acrFlds.SetField("StudyForm" + abit.StudyFormId.ToString() + "1", "1");
+
+                        string addInfo = person.Mobiles.Replace('\r', ',').Replace('\n', ' ').Trim();//если начнут вбивать построчно, то хотя бы в одну строку сведём
+                        if (addInfo.Length > 100)
+                        {
+                            int cutpos = 0;
+                            cutpos = addInfo.Substring(0, 100).LastIndexOf(',');
+                            addInfo = addInfo.Substring(0, cutpos) + "; ";
+                        }
+
+                        acrFlds.SetField("Original", abit.HasOriginals ? "1" : "0");  
+                        acrFlds.SetField("Copy", abit.HasOriginals ? "0" : "1");
+
                         // олимпиады
                         acrFlds.SetField("Extra", person.ExtraInfo + "\r\n" + person.ScienceWork);
 
@@ -918,8 +849,8 @@ namespace Priem
                         string[] mamaPapaWords = tmp.Split(' ');
 
                         string[] mamaPapa = new string[3];
-                        strb = "";
-                        index = 0;
+                        string strb = "";
+                        int index = 0;
                         foreach (string str in mamaPapaWords)
                         {
                             if (index >= 2)
@@ -935,18 +866,10 @@ namespace Priem
                             }
                             mamaPapa[index] = strb;
                         }
-                        if (MainClass.dbType == PriemType.PriemMag)
-                        {
-                            acrFlds.SetField("Contact1", mamaPapa[0]);
-                            acrFlds.SetField("Contact2", mamaPapa[1]);
-                            acrFlds.SetField("Contact3", mamaPapa[2]);
-                        }
-                        else
-                        {
-                            acrFlds.SetField("Parents1", mamaPapa[0]);
-                            acrFlds.SetField("Parents2", mamaPapa[1]);
-                            acrFlds.SetField("Parents3", mamaPapa[2]);
-                        }
+                        acrFlds.SetField("Parents1", mamaPapa[0]);
+                        acrFlds.SetField("Parents2", mamaPapa[1]);
+                        acrFlds.SetField("Parents3", mamaPapa[2]);
+
 
                         pdfStm.FormFlattening = true;
                         pdfStm.Close();
@@ -985,7 +908,7 @@ namespace Priem
             FileStream fileS = null;
             try
             {
-                string query = 
+                string query =
                     string.Format(@"SELECT DISTINCT extAbitSPO.Id as Id,
                                     extAbitSPO.RegNum as Рег_Номер, extPersonSPO.FIO as ФИО, 
                                     (case when extPersonSPO.SchoolTypeId = 1 then extPersonSPO.AttestatRegion + ' ' + extPersonSPO.AttestatSeries + '  №' + extPersonSPO.AttestatNum else extPersonSPO.DiplomSeries + '  №' + extPersonSPO.DiplomNum end) as Аттестат, 
@@ -1008,7 +931,7 @@ namespace Priem
 
                 using (PriemEntities context = new PriemEntities())
                 {
-                    var info = 
+                    var info =
                         (from protocol in context.extEnableProtocol
                          join sf in context.StudyForm
                          on protocol.StudyFormId equals sf.Id
@@ -1248,7 +1171,7 @@ namespace Priem
                          join sf in context.StudyForm
                          on protocol.StudyFormId equals sf.Id
 
-                         where protocol.Id == ProtocolId 
+                         where protocol.Id == ProtocolId
                          && protocol.ProtocolTypeId == 2 && protocol.IsOld == false && protocol.Excluded == false//disEnable
                          select new
                          {
@@ -1516,7 +1439,7 @@ namespace Priem
                     //string basisId = MainClass.Bdc.GetStringValue(string.Format("SELECT StudyBasis.Id FROM StudyBasis INNER JOIN Protocol ON Protocol.StudyBasisId = StudyBasis.Id WHERE Protocol.Id='{0}'", protocolId));
                     //DateTime protocolDate = (DateTime)MainClass.Bdc.GetValue(string.Format("SELECT Protocol.Date FROM Protocol WHERE Protocol.Id='{0}'", protocolId));
                     //string protocolNum = MainClass.Bdc.GetStringValue(string.Format("SELECT Protocol.Number FROM Protocol WHERE Protocol.Id='{0}'", protocolId));
-                    
+
                     string basis = string.Empty;
 
                     switch (basisId)
@@ -1729,7 +1652,7 @@ namespace Priem
                         (from protocol in context.extProtocol
                          join sf in context.StudyForm
                          on protocol.StudyFormId equals sf.Id
-                         
+
                          where protocol.Id == ProtocolId
                          && protocol.ProtocolTypeId == 6 && protocol.IsOld == false && protocol.Excluded == false//ChangeCompBE
                          select new
@@ -2548,7 +2471,7 @@ namespace Priem
                     bool? isParallel = prot.IsParallel;
                     bool? isList = prot.IsListener;
 
-                    
+
                     string profession = (from extabit in context.extAbitSPO
                                          join extentryView in context.extEntryView on extabit.Id equals extentryView.AbiturientId
                                          where extentryView.Id == protId
@@ -4020,6 +3943,34 @@ namespace Priem
             {
                 WinFormsServ.Error(exc.Message);
             }
+        }
+
+        public static string[] GetSplittedStrings(string sourceStr, int firstStrLen, int strLen, int numOfStrings)
+        {
+            sourceStr = sourceStr ?? "";
+            string[] retStr = new string[numOfStrings];
+            int index = 0, startindex = 0;
+            for (int i = 0; i < numOfStrings; i++)
+            {
+                if (sourceStr.Length > startindex && startindex >= 0)
+                {
+                    int rowLength = firstStrLen;//длина первой строки
+                    if (i > 1) //длина остальных строк одинакова
+                        rowLength = strLen;
+                    index = startindex + rowLength;
+                    if (index < sourceStr.Length)
+                    {
+                        index = sourceStr.IndexOf(" ", index);
+                        string val = index > 0 ? sourceStr.Substring(startindex, index - startindex) : sourceStr.Substring(startindex);
+                        retStr[i] = val;
+                    }
+                    else
+                        retStr[i] = sourceStr.Substring(startindex);
+                }
+                startindex = index;
+            }
+
+            return retStr;
         }
     }
 }

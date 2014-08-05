@@ -843,7 +843,7 @@
             this.groupBox1.Controls.Add(this.tbHouseReal);
             this.groupBox1.Controls.Add(this.label35);
             this.groupBox1.Controls.Add(this.tbCodeReal);
-            this.groupBox1.Location = new System.Drawing.Point(25, 298);
+            this.groupBox1.Location = new System.Drawing.Point(20, 304);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(411, 147);
             this.groupBox1.TabIndex = 4;
@@ -1565,7 +1565,7 @@
             this.gbFinishStudy.Controls.Add(this.tbHEProfession);
             this.gbFinishStudy.Location = new System.Drawing.Point(11, 305);
             this.gbFinishStudy.Name = "gbFinishStudy";
-            this.gbFinishStudy.Size = new System.Drawing.Size(433, 187);
+            this.gbFinishStudy.Size = new System.Drawing.Size(467, 187);
             this.gbFinishStudy.TabIndex = 95;
             this.gbFinishStudy.TabStop = false;
             this.gbFinishStudy.Text = "Высшее (среднее специальное) профессиональное образование";
@@ -1580,7 +1580,7 @@
             this.cbHEStudyForm.FormattingEnabled = true;
             this.cbHEStudyForm.Location = new System.Drawing.Point(295, 112);
             this.cbHEStudyForm.Name = "cbHEStudyForm";
-            this.cbHEStudyForm.Size = new System.Drawing.Size(132, 21);
+            this.cbHEStudyForm.Size = new System.Drawing.Size(166, 21);
             this.cbHEStudyForm.TabIndex = 115;
             // 
             // cbHEQualification
@@ -1592,7 +1592,7 @@
             this.cbHEQualification.FormattingEnabled = true;
             this.cbHEQualification.Location = new System.Drawing.Point(295, 73);
             this.cbHEQualification.Name = "cbHEQualification";
-            this.cbHEQualification.Size = new System.Drawing.Size(132, 21);
+            this.cbHEQualification.Size = new System.Drawing.Size(166, 21);
             this.cbHEQualification.TabIndex = 114;
             // 
             // label60
