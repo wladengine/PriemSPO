@@ -987,7 +987,7 @@ namespace Priem
             {
                 string query = 
                     string.Format(@"SELECT DISTINCT extAbitSPO.Id as Id,
-                                    extAbitSPO.RegNum as Рег_Номер, extPersonSPO.Surname + ' '+ extPersonSPO.[Name] + ' ' + extPersonSPO.SecondName as ФИО, 
+                                    extAbitSPO.RegNum as Рег_Номер, extPersonSPO.FIO as ФИО, 
                                     (case when extPersonSPO.SchoolTypeId = 1 then extPersonSPO.AttestatRegion + ' ' + extPersonSPO.AttestatSeries + '  №' + extPersonSPO.AttestatNum else extPersonSPO.DiplomSeries + '  №' + extPersonSPO.DiplomNum end) as Аттестат, 
                                     qEntry.LicenseProgramCode + ' ' + qEntry.LicenseProgramName + ', ' + qEntry.ObrazProgramName + ', ' + ( Case when qEntry.ProfileId IS NOT NULL then qEntry.ProfileName else '' end) as Направление,
                                     qEntry.LicenseProgramCode as Код, Competition.NAme as Конкурс, 
@@ -1222,7 +1222,7 @@ namespace Priem
             try
             {
                 string query = string.Format(@"SELECT DISTINCT extAbitSPO.Id as Id,
-                                    extAbitSPO.RegNum as Рег_Номер, Person.Surname + ' '+Person.[Name] + ' ' + Person.SecondName as ФИО, 
+                                    extAbitSPO.RegNum as Рег_Номер, Person.Surname + ' '+Person.[Name] + ISNULL(' '+Person.SecondName,'') as ФИО, 
                                     (case when Person.SchoolTypeId = 1 then Person.AttestatRegion + ' ' + Person.AttestatSeries + '  №' + Person.AttestatNum else Person.DiplomSeries + '  №' + Person.DiplomNum end) as Аттестат, 
                                     qEntry.LicenseProgramCode + ' ' + qEntry.LicenseProgramName + ', ' + qEntry.ObrazProgramName + ', ' + ( Case when qEntry.ProfileId IS NOT NULL then qEntry.ProfileName else '' end) as Направление,
                                     qEntry.LicenseProgramCode as Код, Competition.NAme as Конкурс, 
@@ -1471,7 +1471,7 @@ namespace Priem
             {
                 string query =
                     string.Format(@"SELECT DISTINCT extAbitSPO.Id as Id,
-                                    extAbitSPO.RegNum as Рег_Номер, Person.Surname + ' '+Person.[Name] + ' ' + Person.SecondName as ФИО, 
+                                    extAbitSPO.RegNum as Рег_Номер, Person.Surname + ' '+Person.[Name] + ISNULL(' '+Person.SecondName,'') as ФИО, 
                                     (case when Person.SchoolTypeId = 1 then Person.AttestatRegion + ' ' + Person.AttestatSeries + '  №' + Person.AttestatNum else Person.DiplomSeries + '  №' + Person.DiplomNum end) as Аттестат, 
                                     qEntry.LicenseProgramCode + ' ' + qEntry.LicenseProgramName + ', ' + qEntry.ObrazProgramName + ', ' + ( Case when qEntry.ProfileId IS NOT NULL then qEntry.ProfileName else '' end) as Направление,
                                     qEntry.LicenseProgramCode as Код, Competition.NAme as Конкурс, 
@@ -1704,7 +1704,7 @@ namespace Priem
             {
                 string query =
                     string.Format(@"SELECT DISTINCT extAbitSPO.Id as Id,
-                                    extAbitSPO.RegNum as Рег_Номер, Person.Surname + ' '+Person.[Name] + ' ' + Person.SecondName as ФИО, 
+                                    extAbitSPO.RegNum as Рег_Номер, Person.Surname + ' '+Person.[Name] +  ISNULL(' '+Person.SecondName,'') as ФИО, 
                                     (case when Person.SchoolTypeId = 1 then Person.AttestatRegion + ' ' + Person.AttestatSeries + '  №' + Person.AttestatNum else Person.DiplomSeries + '  №' + Person.DiplomNum end) as Аттестат, 
                                     qEntry.LicenseProgramCode + ' ' + qEntry.LicenseProgramName + ', ' + qEntry.ObrazProgramName + ', ' + ( Case when qEntry.ProfileId IS NOT NULL then qEntry.ProfileName else '' end) as Направление,
                                     qEntry.LicenseProgramCode as Код, Competition.NAme as Конкурс, 
@@ -2194,7 +2194,7 @@ namespace Priem
                     WinFormsServ.Error("Не найдены данные по заявлению!");
                     return;
                 }
-                Guid PersonId = abit.PersonId ?? Guid.Empty;
+                Guid PersonId = abit.PersonId;// ?? Guid.Empty;
                 var person = context.Person.Where(x => x.Id == PersonId).FirstOrDefault();
                 if (person == null)
                 {

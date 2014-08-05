@@ -321,7 +321,7 @@ AND qAbiturient.IsImported = 1 ";
             string s = string.Join(", ", lstAbits.ToArray());
             
             string queryOur = string.Format(
-                   @"SELECT extAbit.Id, extAbit.Barcode, Person.Surname + ' ' + Person.Name + ' ' + Person.SecondName as ФИО, Person.BirthDate AS Дата_рождения,
+                   @"SELECT extAbit.Id, extAbit.Barcode, Person.Surname + ' ' + Person.Name + ISNULL(' ' + ed.Person.SecondName,'') as ФИО, Person.BirthDate AS Дата_рождения,
                    extAbit.FacultyName AS Факультет, extAbit.LicenseProgramName AS Направление, extAbit.ObrazProgramName AS Образ_программа, 
                    extAbit.ProfileName AS Профиль, extAbit.StudyBasisName AS Основа, Person.Barcode AS PersonBarcode                  
                    FROM ed.extAbit INNER JOIN ed.Person ON extAbit.PersonId = Person.Id 
@@ -445,7 +445,7 @@ AND qAbiturient.IsImported = 1 ";
                 }                   
 
                 string query = string.Format(
-                   @"SELECT ed.extAbit.Id, Person.Surname + ' ' + Person.Name + ' ' + Person.SecondName as ФИО, 
+                   @"SELECT ed.extAbit.Id, Person.Surname + ' ' + Person.Name + ISNULL(' ' + ed.Person.SecondName,'') as ФИО, 
                    Person.BirthDate AS Дата_рождения, ed.extAbit.Barcode, Person.Barcode AS PersonBarcode,
                    ed.extAbit.FacultyName as Факультет, ed.extAbit.LicenseProgramName AS Направление, ed.extAbit.ObrazProgramName AS Образ_программа, 
                    ed.extAbit.ProfileName AS Профиль, ed.extAbit.StudyBasisName AS Основа 

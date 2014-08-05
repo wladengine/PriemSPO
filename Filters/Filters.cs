@@ -134,7 +134,7 @@ namespace Priem
                 AddItem(new FilterItem("параллельные программы", FilterType.Bool, "ed.qAbiturient.IsParallel", "ed.qAbiturient"));  
 
                 AddItem(new FilterItem("Медалист", FilterType.Bool, "ed.Person.IsExcellent", "ed.Person"));
-                AddItem(new FilterItem("Подан подлинник аттестата", FilterType.Bool, "ed.qAbiturient.AttDocOrigin", "ed.qAbiturient"));
+                //AddItem(new FilterItem("Подан подлинник аттестата", FilterType.Bool, "ed.qAbiturient.AttDocOrigin", "ed.qAbiturient"));
 
                 AddItem(new FilterItem("Номер аттестата", FilterType.FromTo, "ed.Person.AttestatNum", "ed.Person"));
                 AddItem(new FilterItem("Серия аттестата", FilterType.FromTo, "ed.Person.AttestatSeries", "ed.Person"));
@@ -150,7 +150,7 @@ namespace Priem
 
                 AddItem(new FilterItem("Профиль", FilterType.Multi, "ed.qAbiturient.ProfileId", "ed.qAbiturient", " SELECT DISTINCT ed.qProfile.Id, ed.qProfile.Name AS Name FROM ed.qProfile "));
 
-                AddItem(new FilterItem("Поданы подлинники свидетельств ЕГЭ", FilterType.Bool, "ed.qAbiturient.EgeDocOrigin", "ed.qAbiturient"));
+                //AddItem(new FilterItem("Поданы подлинники свидетельств ЕГЭ", FilterType.Bool, "ed.qAbiturient.EgeDocOrigin", "ed.qAbiturient"));
                 AddItem(new FilterItem("Статус ФБС", FilterType.Multi, "(SELECT FBSStatusId FROM ed.extFBSStatus WHERE ed.extFBSStatus.PersonId = ed.Person.Id)", "ed.Person", "SELECT Id, Name FROM ed.FBSStatus WHERE Id <> 3"));
 
                 //олимпиады
@@ -216,7 +216,7 @@ namespace Priem
                 AddItem(new FilterItem("Магистерская программа", FilterType.Multi, "ed.qAbiturient.ProfileId", "ed.qAbiturient", " SELECT DISTINCT ed.qProfile.Id, ed.qProfile.Name AS Name FROM ed.qProfile "));
                 
                 AddItem(new FilterItem("Красный диплом", FilterType.Bool, "ed.Person.IsExcellent", "ed.Person"));
-                AddItem(new FilterItem("Подан подлинник диплома", FilterType.Bool, "ed.qAbiturient.AttDocOrigin", "ed.qAbiturient"));
+                //AddItem(new FilterItem("Подан подлинник диплома", FilterType.Bool, "ed.qAbiturient.AttDocOrigin", "ed.qAbiturient"));
             }
 
             cmbFilters.SelectedIndex = 0;

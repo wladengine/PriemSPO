@@ -49,7 +49,7 @@ namespace Priem
 
         private void FillDataGrid(string filters)
         {
-            string defQuery = @"SELECT DISTINCT ed.PersonChanges.PersonId AS Id, ed.extPerson.Surname + ' ' + ed.extPerson.Name + ' ' + ed.extPerson.SecondName AS ФИО,                  
+            string defQuery = @"SELECT DISTINCT ed.PersonChanges.PersonId AS Id, ed.extPerson.Surname + ' ' + ed.extPerson.Name + ISNULL(' ' + ed.Person.SecondName,'') AS ФИО,                  
                 ed.extPerson.PersonNum AS Ид_номер, ed.PersonChanges.FieldName AS Измененное_поле, ed.PersonChanges.OldValue AS Старое_значение, 
                 ed.PersonChanges.NewValue AS Новое_значение, ed.PersonChanges.Date AS Дата_изменения, 
                 ed.PersonChanges.Owner AS Автор_изменения, 

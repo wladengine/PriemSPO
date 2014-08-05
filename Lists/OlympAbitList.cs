@@ -224,7 +224,7 @@ namespace Priem
 
         protected override void GetSource()
         {
-            _sQuery = string.Format(@"SELECT ed.extAbit.Id as Id, RegNum as Рег_Номер, ed.Person.Surname + ' ' + ed.Person.Name + ' ' + ed.Person.SecondName as ФИО,
+            _sQuery = string.Format(@"SELECT ed.extAbit.Id as Id, RegNum as Рег_Номер, ed.Person.Surname + ' ' + ed.Person.Name + ISNULL(' ' + ed.Person.SecondName,'') as ФИО,
                      ed.Competition.Name as Тип_конкурса, OlympTypeName as Вид, OlympName AS Название, OlympLevelName AS Уровень, OlympSubjectName as Предмет,
                      OlympValueName as Степень, StudyFormName as Форма_обучения, ed.Person.BirthDate as Дата_рождения, PassportData as Паспорт                      
                      FROM ed.extAbit 
