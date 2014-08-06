@@ -915,7 +915,7 @@ namespace Priem
                 {
                     using (PriemEntities context = new PriemEntities())
                     {
-                        lblFIO.Text = (from per in context.extPersonSPO
+                        lblFIO.Text = (from per in context.extPerson
                                        where per.Id == _personId
                                        select per.FIO).FirstOrDefault();
 
