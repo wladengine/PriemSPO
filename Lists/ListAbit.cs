@@ -7,6 +7,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
 using System.IO;
+using System.Linq;
 
 using EducServLib;
 using BDClassLib;
@@ -78,7 +79,10 @@ namespace Priem
 
                 using (PriemEntities context = new PriemEntities())
                 {
-                    ComboServ.FillCombo(cbFaculty, HelpClass.GetComboListByTable("ed.qFaculty", "ORDER BY Acronym"), false, true);
+                    var lst = context.qEntry.Where(x => x.StudyLevelGroupId == MainClass.studyLevelGroupId).OrderBy(x => x.FacultyAcr).Select(x => new { x.FacultyId, x.FacultyName }).Distinct()
+                        .ToList().Select(x => new KeyValuePair<string, string>(x.FacultyId.ToString(), x.FacultyName)).ToList();
+                    //ComboServ.FillCombo(cbFaculty, HelpClass.GetComboListByTable("ed.qFaculty", "ORDER BY Acronym"), false, true);
+                    ComboServ.FillCombo(cbFaculty, lst, false, true);
                 }
             }
             catch (Exception exc)
