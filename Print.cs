@@ -647,12 +647,39 @@ namespace Priem
             {
                 using (PriemEntities context = new PriemEntities())
                 {
-                    extAbit abit = (from ab in context.extAbit
-                                       where ab.Id == abitId
-                                       select ab).FirstOrDefault();
-                    
+                    Guid PersonId = (from ab in context.extAbit
+                                     where ab.Id == abitId
+                                     select ab.PersonId).FirstOrDefault();
+
+                    var abitList = (from x in context.Abiturient
+                                    join Entry in context.Entry on x.EntryId equals Entry.Id
+                                    where Entry.StudyLevel.StudyLevelGroup.Id == MainClass.studyLevelGroupId
+                                    && x.IsGosLine == false
+                                    && x.PersonId == PersonId
+                                    && x.BackDoc == false
+                                    select new
+                                    {
+                                        x.Id,
+                                        x.PersonId,
+                                        x.Barcode,
+                                        Faculty = Entry.SP_Faculty.Name,
+                                        Profession = Entry.SP_LicenseProgram.Name,
+                                        ProfessionCode = Entry.SP_LicenseProgram.Code,
+                                        ObrazProgram = Entry.StudyLevel.Acronym + "." + Entry.SP_ObrazProgram.Number + "." + MainClass.PriemYear + " " + Entry.SP_ObrazProgram.Name,
+                                        Specialization = Entry.ProfileName,
+                                        Entry.StudyFormId,
+                                        Entry.StudyForm.Name,
+                                        Entry.StudyBasisId,
+                                        EntryType = (Entry.StudyLevelId == 17 ? 2 : 1),
+                                        Entry.StudyLevelId,
+                                        x.Priority,
+                                        x.IsGosLine,
+                                        Entry.CommissionId,
+                                        ComissionAddress = Entry.CommissionId
+                                    }).OrderBy(x => x.Priority).ToList();
+
                     extPerson person = (from per in context.extPerson
-                                        where per.Id == abit.PersonId
+                                        where per.Id == PersonId
                                            select per).FirstOrDefault();
 
                     string tmp;
@@ -751,7 +778,11 @@ namespace Priem
                             acrFlds.SetField("Privileges", "1");
 
 
-                        acrFlds.SetField("Language", abit.LanguageName);
+                        string LangName = (from ab in context.Language
+                                     where ab.Id == person.LanguageId
+                                     select ab.Name).FirstOrDefault();
+                        
+                        acrFlds.SetField("Language", LangName ?? "");
 
                         if (person.HighEducation != string.Empty)
                         {
@@ -766,7 +797,7 @@ namespace Priem
                         // спорт
                         string SportQualification = "";
                         extPersonSPO personSPO = (from per in context.extPersonSPO
-                                                  where per.Id == abit.PersonId
+                                                  where per.Id == PersonId
                                                   select per).FirstOrDefault();
                         if (personSPO != null)
                         {
@@ -822,13 +853,25 @@ namespace Priem
                             acrFlds.SetField("TableNumber" + i, dre["Number"].ToString());
                             i++;
                         }
-                         
+                        /*
                         acrFlds.SetField("Priority1", abit.Priority.ToString()); 
                         acrFlds.SetField("Profession1", "(" + abit.LicenseProgramCode + ") " + abit.LicenseProgramName);
                         acrFlds.SetField("Specialization1", abit.ProfileName);
                         acrFlds.SetField("ObrazProgram1", abit.ObrazProgramCrypt + " " + abit.ObrazProgramName);
                         acrFlds.SetField("StudyBasis" + abit.StudyBasisId.ToString() + "1", "1");
                         acrFlds.SetField("StudyForm" + abit.StudyFormId.ToString() + "1", "1");
+                        */
+
+                        for (int ii=0; ii< abitList.Count; ii++)
+                        {
+                            acrFlds.SetField("Priority"+(ii+1).ToString(), abitList[ii].Priority.ToString());
+                            acrFlds.SetField("Profession" + (ii + 1).ToString(), "(" + abitList[ii].ProfessionCode + ") " + abitList[ii].Profession);
+                            acrFlds.SetField("Specialization" + (ii + 1).ToString(), abitList[ii].Specialization);
+                            acrFlds.SetField("ObrazProgram" + (ii + 1).ToString(), abitList[ii].ObrazProgram);
+                            acrFlds.SetField("StudyBasis" + abitList[ii].StudyBasisId.ToString() + (ii + 1).ToString(), "1");
+                            acrFlds.SetField("StudyForm" + abitList[ii].StudyFormId.ToString() + (ii + 1).ToString(), "1");
+                        }
+
 
                         string addInfo = person.Mobiles.Replace('\r', ',').Replace('\n', ' ').Trim();//если начнут вбивать построчно, то хотя бы в одну строку сведём
                         if (addInfo.Length > 100)
@@ -838,8 +881,8 @@ namespace Priem
                             addInfo = addInfo.Substring(0, cutpos) + "; ";
                         }
 
-                        acrFlds.SetField("Original", abit.HasOriginals ? "1" : "0");  
-                        acrFlds.SetField("Copy", abit.HasOriginals ? "0" : "1");
+                        acrFlds.SetField("Original", "0");  
+                        acrFlds.SetField("Copy", "1");
 
                         // олимпиады
                         acrFlds.SetField("Extra", person.ExtraInfo + "\r\n" + person.ScienceWork);
