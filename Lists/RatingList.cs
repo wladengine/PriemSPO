@@ -489,7 +489,7 @@ qPersonAttMarkRussian.Value AS 'Атт. Русский Язык',
             {
                 string sOrderBy = string.Empty;
                 if (LicenseProgramId == 557 || LicenseProgramId == 521)//Физическая культура
-                    sOrderBy = " ORDER BY comp, noexamssort desc, attAvg DESC, 'Атт. Физ.Культ' desc, 'Атт. биология' desc, 'Атт. Русский Язык' desc, ФИО";
+                    sOrderBy = " ORDER BY comp, noexamssort desc, 'Оценка Физ.Культ' DESC, attAvg DESC, 'Атт. Физ.Культ' desc, 'Атт. биология' desc, 'Атт. Русский Язык' desc, ФИО";
                     //sOrderBy = " ORDER BY comp, noexamssort desc, 'Оценка Физ.Культ' DESC, attAvg DESC, 'Атт. Физ.Культ' desc, 'Атт. биология' desc, 'Атт. Русский Язык' desc, ФИО";
                 else //остальные
                     sOrderBy = " ORDER BY comp, noexamssort desc, attAvg DESC, 'Атт. матем' desc, 'Атт. Русский Язык' desc, 'Рейтинговый коэффициент' DESC, ФИО";
