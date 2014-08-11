@@ -26,16 +26,31 @@ namespace Priem
         //дополнительная инициализация
         protected override void InitControls()
         {
-            sQuery = @"SELECT DISTINCT ed.extAbitSPO.Sum, ed.extPersonSPO.AttestatSeries, ed.extPersonSPO.AttestatNum, ed.extAbitSPO.Id as Id, ed.extAbitSPO.BAckDoc as backdoc, 
+            sQuery = @"SELECT DISTINCT ed.extAbitSPO.Sum, 
+            --ed.extPersonSPO.AttestatSeries, 
+            --ed.extPersonSPO.AttestatNum, 
+            ed.extPerson.AttestatSeries, 
+            ed.extPerson.AttestatNum, 
+
+            ed.extAbitSPO.Id as Id, 
+            ed.extAbitSPO.BAckDoc as backdoc, 
              (ed.extAbitSPO.BAckDoc | ed.extAbitSPO.NotEnabled | case when (NOT ed.hlpMinEgeAbiturient.Id IS NULL) then 'true' else 'false' end) as Red, ed.extAbitSPO.RegNum as Рег_Номер, 
-             ed.extPersonSPO.FIO as ФИО, 
-             ed.extPersonSPO.EducDocument as Документ_об_образовании, 
-             ed.extPersonSPO.PassportSeries + ' №' + ed.extPersonSPO.PassportNumber as Паспорт, 
+             --ed.extPersonSPO.FIO as ФИО, 
+             --ed.extPersonSPO.EducDocument as Документ_об_образовании, 
+             --ed.extPersonSPO.PassportSeries + ' №' + ed.extPersonSPO.PassportNumber as Паспорт, 
+
+              ed.extPerson.FIO as ФИО, 
+             ed.extPerson.EducDocument as Документ_об_образовании, 
+             ed.extPerson.PassportSeries + ' №' + ed.extPerson.PassportNumber as Паспорт, 
+
              extAbitSPO.ObrazProgramNameEx + ' ' + (Case when extAbitSPO.ProfileId IS NULL then '' else extAbitSPO.ProfileName end) as Направление, 
              Competition.NAme as Конкурс, extAbitSPO.BackDoc 
-             FROM ed.extAbitSPO INNER JOIN ed.extPersonSPO ON ed.extAbitSPO.PersonId = ed.extPersonSPO.Id   
+             FROM ed.extAbitSPO 
+             --left JOIN ed.extPersonSPO ON ed.extAbitSPO.PersonId = ed.extPersonSPO.Id  
+             inner JOIN ed.extPerson ON ed.extAbitSPO.PersonId = ed.extPerson.Id    
              LEFT JOIN ed.hlpMinEgeAbiturient ON ed.hlpMinEgeAbiturient.Id = ed.extAbitSPO.Id          
-             LEFT JOIN ed.Competition ON ed.Competition.Id = ed.extAbitSPO.CompetitionId";
+             LEFT JOIN ed.Competition ON ed.Competition.Id = ed.extAbitSPO.CompetitionId
+                ";
 
             base.InitControls();
 
@@ -58,7 +73,8 @@ namespace Priem
                 sFilter += " AND ed.extAbitSPO.Checked > 0";
 
             //сперва общий конкурс (не общ-преим), т.к. чернобыльцы негодуют - льготы есть, а в протокол не попасть
-            FillGrid(dgvRight, sQuery, GetWhereClause("ed.extAbitSPO") + sFilter + " AND ed.extAbitSPO.CompetitionId NOT IN (1,2,7,8)/* AND (ed.extPersonSPO.Privileges=0  OR ed.extAbitSPO.CompetitionId IN (5,6))*/", sOrderby);
+           // FillGrid(dgvRight, sQuery, GetWhereClause("ed.extAbitSPO") + sFilter + " AND ed.extAbitSPO.CompetitionId NOT IN (1,2,7,8)/* AND (ed.extPersonSPO.Privileges=0  OR ed.extAbitSPO.CompetitionId IN (5,6))*/", sOrderby);
+            FillGrid(dgvRight, sQuery, GetWhereClause("ed.extAbitSPO") + sFilter + " AND ed.extAbitSPO.CompetitionId NOT IN (1,2,7,8)/* AND (ed.extPerson.Privileges=0  OR ed.extAbitSPO.CompetitionId IN (5,6))*/", sOrderby);
 
             //заполнили левый
             if (_id != null)
@@ -72,7 +88,8 @@ namespace Priem
             }
 
             // заполнение льготников, проверенных советниками
-            string query = sQuery + GetWhereClause("ed.extAbitSPO") + sFilter + " AND (ed.extAbitSPO.CompetitionId IN (1,8) OR (ed.extPersonSPO.Privileges>0 AND ed.extAbitSPO.CompetitionId IN (2,7))) AND ed.extAbitSPO.Checked>0 ";
+            //string query = sQuery + GetWhereClause("ed.extAbitSPO") + sFilter + " AND (ed.extAbitSPO.CompetitionId IN (1,8) OR (ed.extPersonSPO.Privileges>0 AND ed.extAbitSPO.CompetitionId IN (2,7))) AND ed.extAbitSPO.Checked>0 ";
+            string query = sQuery + GetWhereClause("ed.extAbitSPO") + sFilter + " AND (ed.extAbitSPO.CompetitionId IN (1,8) OR (ed.extPerson.Privileges>0 AND ed.extAbitSPO.CompetitionId IN (2,7))) AND ed.extAbitSPO.Checked>0 ";
 
             DataSet ds = MainClass.Bdc.GetDataSet(query);
 
