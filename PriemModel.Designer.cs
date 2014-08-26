@@ -10050,7 +10050,10 @@ namespace Priem
         /// <param name="ordernum">Нет доступной документации по метаданным.</param>
         /// <param name="orderdateFor">Нет доступной документации по метаданным.</param>
         /// <param name="ordernumFor">Нет доступной документации по метаданным.</param>
-        public int OrderNumbers_Insert(Nullable<global::System.Guid> protocolId, Nullable<global::System.DateTime> orderdate, global::System.String ordernum, Nullable<global::System.DateTime> orderdateFor, global::System.String ordernumFor)
+        /// <param name="signerId">Нет доступной документации по метаданным.</param>
+        /// <param name="comissionDate">Нет доступной документации по метаданным.</param>
+        /// <param name="comissionNumber">Нет доступной документации по метаданным.</param>
+        public int OrderNumbers_Insert(Nullable<global::System.Guid> protocolId, Nullable<global::System.DateTime> orderdate, global::System.String ordernum, Nullable<global::System.DateTime> orderdateFor, global::System.String ordernumFor, Nullable<global::System.Int32> signerId, Nullable<global::System.DateTime> comissionDate, global::System.String comissionNumber)
         {
             ObjectParameter protocolIdParameter;
             if (protocolId.HasValue)
@@ -10102,7 +10105,37 @@ namespace Priem
                 ordernumForParameter = new ObjectParameter("ordernumFor", typeof(global::System.String));
             }
     
-            return base.ExecuteFunction("OrderNumbers_Insert", protocolIdParameter, orderdateParameter, ordernumParameter, orderdateForParameter, ordernumForParameter);
+            ObjectParameter signerIdParameter;
+            if (signerId.HasValue)
+            {
+                signerIdParameter = new ObjectParameter("SignerId", signerId);
+            }
+            else
+            {
+                signerIdParameter = new ObjectParameter("SignerId", typeof(global::System.Int32));
+            }
+    
+            ObjectParameter comissionDateParameter;
+            if (comissionDate.HasValue)
+            {
+                comissionDateParameter = new ObjectParameter("ComissionDate", comissionDate);
+            }
+            else
+            {
+                comissionDateParameter = new ObjectParameter("ComissionDate", typeof(global::System.DateTime));
+            }
+    
+            ObjectParameter comissionNumberParameter;
+            if (comissionNumber != null)
+            {
+                comissionNumberParameter = new ObjectParameter("ComissionNumber", comissionNumber);
+            }
+            else
+            {
+                comissionNumberParameter = new ObjectParameter("ComissionNumber", typeof(global::System.String));
+            }
+    
+            return base.ExecuteFunction("OrderNumbers_Insert", protocolIdParameter, orderdateParameter, ordernumParameter, orderdateForParameter, ordernumForParameter, signerIdParameter, comissionDateParameter, comissionNumberParameter);
         }
     
         /// <summary>
@@ -10113,7 +10146,10 @@ namespace Priem
         /// <param name="ordernum">Нет доступной документации по метаданным.</param>
         /// <param name="orderdateFor">Нет доступной документации по метаданным.</param>
         /// <param name="ordernumFor">Нет доступной документации по метаданным.</param>
-        public int OrderNumbers_Update(Nullable<global::System.Guid> protocolId, Nullable<global::System.DateTime> orderdate, global::System.String ordernum, Nullable<global::System.DateTime> orderdateFor, global::System.String ordernumFor)
+        /// <param name="signerId">Нет доступной документации по метаданным.</param>
+        /// <param name="comissionDate">Нет доступной документации по метаданным.</param>
+        /// <param name="comissionNumber">Нет доступной документации по метаданным.</param>
+        public int OrderNumbers_Update(Nullable<global::System.Guid> protocolId, Nullable<global::System.DateTime> orderdate, global::System.String ordernum, Nullable<global::System.DateTime> orderdateFor, global::System.String ordernumFor, Nullable<global::System.Int32> signerId, Nullable<global::System.DateTime> comissionDate, global::System.String comissionNumber)
         {
             ObjectParameter protocolIdParameter;
             if (protocolId.HasValue)
@@ -10165,7 +10201,37 @@ namespace Priem
                 ordernumForParameter = new ObjectParameter("ordernumFor", typeof(global::System.String));
             }
     
-            return base.ExecuteFunction("OrderNumbers_Update", protocolIdParameter, orderdateParameter, ordernumParameter, orderdateForParameter, ordernumForParameter);
+            ObjectParameter signerIdParameter;
+            if (signerId.HasValue)
+            {
+                signerIdParameter = new ObjectParameter("SignerId", signerId);
+            }
+            else
+            {
+                signerIdParameter = new ObjectParameter("SignerId", typeof(global::System.Int32));
+            }
+    
+            ObjectParameter comissionDateParameter;
+            if (comissionDate.HasValue)
+            {
+                comissionDateParameter = new ObjectParameter("ComissionDate", comissionDate);
+            }
+            else
+            {
+                comissionDateParameter = new ObjectParameter("ComissionDate", typeof(global::System.DateTime));
+            }
+    
+            ObjectParameter comissionNumberParameter;
+            if (comissionNumber != null)
+            {
+                comissionNumberParameter = new ObjectParameter("ComissionNumber", comissionNumber);
+            }
+            else
+            {
+                comissionNumberParameter = new ObjectParameter("ComissionNumber", typeof(global::System.String));
+            }
+    
+            return base.ExecuteFunction("OrderNumbers_Update", protocolIdParameter, orderdateParameter, ordernumParameter, orderdateForParameter, ordernumForParameter, signerIdParameter, comissionDateParameter, comissionNumberParameter);
         }
     
         /// <summary>
@@ -22285,9 +22351,13 @@ namespace Priem
         /// Создание нового объекта extAbitSPO.
         /// </summary>
         /// <param name="id">Исходное значение свойства Id.</param>
+        /// <param name="personId">Исходное значение свойства PersonId.</param>
+        /// <param name="entryId">Исходное значение свойства EntryId.</param>
         /// <param name="isListener">Исходное значение свойства IsListener.</param>
         /// <param name="isPaid">Исходное значение свойства IsPaid.</param>
         /// <param name="backDoc">Исходное значение свойства BackDoc.</param>
+        /// <param name="docDate">Исходное значение свойства DocDate.</param>
+        /// <param name="docInsertDate">Исходное значение свойства DocInsertDate.</param>
         /// <param name="checked">Исходное значение свойства Checked.</param>
         /// <param name="notEnabled">Исходное значение свойства NotEnabled.</param>
         /// <param name="compFromOlymp">Исходное значение свойства CompFromOlymp.</param>
@@ -22307,16 +22377,22 @@ namespace Priem
         /// <param name="name">Исходное значение свойства Name.</param>
         /// <param name="surname">Исходное значение свойства Surname.</param>
         /// <param name="studyLevelGroupId">Исходное значение свойства StudyLevelGroupId.</param>
+        /// <param name="fIO">Исходное значение свойства FIO.</param>
+        /// <param name="obrazProgramNameEx">Исходное значение свойства ObrazProgramNameEx.</param>
         /// <param name="withHE">Исходное значение свойства WithHE.</param>
         /// <param name="isReduced">Исходное значение свойства IsReduced.</param>
         /// <param name="isParallel">Исходное значение свойства IsParallel.</param>
-        public static extAbitSPO CreateextAbitSPO(global::System.Guid id, global::System.Boolean isListener, global::System.Boolean isPaid, global::System.Boolean backDoc, global::System.Boolean @checked, global::System.Boolean notEnabled, global::System.Boolean compFromOlymp, global::System.Boolean hasOriginals, global::System.Int32 facultyId, global::System.Int32 licenseProgramId, global::System.String licenseProgramName, global::System.Int32 obrazProgramId, global::System.String obrazProgramName, global::System.Int32 studyBasisId, global::System.String studyBasisName, global::System.Int32 studyFormId, global::System.String studyFormName, global::System.Int32 studyLevelId, global::System.String studyLevelName, global::System.Boolean isSecond, global::System.String name, global::System.String surname, global::System.Int32 studyLevelGroupId, global::System.Boolean withHE, global::System.Boolean isReduced, global::System.Boolean isParallel)
+        public static extAbitSPO CreateextAbitSPO(global::System.Guid id, global::System.Guid personId, global::System.Guid entryId, global::System.Boolean isListener, global::System.Boolean isPaid, global::System.Boolean backDoc, global::System.DateTime docDate, global::System.DateTime docInsertDate, global::System.Boolean @checked, global::System.Boolean notEnabled, global::System.Boolean compFromOlymp, global::System.Boolean hasOriginals, global::System.Int32 facultyId, global::System.Int32 licenseProgramId, global::System.String licenseProgramName, global::System.Int32 obrazProgramId, global::System.String obrazProgramName, global::System.Int32 studyBasisId, global::System.String studyBasisName, global::System.Int32 studyFormId, global::System.String studyFormName, global::System.Int32 studyLevelId, global::System.String studyLevelName, global::System.Boolean isSecond, global::System.String name, global::System.String surname, global::System.Int32 studyLevelGroupId, global::System.String fIO, global::System.String obrazProgramNameEx, global::System.Boolean withHE, global::System.Boolean isReduced, global::System.Boolean isParallel)
         {
             extAbitSPO extAbitSPO = new extAbitSPO();
             extAbitSPO.Id = id;
+            extAbitSPO.PersonId = personId;
+            extAbitSPO.EntryId = entryId;
             extAbitSPO.IsListener = isListener;
             extAbitSPO.IsPaid = isPaid;
             extAbitSPO.BackDoc = backDoc;
+            extAbitSPO.DocDate = docDate;
+            extAbitSPO.DocInsertDate = docInsertDate;
             extAbitSPO.Checked = @checked;
             extAbitSPO.NotEnabled = notEnabled;
             extAbitSPO.CompFromOlymp = compFromOlymp;
@@ -22336,6 +22412,8 @@ namespace Priem
             extAbitSPO.Name = name;
             extAbitSPO.Surname = surname;
             extAbitSPO.StudyLevelGroupId = studyLevelGroupId;
+            extAbitSPO.FIO = fIO;
+            extAbitSPO.ObrazProgramNameEx = obrazProgramNameEx;
             extAbitSPO.WithHE = withHE;
             extAbitSPO.IsReduced = isReduced;
             extAbitSPO.IsParallel = isParallel;
@@ -22376,9 +22454,9 @@ namespace Priem
         /// <summary>
         /// Нет доступной документации по метаданным.
         /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
         [DataMemberAttribute()]
-        public Nullable<global::System.Guid> PersonId
+        public global::System.Guid PersonId
         {
             get
             {
@@ -22393,8 +22471,8 @@ namespace Priem
                 OnPersonIdChanged();
             }
         }
-        private Nullable<global::System.Guid> _PersonId;
-        partial void OnPersonIdChanging(Nullable<global::System.Guid> value);
+        private global::System.Guid _PersonId;
+        partial void OnPersonIdChanging(global::System.Guid value);
         partial void OnPersonIdChanged();
     
         /// <summary>
@@ -22424,9 +22502,9 @@ namespace Priem
         /// <summary>
         /// Нет доступной документации по метаданным.
         /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
         [DataMemberAttribute()]
-        public Nullable<global::System.Guid> EntryId
+        public global::System.Guid EntryId
         {
             get
             {
@@ -22441,8 +22519,8 @@ namespace Priem
                 OnEntryIdChanged();
             }
         }
-        private Nullable<global::System.Guid> _EntryId;
-        partial void OnEntryIdChanging(Nullable<global::System.Guid> value);
+        private global::System.Guid _EntryId;
+        partial void OnEntryIdChanging(global::System.Guid value);
         partial void OnEntryIdChanged();
     
         /// <summary>
@@ -22577,9 +22655,9 @@ namespace Priem
         /// <summary>
         /// Нет доступной документации по метаданным.
         /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
         [DataMemberAttribute()]
-        public Nullable<global::System.DateTime> DocDate
+        public global::System.DateTime DocDate
         {
             get
             {
@@ -22594,16 +22672,16 @@ namespace Priem
                 OnDocDateChanged();
             }
         }
-        private Nullable<global::System.DateTime> _DocDate;
-        partial void OnDocDateChanging(Nullable<global::System.DateTime> value);
+        private global::System.DateTime _DocDate;
+        partial void OnDocDateChanging(global::System.DateTime value);
         partial void OnDocDateChanged();
     
         /// <summary>
         /// Нет доступной документации по метаданным.
         /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
         [DataMemberAttribute()]
-        public Nullable<global::System.DateTime> DocInsertDate
+        public global::System.DateTime DocInsertDate
         {
             get
             {
@@ -22618,8 +22696,8 @@ namespace Priem
                 OnDocInsertDateChanged();
             }
         }
-        private Nullable<global::System.DateTime> _DocInsertDate;
-        partial void OnDocInsertDateChanging(Nullable<global::System.DateTime> value);
+        private global::System.DateTime _DocInsertDate;
+        partial void OnDocInsertDateChanging(global::System.DateTime value);
         partial void OnDocInsertDateChanged();
     
         /// <summary>
@@ -23738,7 +23816,7 @@ namespace Priem
         /// <summary>
         /// Нет доступной документации по метаданным.
         /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
         [DataMemberAttribute()]
         public global::System.String FIO
         {
@@ -23750,7 +23828,7 @@ namespace Priem
             {
                 OnFIOChanging(value);
                 ReportPropertyChanging("FIO");
-                _FIO = StructuralObject.SetValidValue(value, true);
+                _FIO = StructuralObject.SetValidValue(value, false);
                 ReportPropertyChanged("FIO");
                 OnFIOChanged();
             }
@@ -23786,7 +23864,7 @@ namespace Priem
         /// <summary>
         /// Нет доступной документации по метаданным.
         /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
         [DataMemberAttribute()]
         public global::System.String ObrazProgramNameEx
         {
@@ -23798,7 +23876,7 @@ namespace Priem
             {
                 OnObrazProgramNameExChanging(value);
                 ReportPropertyChanging("ObrazProgramNameEx");
-                _ObrazProgramNameEx = StructuralObject.SetValidValue(value, true);
+                _ObrazProgramNameEx = StructuralObject.SetValidValue(value, false);
                 ReportPropertyChanged("ObrazProgramNameEx");
                 OnObrazProgramNameExChanged();
             }
@@ -26529,7 +26607,11 @@ namespace Priem
         /// <param name="entryId">Исходное значение свойства EntryId.</param>
         /// <param name="protocolHistoryId">Исходное значение свойства ProtocolHistoryId.</param>
         /// <param name="personId">Исходное значение свойства PersonId.</param>
-        public static extEntryView CreateextEntryView(global::System.Guid id, global::System.Guid abiturientId, global::System.Boolean excluded, global::System.Boolean isOld, global::System.String protocolTypeName, global::System.Guid entryId, global::System.Guid protocolHistoryId, global::System.Guid personId)
+        /// <param name="isCrimea">Исходное значение свойства IsCrimea.</param>
+        /// <param name="isQuota">Исходное значение свойства IsQuota.</param>
+        /// <param name="isCel">Исходное значение свойства IsCel.</param>
+        /// <param name="isBE">Исходное значение свойства IsBE.</param>
+        public static extEntryView CreateextEntryView(global::System.Guid id, global::System.Guid abiturientId, global::System.Boolean excluded, global::System.Boolean isOld, global::System.String protocolTypeName, global::System.Guid entryId, global::System.Guid protocolHistoryId, global::System.Guid personId, global::System.Int32 isCrimea, global::System.Int32 isQuota, global::System.Int32 isCel, global::System.Int32 isBE)
         {
             extEntryView extEntryView = new extEntryView();
             extEntryView.Id = id;
@@ -26540,6 +26622,10 @@ namespace Priem
             extEntryView.EntryId = entryId;
             extEntryView.ProtocolHistoryId = protocolHistoryId;
             extEntryView.PersonId = personId;
+            extEntryView.IsCrimea = isCrimea;
+            extEntryView.IsQuota = isQuota;
+            extEntryView.IsCel = isCel;
+            extEntryView.IsBE = isBE;
             return extEntryView;
         }
 
@@ -27290,6 +27376,114 @@ namespace Priem
         private global::System.Guid _PersonId;
         partial void OnPersonIdChanging(global::System.Guid value);
         partial void OnPersonIdChanged();
+    
+        /// <summary>
+        /// Нет доступной документации по метаданным.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 IsCrimea
+        {
+            get
+            {
+                return _IsCrimea;
+            }
+            set
+            {
+                if (_IsCrimea != value)
+                {
+                    OnIsCrimeaChanging(value);
+                    ReportPropertyChanging("IsCrimea");
+                    _IsCrimea = StructuralObject.SetValidValue(value);
+                    ReportPropertyChanged("IsCrimea");
+                    OnIsCrimeaChanged();
+                }
+            }
+        }
+        private global::System.Int32 _IsCrimea;
+        partial void OnIsCrimeaChanging(global::System.Int32 value);
+        partial void OnIsCrimeaChanged();
+    
+        /// <summary>
+        /// Нет доступной документации по метаданным.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 IsQuota
+        {
+            get
+            {
+                return _IsQuota;
+            }
+            set
+            {
+                if (_IsQuota != value)
+                {
+                    OnIsQuotaChanging(value);
+                    ReportPropertyChanging("IsQuota");
+                    _IsQuota = StructuralObject.SetValidValue(value);
+                    ReportPropertyChanged("IsQuota");
+                    OnIsQuotaChanged();
+                }
+            }
+        }
+        private global::System.Int32 _IsQuota;
+        partial void OnIsQuotaChanging(global::System.Int32 value);
+        partial void OnIsQuotaChanged();
+    
+        /// <summary>
+        /// Нет доступной документации по метаданным.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 IsCel
+        {
+            get
+            {
+                return _IsCel;
+            }
+            set
+            {
+                if (_IsCel != value)
+                {
+                    OnIsCelChanging(value);
+                    ReportPropertyChanging("IsCel");
+                    _IsCel = StructuralObject.SetValidValue(value);
+                    ReportPropertyChanged("IsCel");
+                    OnIsCelChanged();
+                }
+            }
+        }
+        private global::System.Int32 _IsCel;
+        partial void OnIsCelChanging(global::System.Int32 value);
+        partial void OnIsCelChanged();
+    
+        /// <summary>
+        /// Нет доступной документации по метаданным.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 IsBE
+        {
+            get
+            {
+                return _IsBE;
+            }
+            set
+            {
+                if (_IsBE != value)
+                {
+                    OnIsBEChanging(value);
+                    ReportPropertyChanging("IsBE");
+                    _IsBE = StructuralObject.SetValidValue(value);
+                    ReportPropertyChanged("IsBE");
+                    OnIsBEChanged();
+                }
+            }
+        }
+        private global::System.Int32 _IsBE;
+        partial void OnIsBEChanging(global::System.Int32 value);
+        partial void OnIsBEChanged();
 
         #endregion
 
@@ -34883,6 +35077,78 @@ namespace Priem
         private Nullable<global::System.Int32> _RegionEducId;
         partial void OnRegionEducIdChanging(Nullable<global::System.Int32> value);
         partial void OnRegionEducIdChanged();
+    
+        /// <summary>
+        /// Нет доступной документации по метаданным.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public global::System.String RegionNumber
+        {
+            get
+            {
+                return _RegionNumber;
+            }
+            set
+            {
+                OnRegionNumberChanging(value);
+                ReportPropertyChanging("RegionNumber");
+                _RegionNumber = StructuralObject.SetValidValue(value, true);
+                ReportPropertyChanged("RegionNumber");
+                OnRegionNumberChanged();
+            }
+        }
+        private global::System.String _RegionNumber;
+        partial void OnRegionNumberChanging(global::System.String value);
+        partial void OnRegionNumberChanged();
+    
+        /// <summary>
+        /// Нет доступной документации по метаданным.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public global::System.String ForeignNationality
+        {
+            get
+            {
+                return _ForeignNationality;
+            }
+            set
+            {
+                OnForeignNationalityChanging(value);
+                ReportPropertyChanging("ForeignNationality");
+                _ForeignNationality = StructuralObject.SetValidValue(value, true);
+                ReportPropertyChanged("ForeignNationality");
+                OnForeignNationalityChanged();
+            }
+        }
+        private global::System.String _ForeignNationality;
+        partial void OnForeignNationalityChanging(global::System.String value);
+        partial void OnForeignNationalityChanged();
+    
+        /// <summary>
+        /// Нет доступной документации по метаданным.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public Nullable<global::System.Int32> ForeignNationalityId
+        {
+            get
+            {
+                return _ForeignNationalityId;
+            }
+            set
+            {
+                OnForeignNationalityIdChanging(value);
+                ReportPropertyChanging("ForeignNationalityId");
+                _ForeignNationalityId = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("ForeignNationalityId");
+                OnForeignNationalityIdChanged();
+            }
+        }
+        private Nullable<global::System.Int32> _ForeignNationalityId;
+        partial void OnForeignNationalityIdChanging(Nullable<global::System.Int32> value);
+        partial void OnForeignNationalityIdChanged();
 
         #endregion
 
@@ -44308,6 +44574,54 @@ namespace Priem
         private Nullable<global::System.Int32> _SignerId;
         partial void OnSignerIdChanging(Nullable<global::System.Int32> value);
         partial void OnSignerIdChanged();
+    
+        /// <summary>
+        /// Нет доступной документации по метаданным.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public Nullable<global::System.DateTime> ComissionDate
+        {
+            get
+            {
+                return _ComissionDate;
+            }
+            set
+            {
+                OnComissionDateChanging(value);
+                ReportPropertyChanging("ComissionDate");
+                _ComissionDate = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("ComissionDate");
+                OnComissionDateChanged();
+            }
+        }
+        private Nullable<global::System.DateTime> _ComissionDate;
+        partial void OnComissionDateChanging(Nullable<global::System.DateTime> value);
+        partial void OnComissionDateChanged();
+    
+        /// <summary>
+        /// Нет доступной документации по метаданным.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public global::System.String ComissionNumber
+        {
+            get
+            {
+                return _ComissionNumber;
+            }
+            set
+            {
+                OnComissionNumberChanging(value);
+                ReportPropertyChanging("ComissionNumber");
+                _ComissionNumber = StructuralObject.SetValidValue(value, true);
+                ReportPropertyChanged("ComissionNumber");
+                OnComissionNumberChanged();
+            }
+        }
+        private global::System.String _ComissionNumber;
+        partial void OnComissionNumberChanging(global::System.String value);
+        partial void OnComissionNumberChanged();
 
         #endregion
 
@@ -59389,6 +59703,30 @@ namespace Priem
         private global::System.String _Holder;
         partial void OnHolderChanging(global::System.String value);
         partial void OnHolderChanged();
+    
+        /// <summary>
+        /// Нет доступной документации по метаданным.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public global::System.String GSGUCode
+        {
+            get
+            {
+                return _GSGUCode;
+            }
+            set
+            {
+                OnGSGUCodeChanging(value);
+                ReportPropertyChanging("GSGUCode");
+                _GSGUCode = StructuralObject.SetValidValue(value, true);
+                ReportPropertyChanged("GSGUCode");
+                OnGSGUCodeChanged();
+            }
+        }
+        private global::System.String _GSGUCode;
+        partial void OnGSGUCodeChanging(global::System.String value);
+        partial void OnGSGUCodeChanged();
 
         #endregion
 

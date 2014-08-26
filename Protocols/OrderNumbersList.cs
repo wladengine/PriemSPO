@@ -38,6 +38,8 @@ namespace Priem
 
             ComboServ.FillCombo(cbFaculty, HelpClass.GetComboListByTable("ed.qFaculty", "ORDER BY Acronym"), false, false);
             ComboServ.FillCombo(cbStudyBasis, HelpClass.GetComboListByTable("ed.StudyBasis", "ORDER BY Name"), false, false);
+            ComboServ.FillCombo(cbSigner, HelpClass.GetComboListByTable("ed.Signer", "ORDER BY Name"), false, false);
+
 
             cbStudyBasis.SelectedIndex = 0;
             FillStudyForm();
@@ -96,6 +98,34 @@ namespace Priem
             set { ComboServ.SetComboId(cbStudyForm, value); }
         }
 
+        public int? SignerId
+        {
+            get { return ComboServ.GetComboIdInt(cbSigner); }
+            set { ComboServ.SetComboId(cbSigner, value); }
+        }
+        public string ComissionNumber
+        {
+            get { return tbComissionNumber.Text.Trim(); }
+            set { tbComissionNumber.Text = value; }
+        }
+        public DateTime? ComissionDate
+        {
+            get
+            {
+                return dtpComissionDate.Value.Date;
+            }
+            set
+            {
+                if (value.HasValue)
+                {
+                    try
+                    {
+                        dtpComissionDate.Value = value.Value;
+                    }
+                    catch { }
+                }
+            }
+        }
         public bool IsSecond
         {
             get { return chbIsSecond.Checked; }
@@ -133,7 +163,14 @@ namespace Priem
                 ComboServ.FillCombo(cbStudyForm, lst, false, false);
             }
         }
-
+        private void FillSigner()
+        {
+            using (PriemEntities context = new PriemEntities())
+            {
+                var lst = context.Signer.Select(x => new { x.Id, x.Name }).ToList().Select(x => new KeyValuePair<string, string>(x.Id.ToString(), x.Name)).ToList();
+                ComboServ.FillCombo(cbSigner, lst, false, false);
+            }
+        }
         private void FillLicenseProgram()
         {
             using (PriemEntities context = new PriemEntities())
@@ -225,9 +262,17 @@ namespace Priem
                     dtOrderDate.Value = DateTime.Parse(rw["OrderDate"].ToString());
                 if ((rw["OrderDateFor"].ToString()).Length > 0)
                     dtOrderDateFor.Value = DateTime.Parse(rw["OrderDateFor"].ToString());
-                
+                if ((rw["ComissionDate"].ToString()).Length > 0)
+                    dtpComissionDate.Value = DateTime.Parse(rw["ComissionDate"].ToString());
+
+                int tmp = 0;
+                if (int.TryParse(rw["SignerId"].ToString(), out tmp))
+                    SignerId = tmp;
+
                 tbOrderNum.Text = rw["OrderNum"].ToString();
                 tbOrderNumFor.Text = rw["OrderNumFor"].ToString();
+                tbComissionNumber.Text = rw["ComissionNumber"].ToString();
+
 
                 SetReadOnly();
             } 
@@ -264,11 +309,11 @@ namespace Priem
                 using (PriemEntities context = new PriemEntities())
                 {
                     Guid? protId = new Guid(dgvViews.CurrentRow.Cells["Id"].Value.ToString());
-
-                    if (forUpdate)                   
-                        context.OrderNumbers_Update(protId, dtOrderDate.Value.Date, tbOrderNum.Text.Trim(), dtOrderDateFor.Value.Date, tbOrderNumFor.Text.Trim());                    
+                     
+                    if (forUpdate)
+                        context.OrderNumbers_Update(protId, dtOrderDate.Value.Date, tbOrderNum.Text.Trim(), dtOrderDateFor.Value.Date, tbOrderNumFor.Text.Trim(), SignerId, ComissionDate, ComissionNumber);
                     else
-                        context.OrderNumbers_Insert(protId, dtOrderDate.Value.Date, tbOrderNum.Text.Trim(), dtOrderDateFor.Value.Date, tbOrderNumFor.Text.Trim());
+                        context.OrderNumbers_Insert(protId, dtOrderDate.Value.Date, tbOrderNum.Text.Trim(), dtOrderDateFor.Value.Date, tbOrderNumFor.Text.Trim(), SignerId, ComissionDate, ComissionNumber);
                    
                     forUpdate = true;
                     SetReadOnly();

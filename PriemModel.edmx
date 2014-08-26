@@ -433,7 +433,11 @@
       [extEntryView].[SignerPosition] AS [SignerPosition], 
       [extEntryView].[EntryId] AS [EntryId], 
       [extEntryView].[ProtocolHistoryId] AS [ProtocolHistoryId], 
-      [extEntryView].[PersonId] AS [PersonId]
+      [extEntryView].[PersonId] AS [PersonId], 
+      [extEntryView].[IsCrimea] AS [IsCrimea], 
+      [extEntryView].[IsQuota] AS [IsQuota], 
+      [extEntryView].[IsCel] AS [IsCel], 
+      [extEntryView].[IsBE] AS [IsBE]
       FROM [ed].[extEntryView] AS [extEntryView]</DefiningQuery>
           </EntitySet>
           <EntitySet Name="extEntryView_ForDisEntered" EntityType="Priem2012Model.Store.extEntryView_ForDisEntered" store:Type="Views" store:Schema="ed" store:Name="extEntryView_ForDisEntered">
@@ -762,7 +766,10 @@
       [extPerson].[HostelEduc] AS [HostelEduc], 
       [extPerson].[KladrCode] AS [KladrCode], 
       [extPerson].[SNILS] AS [SNILS], 
-      [extPerson].[RegionEducId] AS [RegionEducId]
+      [extPerson].[RegionEducId] AS [RegionEducId], 
+      [extPerson].[RegionNumber] AS [RegionNumber], 
+      [extPerson].[ForeignNationality] AS [ForeignNationality], 
+      [extPerson].[ForeignNationalityId] AS [ForeignNationalityId]
       FROM [ed].[extPerson] AS [extPerson]</DefiningQuery>
           </EntitySet>
           <EntitySet Name="extPersonAll" EntityType="Priem2012Model.Store.extPersonAll" store:Type="Views" store:Schema="ed" store:Name="extPersonAll">
@@ -2194,6 +2201,8 @@
           <Property Name="OrderNumFor" Type="nvarchar" MaxLength="50" />
           <Property Name="OrderDateFor" Type="datetime" />
           <Property Name="SignerId" Type="int" />
+          <Property Name="ComissionDate" Type="date" />
+          <Property Name="ComissionNumber" Type="nvarchar" MaxLength="10" />
         </EntityType>
         <EntityType Name="PaidData">
           <Key>
@@ -2555,6 +2564,7 @@
           <Property Name="AggregateGroupId" Type="int" Nullable="false" />
           <Property Name="IsOpen" Type="bit" Nullable="false" />
           <Property Name="Holder" Type="nvarchar" MaxLength="100" />
+          <Property Name="GSGUCode" Type="nvarchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="SP_ObrazProgram">
           <Key>
@@ -2757,9 +2767,13 @@
         <EntityType Name="extAbitSPO">
           <Key>
             <PropertyRef Name="Id" />
+            
+            
             <PropertyRef Name="IsListener" />
             <PropertyRef Name="IsPaid" />
             <PropertyRef Name="BackDoc" />
+            
+            
             <PropertyRef Name="Checked" />
             <PropertyRef Name="NotEnabled" />
             <PropertyRef Name="CompFromOlymp" />
@@ -2779,21 +2793,23 @@
             <PropertyRef Name="Name" />
             <PropertyRef Name="Surname" />
             <PropertyRef Name="StudyLevelGroupId" />
+            
+            
             <PropertyRef Name="WithHE" />
             <PropertyRef Name="IsReduced" />
             <PropertyRef Name="IsParallel" />
           </Key>
           <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
-          <Property Name="PersonId" Type="uniqueidentifier" />
+          <Property Name="PersonId" Type="uniqueidentifier" Nullable="false" />
           <Property Name="RegNum" Type="nvarchar" MaxLength="50" />
-          <Property Name="EntryId" Type="uniqueidentifier" />
+          <Property Name="EntryId" Type="uniqueidentifier" Nullable="false" />
           <Property Name="CompetitionId" Type="int" />
           <Property Name="IsListener" Type="bit" Nullable="false" />
           <Property Name="IsPaid" Type="bit" Nullable="false" />
           <Property Name="BackDoc" Type="bit" Nullable="false" />
           <Property Name="BackDocDate" Type="smalldatetime" />
-          <Property Name="DocDate" Type="smalldatetime" />
-          <Property Name="DocInsertDate" Type="smalldatetime" />
+          <Property Name="DocDate" Type="smalldatetime" Nullable="false" />
+          <Property Name="DocInsertDate" Type="smalldatetime" Nullable="false" />
           <Property Name="Checked" Type="bit" Nullable="false" />
           <Property Name="NotEnabled" Type="bit" Nullable="false" />
           <Property Name="Coefficient" Type="float" />
@@ -2807,7 +2823,7 @@
           <Property Name="StudyNumber" Type="nvarchar" MaxLength="50" />
           <Property Name="StudentStatus" Type="int" />
           <Property Name="SessionAVG" Type="float" />
-          <Property Name="Priority" Type="float" />
+          <Property Name="Priority" Type="int" />
           <Property Name="Barcode" Type="int" />
           <Property Name="FacultyId" Type="int" Nullable="false" />
           <Property Name="FacultyAcr" Type="nvarchar" MaxLength="50" />
@@ -2838,9 +2854,9 @@
           <Property Name="StudyFormOldName" Type="nvarchar" MaxLength="50" />
           <Property Name="LanguageName" Type="nvarchar" MaxLength="50" />
           <Property Name="StudyLevelGroupId" Type="int" Nullable="false" />
-          <Property Name="FIO" Type="nvarchar" MaxLength="152" />
+          <Property Name="FIO" Type="nvarchar" Nullable="false" MaxLength="152" />
           <Property Name="PassportData" Type="nvarchar" MaxLength="532" />
-          <Property Name="ObrazProgramNameEx" Type="nvarchar" MaxLength="1014" />
+          <Property Name="ObrazProgramNameEx" Type="nvarchar" Nullable="false" MaxLength="1014" />
           <Property Name="WithHE" Type="bit" Nullable="false" />
           <Property Name="IsReduced" Type="bit" Nullable="false" />
           <Property Name="IsParallel" Type="bit" Nullable="false" />
@@ -3036,6 +3052,10 @@
             <PropertyRef Name="EntryId" />
             <PropertyRef Name="ProtocolHistoryId" />
             <PropertyRef Name="PersonId" />
+            <PropertyRef Name="IsCrimea" />
+            <PropertyRef Name="IsQuota" />
+            <PropertyRef Name="IsCel" />
+            <PropertyRef Name="IsBE" />
           </Key>
           <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
           <Property Name="AbiturientId" Type="uniqueidentifier" Nullable="false" />
@@ -3067,6 +3087,10 @@
           <Property Name="EntryId" Type="uniqueidentifier" Nullable="false" />
           <Property Name="ProtocolHistoryId" Type="uniqueidentifier" Nullable="false" />
           <Property Name="PersonId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="IsCrimea" Type="int" Nullable="false" />
+          <Property Name="IsQuota" Type="int" Nullable="false" />
+          <Property Name="IsCel" Type="int" Nullable="false" />
+          <Property Name="IsBE" Type="int" Nullable="false" />
         </EntityType>
         <!--Ошибки, обнаруженные при создании:
       предупреждение 6002: В таблице или представлении "Priem.ed.extEntryView_ForDisEntered" не определен первичный ключ. Ключ был выведен, а определение таблицы или представления было создано в режиме только для чтения.
@@ -3486,6 +3510,9 @@
           <Property Name="KladrCode" Type="nvarchar" MaxLength="50" />
           <Property Name="SNILS" Type="nvarchar" MaxLength="50" />
           <Property Name="RegionEducId" Type="int" />
+          <Property Name="RegionNumber" Type="nvarchar" MaxLength="2" />
+          <Property Name="ForeignNationality" Type="nvarchar" MaxLength="100" />
+          <Property Name="ForeignNationalityId" Type="int" />
         </EntityType>
         <!--Ошибки, обнаруженные при создании:
       предупреждение 6002: В таблице или представлении "Priem.ed.extPersonAll" не определен первичный ключ. Ключ был выведен, а определение таблицы или представления было создано в режиме только для чтения.
@@ -5787,6 +5814,9 @@
           <Parameter Name="ordernum" Type="nvarchar" Mode="In" />
           <Parameter Name="orderdateFor" Type="smalldatetime" Mode="In" />
           <Parameter Name="ordernumFor" Type="nvarchar" Mode="In" />
+          <Parameter Name="SignerId" Type="int" Mode="In" />
+          <Parameter Name="ComissionDate" Type="date" Mode="In" />
+          <Parameter Name="ComissionNumber" Type="nvarchar" Mode="In" />
         </Function>
         <Function Name="OrderNumbers_Update" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="ed">
           <Parameter Name="protocolId" Type="uniqueidentifier" Mode="In" />
@@ -5794,6 +5824,9 @@
           <Parameter Name="ordernum" Type="nvarchar" Mode="In" />
           <Parameter Name="orderdateFor" Type="smalldatetime" Mode="In" />
           <Parameter Name="ordernumFor" Type="nvarchar" Mode="In" />
+          <Parameter Name="SignerId" Type="int" Mode="In" />
+          <Parameter Name="ComissionDate" Type="date" Mode="In" />
+          <Parameter Name="ComissionNumber" Type="nvarchar" Mode="In" />
         </Function>
         <Function Name="PaidData_Delete" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="ed">
           <Parameter Name="id" Type="uniqueidentifier" Mode="In" />
@@ -7246,6 +7279,9 @@
             <Parameter Name="ordernum" Mode="In" Type="String" />
             <Parameter Name="orderdateFor" Mode="In" Type="DateTime" />
             <Parameter Name="ordernumFor" Mode="In" Type="String" />
+            <Parameter Name="SignerId" Mode="In" Type="Int32" />
+            <Parameter Name="ComissionDate" Mode="In" Type="DateTime" />
+            <Parameter Name="ComissionNumber" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="OrderNumbers_Update">
             <Parameter Name="protocolId" Mode="In" Type="Guid" />
@@ -7253,6 +7289,9 @@
             <Parameter Name="ordernum" Mode="In" Type="String" />
             <Parameter Name="orderdateFor" Mode="In" Type="DateTime" />
             <Parameter Name="ordernumFor" Mode="In" Type="String" />
+            <Parameter Name="SignerId" Mode="In" Type="Int32" />
+            <Parameter Name="ComissionDate" Mode="In" Type="DateTime" />
+            <Parameter Name="ComissionNumber" Mode="In" Type="String" />
           </FunctionImport>
           <EntitySet Name="Entry" EntityType="Priem2012Model.Entry" />
           <AssociationSet Name="FK_PayDataStudyPlan_Entry" Association="Priem2012Model.FK_PayDataStudyPlan_Entry">
@@ -9002,6 +9041,10 @@
             <PropertyRef Name="EntryId" />
             <PropertyRef Name="ProtocolHistoryId" />
             <PropertyRef Name="PersonId" />
+            <PropertyRef Name="IsCrimea" />
+            <PropertyRef Name="IsQuota" />
+            <PropertyRef Name="IsCel" />
+            <PropertyRef Name="IsBE" />
           </Key>
           <Property Type="Guid" Name="Id" Nullable="false" />
           <Property Type="Guid" Name="AbiturientId" Nullable="false" />
@@ -9033,6 +9076,10 @@
           <Property Type="Guid" Name="EntryId" Nullable="false" />
           <Property Type="Guid" Name="ProtocolHistoryId" Nullable="false" />
           <Property Type="Guid" Name="PersonId" Nullable="false" />
+          <Property Type="Int32" Name="IsCrimea" Nullable="false" />
+          <Property Type="Int32" Name="IsQuota" Nullable="false" />
+          <Property Type="Int32" Name="IsCel" Nullable="false" />
+          <Property Type="Int32" Name="IsBE" Nullable="false" />
         </EntityType>
         <EntityType Name="extProtocol">
           <Key>
@@ -9838,6 +9885,8 @@
           <Property Type="DateTime" Name="OrderDateFor" Precision="3" />
           <Property Type="Int32" Name="SignerId" />
           <NavigationProperty Name="Signer" Relationship="Priem2012Model.FK_OrderNumbers_Signer" FromRole="OrderNumbers" ToRole="Signer" />
+          <Property Type="DateTime" Name="ComissionDate" />
+          <Property Type="String" Name="ComissionNumber" MaxLength="10" FixedLength="false" Unicode="true" />
         </EntityType>
         <Association Name="FK_OrderNumbers_Signer">
           <End Type="Priem2012Model.Signer" Role="Signer" Multiplicity="0..1" />
@@ -10015,6 +10064,9 @@
           <Property Type="String" Name="KladrCode" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Type="String" Name="SNILS" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Type="Int32" Name="RegionEducId" />
+          <Property Type="String" Name="RegionNumber" MaxLength="2" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="ForeignNationality" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Type="Int32" Name="ForeignNationalityId" />
         </EntityType>
         <Association Name="FK_Person_EducationInfo_Country">
           <End Type="Priem2012Model.Country" Role="Country" Multiplicity="0..1" />
@@ -10969,6 +11021,7 @@
           <NavigationProperty Name="Entry" Relationship="Priem2012Model.FK_Entry_SP_LicenseProgram" FromRole="SP_LicenseProgram" ToRole="Entry" />
           <NavigationProperty Name="StudyLevel" Relationship="Priem2012Model.FK_SP_LicenseProgram_StudyLevel" FromRole="SP_LicenseProgram" ToRole="StudyLevel" />
           <NavigationProperty Name="SP_ObrazProgram" Relationship="Priem2012Model.FK_SP_ObrazProgram_SP_LicenseProgram" FromRole="SP_LicenseProgram" ToRole="SP_ObrazProgram" />
+          <Property Type="String" Name="GSGUCode" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="SP_ObrazProgram">
           <Key>
@@ -11104,16 +11157,16 @@
             <PropertyRef Name="IsParallel" />
           </Key>
           <Property Type="Guid" Name="Id" Nullable="false" />
-          <Property Type="Guid" Name="PersonId" />
+          <Property Type="Guid" Name="PersonId" Nullable="false" />
           <Property Type="String" Name="RegNum" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Type="Guid" Name="EntryId" />
+          <Property Type="Guid" Name="EntryId" Nullable="false" />
           <Property Type="Int32" Name="CompetitionId" />
           <Property Type="Boolean" Name="IsListener" Nullable="false" />
           <Property Type="Boolean" Name="IsPaid" Nullable="false" />
           <Property Type="Boolean" Name="BackDoc" Nullable="false" />
           <Property Type="DateTime" Name="BackDocDate" Precision="0" />
-          <Property Type="DateTime" Name="DocDate" Precision="0" />
-          <Property Type="DateTime" Name="DocInsertDate" Precision="0" />
+          <Property Type="DateTime" Name="DocDate" Precision="0" Nullable="false" />
+          <Property Type="DateTime" Name="DocInsertDate" Precision="0" Nullable="false" />
           <Property Type="Boolean" Name="Checked" Nullable="false" />
           <Property Type="Boolean" Name="NotEnabled" Nullable="false" />
           <Property Type="Double" Name="Coefficient" />
@@ -11158,9 +11211,9 @@
           <Property Type="String" Name="StudyFormOldName" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Type="String" Name="LanguageName" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Type="Int32" Name="StudyLevelGroupId" Nullable="false" />
-          <Property Type="String" Name="FIO" MaxLength="152" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="FIO" MaxLength="152" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Type="String" Name="PassportData" MaxLength="532" FixedLength="false" Unicode="true" />
-          <Property Type="String" Name="ObrazProgramNameEx" MaxLength="1014" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="ObrazProgramNameEx" MaxLength="1014" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Type="Boolean" Name="WithHE" Nullable="false" />
           <Property Type="Boolean" Name="IsReduced" Nullable="false" />
           <Property Type="Boolean" Name="IsParallel" Nullable="false" />
@@ -12097,6 +12150,10 @@
           <EntitySetMapping Name="extEntryView">
             <EntityTypeMapping TypeName="Priem2012Model.extEntryView">
               <MappingFragment StoreEntitySet="extEntryView">
+                <ScalarProperty Name="IsBE" ColumnName="IsBE" />
+                <ScalarProperty Name="IsCel" ColumnName="IsCel" />
+                <ScalarProperty Name="IsQuota" ColumnName="IsQuota" />
+                <ScalarProperty Name="IsCrimea" ColumnName="IsCrimea" />
                 <ScalarProperty Name="PersonId" ColumnName="PersonId" />
                 <ScalarProperty Name="ProtocolHistoryId" ColumnName="ProtocolHistoryId" />
                 <ScalarProperty Name="EntryId" ColumnName="EntryId" />
@@ -12636,6 +12693,8 @@
           <EntitySetMapping Name="OrderNumbers">
             <EntityTypeMapping TypeName="Priem2012Model.OrderNumbers">
               <MappingFragment StoreEntitySet="OrderNumbers">
+                <ScalarProperty Name="ComissionNumber" ColumnName="ComissionNumber" />
+                <ScalarProperty Name="ComissionDate" ColumnName="ComissionDate" />
                 <ScalarProperty Name="SignerId" ColumnName="SignerId" />
                 <ScalarProperty Name="OrderDateFor" ColumnName="OrderDateFor" />
                 <ScalarProperty Name="OrderNumFor" ColumnName="OrderNumFor" />
@@ -12685,6 +12744,9 @@
           <EntitySetMapping Name="extPerson">
             <EntityTypeMapping TypeName="Priem2012Model.extPerson">
               <MappingFragment StoreEntitySet="extPerson">
+                <ScalarProperty Name="ForeignNationalityId" ColumnName="ForeignNationalityId" />
+                <ScalarProperty Name="ForeignNationality" ColumnName="ForeignNationality" />
+                <ScalarProperty Name="RegionNumber" ColumnName="RegionNumber" />
                 <ScalarProperty Name="RegionEducId" ColumnName="RegionEducId" />
                 <ScalarProperty Name="SNILS" ColumnName="SNILS" />
                 <ScalarProperty Name="KladrCode" ColumnName="KladrCode" />
@@ -13369,6 +13431,7 @@
           <EntitySetMapping Name="SP_LicenseProgram">
             <EntityTypeMapping TypeName="Priem2012Model.SP_LicenseProgram">
               <MappingFragment StoreEntitySet="SP_LicenseProgram">
+                <ScalarProperty Name="GSGUCode" ColumnName="GSGUCode" />
                 <ScalarProperty Name="Holder" ColumnName="Holder" />
                 <ScalarProperty Name="IsOpen" ColumnName="IsOpen" />
                 <ScalarProperty Name="AggregateGroupId" ColumnName="AggregateGroupId" />
