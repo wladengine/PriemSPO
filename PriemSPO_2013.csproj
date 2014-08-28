@@ -860,7 +860,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\PriemLib\PriemLib\PriemLib.csproj">
-      <Project>{686F95EC-4AFB-4B37-AA60-70D9AC584CD8}</Project>
+      <Project>{957a6e48-2cf1-4360-bbe5-d27246bc2093}</Project>
       <Name>PriemLib</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\_SHARED LIBS\BaseFormsLib\BaseFormsLib\BaseFormsLib.csproj">
