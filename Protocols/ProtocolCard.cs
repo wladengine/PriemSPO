@@ -14,6 +14,7 @@ using BDClassLib;
 using EducServLib;
 using BaseFormsLib;
 using WordOut;
+using PriemLib;
 
 namespace Priem
 {
@@ -34,7 +35,7 @@ namespace Priem
 
         protected bool? _isListener;
 
-        protected DataRefreshHandler _drh;
+        protected MainClass.DataRefreshHandler _drh;
         protected bool isNew;
         protected bool isConfirmed; //проставили галочку, что уверены
 
@@ -118,7 +119,7 @@ namespace Priem
             this.CenterToParent();
             InitFocusHandlers();
 
-            _drh = new DataRefreshHandler(UpdateRightGrid);           
+            _drh = new MainClass.DataRefreshHandler(UpdateRightGrid);           
             MainClass.AddHandler(_drh);
 
             btnDelete.Visible = false;
@@ -520,7 +521,7 @@ namespace Priem
             string abId = dgv.Rows[dgv.CurrentCell.RowIndex].Cells["Id"].Value.ToString();
             if (abId != "")
             {
-                MainClass.OpenCardAbit(abId, this, dgv.CurrentCell.RowIndex);
+                MainClassCards.OpenCardAbit(abId, this, dgv.CurrentCell.RowIndex);
             }
         }
 

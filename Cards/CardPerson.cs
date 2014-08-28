@@ -13,6 +13,7 @@ using System.Transactions;
 
 using BaseFormsLib;
 using EducServLib;
+using PriemLib;
 
 namespace Priem
 {
@@ -338,8 +339,13 @@ namespace Priem
                     FillApplications();                   
                     UpdateDataGridEge();
 
+                    GetHasOriginals(context);
+                    GetIsPaid();
+
                     inEnableProtocol = GetInEnableProtocol(context);
                     inEntryView = GetInEntryView(context);
+
+
                 }
             }
             catch (DataException de)
@@ -500,6 +506,138 @@ namespace Priem
                     return false;
             }
         }
+
+        BackgroundWorker bw;
+        private void GetHasOriginals(PriemEntities context)
+        {
+            bw = new BackgroundWorker();
+            bw.DoWork += bw_DoWork;
+            bw.RunWorkerCompleted += bw_RunWorkerCompleted;
+
+            var arg = new
+            {
+                Context = context,
+                GuidId = GuidId
+            };
+
+            bw.RunWorkerAsync(arg);
+            lblSearchingOriginals.Visible = true;
+
+            //qAbiturient_WhoSetHasOriginals _who = (from orig in context.qAbiturient_WhoSetHasOriginals
+            //            join Abit in context.Abiturient on orig.Id equals Abit.Id
+            //            where orig.PersonId == GuidId && !Abit.BackDoc
+            //            select orig).FirstOrDefault();
+
+            //if (_who == null)
+            //    return;
+            //string who = _who.UserId;
+            //string whoFac = _who.FacultyName;
+            //string whoDate = _who.ActionTime.ToShortDateString() + " " + _who.ActionTime.ToShortTimeString();
+            //who = MainClass.GetADUserName(who);
+
+            //if (!string.IsNullOrEmpty(who))
+            //{
+            //    lblHasOriginalsUser.Text = "Проставлено: " + who + " (" + whoDate + " " + whoFac + ")";
+            //    lblHasOriginalsUser.Visible = true;
+            //    chbHasOriginals.Checked = true;
+            //}
+            //else
+            //{
+            //    lblHasOriginalsUser.Text = "";
+            //    lblHasOriginalsUser.Visible = false;
+            //    chbHasOriginals.Checked = false;
+            //}
+        }
+        void bw_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            lblSearchingOriginals.Visible = false;
+
+            if (e.Result == null)
+                return;
+
+            var _who = ((qAbiturient_WhoSetHasOriginals)e.Result);
+            string who = _who.UserId;
+            string whoFac = _who.FacultyName;
+            string whoDate = _who.ActionTime.ToShortDateString() + " " + _who.ActionTime.ToShortTimeString();
+            who = MainClass.GetADUserName(who);
+
+            if (!string.IsNullOrEmpty(who))
+            {
+                lblHasOriginalsUser.Text = "Проставлено: " + who + " (" + whoDate + " " + whoFac + ")";
+                lblHasOriginalsUser.Visible = true;
+                chbHasOriginals.Checked = true;
+            }
+            else
+            {
+                lblHasOriginalsUser.Text = "";
+                lblHasOriginalsUser.Visible = false;
+                chbHasOriginals.Checked = false;
+            }
+        }
+        void bw_DoWork(object sender, DoWorkEventArgs e)
+        {
+            using (PriemEntities context = new PriemEntities())
+            {
+                Guid gId = ((dynamic)(e.Argument)).GuidId;
+
+                e.Result = (from orig in context.qAbiturient_WhoSetHasOriginals
+                            join Abit in context.Abiturient on orig.Id equals Abit.Id
+                            where orig.PersonId == GuidId && !Abit.BackDoc
+                            select orig).FirstOrDefault();
+            }
+        }
+
+        BackgroundWorker bw_ispaid;
+        private void GetIsPaid()
+        {
+            bw_ispaid = new BackgroundWorker();
+            bw_ispaid.DoWork += bw_ispaid_DoWork;
+            bw_ispaid.RunWorkerCompleted += bw_ispaid_RunWorkerCompleted;
+
+            var arg = GuidId;
+
+            bw_ispaid.RunWorkerAsync(arg);
+            lblSearchingOriginals.Visible = true;
+        }
+        void bw_ispaid_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            lblSearchingDogovor.Visible = false;
+
+            if (e.Result == null)
+                return;
+
+            var _who = ((qAbiturient_WhoSetIsPaid)e.Result);
+            string who = _who.UserId;
+            string whoFac = _who.FacultyName;
+            string whoDate = _who.ActionTime.ToShortDateString() + " " + _who.ActionTime.ToShortTimeString();
+            who = MainClass.GetADUserName(who);
+
+            if (!string.IsNullOrEmpty(who))
+            {
+                lblHasDogovorUser.Text = "Проставлено: " + who + " (" + whoDate + " " + whoFac + ")";
+                lblHasDogovorUser.Visible = true;
+                chbHasDogovor.Checked = true;
+            }
+            else
+            {
+                lblHasDogovorUser.Text = "";
+                lblHasDogovorUser.Visible = false;
+                chbHasDogovor.Checked = false;
+            }
+        }
+        void bw_ispaid_DoWork(object sender, DoWorkEventArgs e)
+        {
+            using (PriemEntities context = new PriemEntities())
+            {
+                Guid gId = (Guid)(e.Argument);
+
+                e.Result = (from paid in context.qAbiturient_WhoSetIsPaid
+                            join Abit in context.Abiturient on paid.Id equals Abit.Id
+                            where paid.PersonId == gId && !Abit.BackDoc
+                            select paid).FirstOrDefault();
+            }
+        }
+
 
         #region ReadOnly & IsOpen
 
@@ -1068,7 +1206,7 @@ namespace Priem
                 string abId = dgvApplications.Rows[dgvApplications.CurrentCell.RowIndex].Cells["Id"].Value.ToString();
                 if (abId != "")
                 {
-                    MainClass.OpenCardAbit(abId, this, dgvApplications.CurrentRow.Index);
+                    MainClassCards.OpenCardAbit(abId, this, dgvApplications.CurrentRow.Index);
                 }
             }
         }

@@ -7,6 +7,7 @@ using System.Data;
 using System.IO;
 using System.ComponentModel;
 using System.Linq;
+using System.DirectoryServices.AccountManagement;
 
 using BaseFormsLib;
 using EducServLib;
@@ -208,6 +209,21 @@ namespace Priem
         public static string GetStLevelFilter(string tableName)
         {
             return string.Format(" AND {1}.StudyLevelGroupId = {0} ", studyLevelGroupId, tableName);
+        }
+
+        public static string GetADUserName(string userName)
+        {
+            try
+            {
+                var ADPrincipal = new PrincipalContext(ContextType.Domain);
+                UserPrincipal user = UserPrincipal.FindByIdentity(ADPrincipal, userName);
+
+                if (user != null)
+                    return user.DisplayName + " (" + userName + ")";
+            }
+            catch { }
+
+            return userName;
         }
     }
 }

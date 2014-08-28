@@ -6,6 +6,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Configuration;
 
+using PriemLib;
 using EducServLib;
 using BDClassLib;
 

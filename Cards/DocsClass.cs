@@ -8,6 +8,8 @@ using System.Data;
 
 using EducServLib;
 using BDClassLib;
+using PriemLib;
+
 
 namespace Priem
 {

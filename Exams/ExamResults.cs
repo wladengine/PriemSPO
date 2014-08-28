@@ -12,6 +12,7 @@ using WordOut;
 using EducServLib;
 using BDClassLib;
 using BaseFormsLib;
+using PriemLib; 
 
 namespace Priem
 {
@@ -660,7 +661,7 @@ ORDER BY ФИО", abitFilters);
         
         protected override void OpenCard(string itemId, BaseFormEx formOwner, int? index)
         {
-            MainClass.OpenCardAbit(itemId, this, dgvMarks.CurrentRow.Index);
+            MainClassCards.OpenCardAbit(itemId, this, dgvMarks.CurrentRow.Index);
         }       
 
         //поиск по номеру

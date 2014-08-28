@@ -6,6 +6,7 @@ using System.Data;
 
 using BDClassLib;
 using EducServLib;
+using PriemLib;
 
 namespace Priem
 {

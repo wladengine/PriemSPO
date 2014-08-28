@@ -63,10 +63,6 @@
     <StartupObject>Priem.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BaseFormsLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\_SHARED LIBS\BaseFormsLib\BaseFormsLib\bin\Debug\BaseFormsLib.dll</HintPath>
-    </Reference>
     <Reference Include="BDClassLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>bin\Debug\BDClassLib.dll</HintPath>
@@ -85,6 +81,7 @@
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.Entity" />
+    <Reference Include="System.DirectoryServices.AccountManagement" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
     <Reference Include="System.Transactions" />
@@ -97,10 +94,6 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="WordOut, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\Debug\WordOut.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BooksPasha\BackUpFix.cs">
@@ -380,10 +373,6 @@
     <Compile Include="Crypto\SetNewMark.Designer.cs">
       <DependentUpon>SetNewMark.cs</DependentUpon>
     </Compile>
-    <Compile Include="DBConstants.cs" />
-    <Compile Include="DBPriem.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Books\BookList.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -517,8 +506,6 @@
     <Compile Include="MainClass.Cards.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MainClass.cs" />
-    <Compile Include="MainClass.DB.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -536,11 +523,6 @@
     </Compile>
     <Compile Include="Migrator.designer.cs">
       <DependentUpon>Migrator.cs</DependentUpon>
-    </Compile>
-    <Compile Include="PriemModel.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>PriemModel.edmx</DependentUpon>
     </Compile>
     <Compile Include="Print.cs" />
     <Compile Include="Program.cs" />
@@ -1004,14 +986,6 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
-    <EntityDeploy Include="PriemModel.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>PriemModel.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <Compile Include="MainClass.Roles.cs" />
-    <None Include="PriemModel.edmx.diagram">
-      <DependentUpon>PriemModel.edmx</DependentUpon>
-    </None>
     <None Include="Properties\DataSources\PriemEntities.datasource" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -1052,10 +1026,25 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\PriemLib\PriemLib\PriemLib.csproj">
+      <Project>{686F95EC-4AFB-4B37-AA60-70D9AC584CD8}</Project>
+      <Name>PriemLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\_SHARED LIBS\BaseFormsLib\BaseFormsLib\BaseFormsLib.csproj">
+      <Project>{264EF71D-FE21-4BE1-B7EB-CCF3B5FD219F}</Project>
+      <Name>BaseFormsLib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\_SHARED LIBS\EducServLib\EducServLib\EducServLib.csproj">
-      <Project>{96257583-5ff8-4f63-aed3-96c36df6477d}</Project>
+      <Project>{96257583-5FF8-4F63-AED3-96C36DF6477D}</Project>
       <Name>EducServLib</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\_SHARED LIBS\WordOut\WordOut.csproj">
+      <Project>{C54799A9-232C-45B2-BE94-B63F514CA52A}</Project>
+      <Name>WordOut</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

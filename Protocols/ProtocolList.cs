@@ -10,6 +10,7 @@ using System.Linq;
 using BDClassLib;
 using EducServLib;
 using BaseFormsLib;
+using PriemLib;
 
 namespace Priem
 {
@@ -24,8 +25,8 @@ namespace Priem
         private string _protocolName;
         private string _protocolReason;
         
-        protected DataRefreshHandler drh = null;
-        protected ProtocolRefreshHandler prh = null;
+        protected MainClass.DataRefreshHandler drh = null;
+        protected MainClass.ProtocolRefreshHandler prh = null;
 
         //конструктор
         public ProtocolList(ProtocolTypes protocolType)
@@ -64,9 +65,9 @@ namespace Priem
         protected virtual void InitControls()
         {
             InitFocusHandlers();
-            drh = new DataRefreshHandler(UpdateDataGrid);
-            prh = new ProtocolRefreshHandler(UpdateProtocolList);
-            prh += new ProtocolRefreshHandler(SelectLastProtocol);
+            drh = new MainClass.DataRefreshHandler(UpdateDataGrid);
+            prh = new MainClass.ProtocolRefreshHandler(UpdateProtocolList);
+            prh += new MainClass.ProtocolRefreshHandler(SelectLastProtocol);
             MainClass.AddHandler(drh);
             MainClass.AddProtocolHandler(prh);
 
@@ -328,7 +329,7 @@ namespace Priem
                 string abId = dgvProtocols.Rows[dgvProtocols.CurrentCell.RowIndex].Cells["Id"].Value.ToString();
                 if (abId != "")
                 {
-                    MainClass.OpenCardAbit(abId, this, dgvProtocols.CurrentCell.RowIndex);
+                    MainClassCards.OpenCardAbit(abId, this, dgvProtocols.CurrentCell.RowIndex);
                 }
             }
         }
@@ -340,7 +341,7 @@ namespace Priem
                 return;
 
             if (StudyFormId != null)
-                MainClass.OpenNewProtocol(this, FacultyId.Value, StudyFormId.Value, StudyBasisId.Value, _protocolType);
+                MainClassCards.OpenNewProtocol(this, FacultyId.Value, StudyFormId.Value, StudyBasisId.Value, _protocolType);
         }
 
         //открытие карточки по двойному клику

@@ -10,6 +10,7 @@ using System.Transactions;
 
 using BDClassLib;
 using EducServLib;
+using PriemLib;
 
 namespace Priem
 {

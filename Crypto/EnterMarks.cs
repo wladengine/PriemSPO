@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using System.Text.RegularExpressions;
 using System.Linq;
 using System.Transactions;
+using PriemLib;
 
 using WordOut;
 using EducServLib;

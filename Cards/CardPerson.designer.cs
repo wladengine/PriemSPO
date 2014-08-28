@@ -247,6 +247,12 @@
             this.btnAddAbit = new System.Windows.Forms.Button();
             this.btnDocs = new System.Windows.Forms.Button();
             this.sfdPrint = new System.Windows.Forms.SaveFileDialog();
+            this.lblSearchingDogovor = new System.Windows.Forms.Label();
+            this.chbHasDogovor = new System.Windows.Forms.CheckBox();
+            this.lblHasDogovorUser = new System.Windows.Forms.Label();
+            this.lblSearchingOriginals = new System.Windows.Forms.Label();
+            this.lblHasOriginalsUser = new System.Windows.Forms.Label();
+            this.chbHasOriginals = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.epError)).BeginInit();
             this.tabCard.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -2195,6 +2201,12 @@
             // 
             // tabPage6
             // 
+            this.tabPage6.Controls.Add(this.lblSearchingDogovor);
+            this.tabPage6.Controls.Add(this.chbHasDogovor);
+            this.tabPage6.Controls.Add(this.lblHasDogovorUser);
+            this.tabPage6.Controls.Add(this.lblSearchingOriginals);
+            this.tabPage6.Controls.Add(this.lblHasOriginalsUser);
+            this.tabPage6.Controls.Add(this.chbHasOriginals);
             this.tabPage6.Controls.Add(this.gbEnter);
             this.tabPage6.Controls.Add(this.label41);
             this.tabPage6.Controls.Add(this.label37);
@@ -2215,7 +2227,7 @@
             this.gbEnter.Controls.Add(this.lblFaculty);
             this.gbEnter.Controls.Add(this.lblProfession);
             this.gbEnter.Controls.Add(this.lblStudyBasis);
-            this.gbEnter.Location = new System.Drawing.Point(8, 374);
+            this.gbEnter.Location = new System.Drawing.Point(8, 392);
             this.gbEnter.Name = "gbEnter";
             this.gbEnter.Size = new System.Drawing.Size(436, 110);
             this.gbEnter.TabIndex = 5;
@@ -2289,7 +2301,7 @@
             // label37
             // 
             this.label37.AutoSize = true;
-            this.label37.Location = new System.Drawing.Point(5, 193);
+            this.label37.Location = new System.Drawing.Point(8, 271);
             this.label37.Name = "label37";
             this.label37.Size = new System.Drawing.Size(178, 13);
             this.label37.TabIndex = 2;
@@ -2319,7 +2331,7 @@
             dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
             this.dgvOtherAppl.DefaultCellStyle = dataGridViewCellStyle5;
-            this.dgvOtherAppl.Location = new System.Drawing.Point(8, 209);
+            this.dgvOtherAppl.Location = new System.Drawing.Point(8, 287);
             this.dgvOtherAppl.Name = "dgvOtherAppl";
             this.dgvOtherAppl.ReadOnly = true;
             dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
@@ -2332,7 +2344,7 @@
             this.dgvOtherAppl.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
             this.dgvOtherAppl.RowHeadersVisible = false;
             this.dgvOtherAppl.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvOtherAppl.Size = new System.Drawing.Size(436, 159);
+            this.dgvOtherAppl.Size = new System.Drawing.Size(436, 99);
             this.dgvOtherAppl.TabIndex = 1;
             // 
             // dgvApplications
@@ -2373,7 +2385,7 @@
             this.dgvApplications.RowHeadersDefaultCellStyle = dataGridViewCellStyle9;
             this.dgvApplications.RowHeadersVisible = false;
             this.dgvApplications.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvApplications.Size = new System.Drawing.Size(436, 159);
+            this.dgvApplications.Size = new System.Drawing.Size(436, 146);
             this.dgvApplications.TabIndex = 0;
             this.dgvApplications.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvApplications_CellDoubleClick);
             // 
@@ -2498,6 +2510,66 @@
             this.btnDocs.UseVisualStyleBackColor = true;
             this.btnDocs.Visible = false;
             this.btnDocs.Click += new System.EventHandler(this.btnDocs_Click);
+            // 
+            // lblSearchingDogovor
+            // 
+            this.lblSearchingDogovor.AutoSize = true;
+            this.lblSearchingDogovor.Location = new System.Drawing.Point(5, 241);
+            this.lblSearchingDogovor.Name = "lblSearchingDogovor";
+            this.lblSearchingDogovor.Size = new System.Drawing.Size(135, 13);
+            this.lblSearchingDogovor.TabIndex = 136;
+            this.lblSearchingDogovor.Text = "Идёт поиск, подождите...";
+            this.lblSearchingDogovor.Visible = false;
+            // 
+            // chbHasDogovor
+            // 
+            this.chbHasDogovor.AutoSize = true;
+            this.chbHasDogovor.Location = new System.Drawing.Point(5, 222);
+            this.chbHasDogovor.Name = "chbHasDogovor";
+            this.chbHasDogovor.Size = new System.Drawing.Size(121, 17);
+            this.chbHasDogovor.TabIndex = 135;
+            this.chbHasDogovor.Text = "Договор подписан";
+            this.chbHasDogovor.UseVisualStyleBackColor = true;
+            // 
+            // lblHasDogovorUser
+            // 
+            this.lblHasDogovorUser.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblHasDogovorUser.Location = new System.Drawing.Point(197, 222);
+            this.lblHasDogovorUser.Name = "lblHasDogovorUser";
+            this.lblHasDogovorUser.Size = new System.Drawing.Size(284, 50);
+            this.lblHasDogovorUser.TabIndex = 134;
+            this.lblHasDogovorUser.Text = "UserId";
+            this.lblHasDogovorUser.Visible = false;
+            // 
+            // lblSearchingOriginals
+            // 
+            this.lblSearchingOriginals.AutoSize = true;
+            this.lblSearchingOriginals.Location = new System.Drawing.Point(5, 194);
+            this.lblSearchingOriginals.Name = "lblSearchingOriginals";
+            this.lblSearchingOriginals.Size = new System.Drawing.Size(135, 13);
+            this.lblSearchingOriginals.TabIndex = 133;
+            this.lblSearchingOriginals.Text = "Идёт поиск, подождите...";
+            this.lblSearchingOriginals.Visible = false;
+            // 
+            // lblHasOriginalsUser
+            // 
+            this.lblHasOriginalsUser.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblHasOriginalsUser.Location = new System.Drawing.Point(197, 172);
+            this.lblHasOriginalsUser.Name = "lblHasOriginalsUser";
+            this.lblHasOriginalsUser.Size = new System.Drawing.Size(284, 50);
+            this.lblHasOriginalsUser.TabIndex = 132;
+            this.lblHasOriginalsUser.Text = "UserId";
+            this.lblHasOriginalsUser.Visible = false;
+            // 
+            // chbHasOriginals
+            // 
+            this.chbHasOriginals.AutoSize = true;
+            this.chbHasOriginals.Location = new System.Drawing.Point(5, 175);
+            this.chbHasOriginals.Name = "chbHasOriginals";
+            this.chbHasOriginals.Size = new System.Drawing.Size(165, 17);
+            this.chbHasOriginals.TabIndex = 131;
+            this.chbHasOriginals.Text = "Оригиналы предоставлены";
+            this.chbHasOriginals.UseVisualStyleBackColor = true;
             // 
             // CardPerson
             // 
@@ -2787,6 +2859,12 @@
         private System.Windows.Forms.CheckBox chbIsEqual;
         private System.Windows.Forms.ComboBox cbRegionEduc;
         private System.Windows.Forms.Label label63;
+        private System.Windows.Forms.Label lblSearchingDogovor;
+        private System.Windows.Forms.CheckBox chbHasDogovor;
+        private System.Windows.Forms.Label lblHasDogovorUser;
+        private System.Windows.Forms.Label lblSearchingOriginals;
+        private System.Windows.Forms.Label lblHasOriginalsUser;
+        private System.Windows.Forms.CheckBox chbHasOriginals;
 
     }
 }

@@ -10,6 +10,7 @@ using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Data.SqlClient;
+using PriemLib;
 
 using EducServLib;
 

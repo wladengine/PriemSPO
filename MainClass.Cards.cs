@@ -5,17 +5,18 @@ using System.Text;
 using System.Windows.Forms;
 
 using BaseFormsLib;
+using PriemLib;
 
 namespace Priem
 {
     public delegate void DataRefreshHandler();
     public delegate void ProtocolRefreshHandler();
 
-    public static partial class MainClass
+    public static partial class MainClassCards
     {
         public static void OpenCardPerson(string personId, BaseFormEx formOwner, int? rowIndex)
         {
-            foreach (Form frmChild in mainform.MdiChildren)
+            foreach (Form frmChild in MainClass.mainform.MdiChildren)
             {
                 if (frmChild is CardPerson)
                 {
@@ -40,7 +41,7 @@ namespace Priem
 
         public static void OpenCardAbit(string abId, BaseFormEx formOwner, int? rowIndex)
         {
-            foreach (Form frmChild in mainform.MdiChildren)
+            foreach (Form frmChild in MainClass.mainform.MdiChildren)
             {
                 if (frmChild is CardAbit)
                 {
@@ -60,7 +61,7 @@ namespace Priem
 
         public static void OpenNewProtocol(ProtocolList formOwner, int iFacultyId, int iStudyFormId, int iStudyBasisId, ProtocolTypes _pType)
         {
-            foreach (Form frmChild in mainform.MdiChildren)
+            foreach (Form frmChild in MainClass.mainform.MdiChildren)
             {
                 if (frmChild is ProtocolCard)
                 {
@@ -81,38 +82,6 @@ namespace Priem
             }
 
             p.Show();
-        }
-
-        public static void AddHandler(DataRefreshHandler drh)
-        {
-            _drHandler += drh;
-        }
-
-        public static void RemoveHandler(DataRefreshHandler drh)
-        {
-            _drHandler -= drh;
-        }
-
-        public static void DataRefresh()
-        {
-            if (_drHandler != null)
-                _drHandler();
-        }
-
-        public static void AddProtocolHandler(ProtocolRefreshHandler prh)
-        {
-            _prHandler += prh;
-        }
-
-        public static void RemoveProtocolHandler(ProtocolRefreshHandler prh)
-        {
-            _prHandler -= prh;
-        }
-
-        public static void ProtocolRefresh()
-        {
-            if (_prHandler != null)
-                _prHandler();
-        }
+        } 
     }
 }

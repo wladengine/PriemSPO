@@ -12,6 +12,7 @@ using System.Transactions;
 using BaseFormsLib;
 using EducServLib;
 using WordOut;
+using PriemLib;
 
 namespace Priem
 {
@@ -19,7 +20,7 @@ namespace Priem
     {
         private DBPriem _bdc;
         private string sQuery;
-        protected ProtocolRefreshHandler prh = null;
+        protected MainClass.ProtocolRefreshHandler prh = null;
 
         public DisEntryViewList()
         {            
@@ -64,9 +65,9 @@ namespace Priem
             cbFaculty.SelectedIndexChanged += new EventHandler(cbFaculty_SelectedIndexChanged);
             cbStudyForm.SelectedIndexChanged += new EventHandler(cbStudyForm_SelectedIndexChanged);
             cbStudyBasis.SelectedIndexChanged += new EventHandler(cbStudyBasis_SelectedIndexChanged);
-            cbLicenseProgram.SelectedIndexChanged += new EventHandler(cbLicenseProgram_SelectedIndexChanged);  
+            cbLicenseProgram.SelectedIndexChanged += new EventHandler(cbLicenseProgram_SelectedIndexChanged);
 
-            prh = new ProtocolRefreshHandler(UpdateDataGrid);                  
+            prh = new MainClass.ProtocolRefreshHandler(UpdateDataGrid);                  
             MainClass.AddProtocolHandler(prh);
         }
 

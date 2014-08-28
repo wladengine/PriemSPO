@@ -10,6 +10,7 @@ using System.Linq;
 
 using BaseFormsLib;
 using EducServLib;
+using PriemLib;
 
 namespace Priem
 {

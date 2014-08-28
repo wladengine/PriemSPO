@@ -12,6 +12,7 @@ using System.Data.Objects;
 
 using BaseFormsLib;
 using EducServLib;
+using PriemLib;
 
 
 namespace Priem

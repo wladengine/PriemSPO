@@ -12,6 +12,7 @@ using System.Transactions;
 using BaseFormsLib;
 using EducServLib;
 using WordOut;
+using PriemLib;
 
 namespace Priem
 {

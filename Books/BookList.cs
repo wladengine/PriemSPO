@@ -10,13 +10,14 @@ using System.Windows.Forms;
 using BaseFormsLib;
 using EducServLib;
 using BDClassLib;
+using PriemLib;
 
 namespace Priem
 {
     public partial class BookList : BaseList
     {
         protected string _orderBy;
-        protected DataRefreshHandler _drh;
+        protected MainClass.DataRefreshHandler _drh;
         protected DBPriem _bdc; 
 
         public BookList()
@@ -34,8 +35,8 @@ namespace Priem
             this.CenterToParent();
             this.MdiParent = MainClass.mainform;           
             _bdc = MainClass.Bdc;
-            
-            _drh = new DataRefreshHandler(UpdateDataGrid);
+
+            _drh = new MainClass.DataRefreshHandler(UpdateDataGrid);
             MainClass.AddHandler(_drh);           
 
             Dgv.ReadOnly = true;

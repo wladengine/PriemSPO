@@ -13,6 +13,7 @@ using System.Transactions;
 using WordOut;
 using EducServLib;
 using BDClassLib;
+using PriemLib;
 
 using BaseFormsLib;
 

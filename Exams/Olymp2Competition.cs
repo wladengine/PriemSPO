@@ -13,6 +13,7 @@ using EducServLib;
 using BDClassLib;
 using WordOut;
 using BaseFormsLib;
+using PriemLib;
 
 namespace Priem
 {
@@ -458,7 +459,7 @@ namespace Priem
 
         protected override void OpenCard(string id, BaseFormEx formOwner, int? index)
         {
-            MainClass.OpenCardAbit(id, this, dgvAbitList.CurrentRow.Index);
+            MainClassCards.OpenCardAbit(id, this, dgvAbitList.CurrentRow.Index);
         }
 
         private void btnOk_Click(object sender, EventArgs e)

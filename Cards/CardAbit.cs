@@ -14,12 +14,13 @@ using System.Data.Objects;
 
 using BaseFormsLib;
 using EducServLib;
+using PriemLib;
 
 namespace Priem
 {
     public partial class CardAbit : CardFromList
     {
-        private DataRefreshHandler _drh;
+        private MainClass.DataRefreshHandler _drh;
 
         private Guid? _personId;
         private bool inEnableProtocol;
@@ -58,7 +59,7 @@ namespace Priem
             base.ExtraInit();
             _tableName = "ed.Abiturient";
 
-            _drh = new DataRefreshHandler(UpdateFIO);
+            _drh = new MainClass.DataRefreshHandler(UpdateFIO);
             MainClass.AddHandler(_drh);           
            
             tcCard = tabCard;
@@ -1469,7 +1470,7 @@ namespace Priem
 
         private void btnCardPerson_Click(object sender, EventArgs e)
         {
-            MainClass.OpenCardPerson(_personId.ToString(), null, -1);
+            MainClassCards.OpenCardPerson(_personId.ToString(), null, -1);
         }        
         
         //данные по оплате

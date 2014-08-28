@@ -9,6 +9,7 @@ using System.Windows.Forms;
 
 using BaseFormsLib;
 using EducServLib;
+using PriemLib;
 
 namespace Priem
 {
@@ -334,7 +335,7 @@ INNER JOIN ed.EgeExamName ON EgeExamName.Id = EgeToExam.EgeExamNameId";
         private void dgv_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.ColumnIndex > -1 && e.RowIndex > -1)
-                MainClass.OpenCardPerson(dgv.Rows[e.RowIndex].Cells["Id"].Value.ToString(), this, e.RowIndex);
+                MainClassCards.OpenCardPerson(dgv.Rows[e.RowIndex].Cells["Id"].Value.ToString(), this, e.RowIndex);
         }
         private void dgv_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {

@@ -10,6 +10,7 @@ using System.Configuration;
 using System.Diagnostics;
 
 using EducServLib;
+using PriemLib;
 
 namespace Priem
 {

@@ -14,12 +14,13 @@ using BDClassLib;
 using WordOut;
 using BaseFormsLib;
 using Excel = Microsoft.Office.Interop.Excel;
+using PriemLib;
 
 namespace Priem
 {
     public partial class ListAbit : FormFilter
     {
-        private DataRefreshHandler _drh;
+        private MainClass.DataRefreshHandler _drh;
         private DBPriem _bdc;
 
         public string FacultyId
@@ -68,7 +69,7 @@ namespace Priem
                 this.CenterToScreen();
                 this.MdiParent = MainClass.mainform;
                 _bdc = MainClass.Bdc;
-                _drh = new DataRefreshHandler(UpdateDataGrid);
+                _drh = new MainClass.DataRefreshHandler(UpdateDataGrid);
                 MainClass.AddHandler(_drh);
 
                 Dgv = dgvAbitList;
@@ -125,7 +126,7 @@ namespace Priem
             {
                 string abId = dgvAbitList.Rows[dgvAbitList.CurrentCell.RowIndex].Cells["Id"].Value.ToString();
                 if (abId != "")
-                    MainClass.OpenCardAbit(abId, this, dgvAbitList.CurrentRow.Index);
+                    MainClassCards.OpenCardAbit(abId, this, dgvAbitList.CurrentRow.Index);
             }
         }
 

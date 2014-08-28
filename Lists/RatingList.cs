@@ -13,7 +13,7 @@ using System.Data.Objects;
 using EducServLib;
 using BDClassLib;
 using WordOut;
-
+using PriemLib;
 using RtfWriter;
 
 namespace Priem
@@ -375,7 +375,7 @@ qPersonAttMarkRussian.Value AS 'Атт. Русский Язык',
 
         protected override void OpenCard(string id, BaseFormsLib.BaseFormEx formOwner, int? index)
         {
-            MainClass.OpenCardAbit(id, this, dgvAbits.CurrentRow.Index);
+            MainClassCards.OpenCardAbit(id, this, dgvAbits.CurrentRow.Index);
         }
 
         int GetPlanValueAndCheckLock()

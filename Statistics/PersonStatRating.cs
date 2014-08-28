@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using PriemLib;
 
 namespace Priem
 {
@@ -92,7 +93,7 @@ WHERE hlpStatRatingList.PersonId = @PersonId";
         }
         private void btnOpenPersonCard_Click(object sender, EventArgs e)
         {
-            MainClass.OpenCardPerson(_PersonId.ToString(), null, null);
+            MainClassCards.OpenCardPerson(_PersonId.ToString(), null, null);
         }
         private void btnClose_Click(object sender, EventArgs e)
         {

@@ -11,7 +11,9 @@ using System.Data.Objects;
 using System.Transactions;
 
 using BaseFormsLib;
-using EducServLib; 
+using EducServLib;
+using PriemLib;
+
 
 namespace Priem
 {
@@ -1101,8 +1103,8 @@ FROM [extApplicationDetails] WHERE [ApplicationId]=@AppId";
 
                         foreach (var Comp in LstCompetitions)
                         {
-                            var DocDate = Comp.DocDate.ToSmallDateTime();
-                            var DocInsertDate = Comp.DocInsertDate.ToSmallDateTime();
+                            var DocDate = Comp.DocDate;
+                            var DocInsertDate = Comp.DocInsertDate;
                             bool isViewed = Comp.HasCompetition;
                             context.Abiturient_InsertDirectly(PersonId, Comp.EntryId, Comp.CompetitionId, Comp.IsListener,
                                 false, false, false, null, DocDate, DocInsertDate,
@@ -1265,7 +1267,7 @@ FROM [extApplicationDetails] WHERE [ApplicationId]=@AppId";
                                    select ab.PersonId).FirstOrDefault();
 
                     //MainClass.OpenCardAbit(abId.ToString(), null, null);
-                    MainClass.OpenCardPerson(perId.ToString(), null, null);
+                    MainClassCards.OpenCardPerson(perId.ToString(), null, null);
 
                 }
                 else
@@ -1274,7 +1276,7 @@ FROM [extApplicationDetails] WHERE [ApplicationId]=@AppId";
                                    where per.Barcode == _personBarc
                                    select per.Id).FirstOrDefault();
 
-                    MainClass.OpenCardPerson(perId.ToString(), null, null);
+                    MainClassCards.OpenCardPerson(perId.ToString(), null, null);
                 }
             }
         }

@@ -11,6 +11,7 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 using BaseFormsLib;
 using EducServLib;
+using PriemLib;
 
 namespace Priem
 {

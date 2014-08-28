@@ -10,13 +10,14 @@ using System.Windows.Forms;
 using BDClassLib;
 using EducServLib;
 using BaseFormsLib;
+using PriemLib;
 
 namespace Priem
 {
     public partial class PersonChangesList : BaseFormEx
     {
         private DBPriem _bdc;
-        private DataRefreshHandler _drh;
+        private MainClass.DataRefreshHandler _drh;
 
         public PersonChangesList()
         {
@@ -30,7 +31,7 @@ namespace Priem
             this.MdiParent = MainClass.mainform;
             _bdc = MainClass.Bdc;
 
-            _drh = new DataRefreshHandler(UpdateDataGrid);
+            _drh = new MainClass.DataRefreshHandler(UpdateDataGrid);
             MainClass.AddHandler(_drh);
 
             Dgv = dgvChanges;
@@ -101,7 +102,7 @@ namespace Priem
                 string perId = dgvChanges.Rows[dgvChanges.CurrentCell.RowIndex].Cells["Id"].Value.ToString();
                 if (perId != "")
                 {
-                    MainClass.OpenCardPerson(perId, this, dgvChanges.CurrentRow.Index);
+                    MainClassCards.OpenCardPerson(perId, this, dgvChanges.CurrentRow.Index);
                 }
             }
         }

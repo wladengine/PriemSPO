@@ -13,6 +13,7 @@ using System.Data.Objects;
 using EducServLib;
 using BDClassLib;
 using BaseFormsLib;
+using PriemLib;
 
 namespace Priem
 {
@@ -431,7 +432,7 @@ namespace Priem
                 string abId = dgvRight.Rows[dgvRight.CurrentCell.RowIndex].Cells["Id"].Value.ToString();
                 if (abId != "")
                 {
-                    MainClass.OpenCardPerson(abId, this, dgvRight.CurrentRow.Index);
+                    MainClassCards.OpenCardPerson(abId, this, dgvRight.CurrentRow.Index);
                 }
             }                
         }        

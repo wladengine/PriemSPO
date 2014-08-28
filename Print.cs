@@ -12,6 +12,7 @@ using iTextSharp.text;
 using iTextSharp.text.pdf;
 
 using EducServLib;
+using PriemLib;
 
 namespace Priem
 {
