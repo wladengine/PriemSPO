@@ -35,7 +35,7 @@ namespace Priem
 
         protected bool? _isListener;
 
-        protected MainClass.DataRefreshHandler _drh;
+        protected DataRefreshHandler _drh;
         protected bool isNew;
         protected bool isConfirmed; //проставили галочку, что уверены
 

@@ -20,7 +20,7 @@ namespace Priem
 {
     public partial class CardAbit : CardFromList
     {
-        private MainClass.DataRefreshHandler _drh;
+        private DataRefreshHandler _drh;
 
         private Guid? _personId;
         private bool inEnableProtocol;

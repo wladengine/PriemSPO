@@ -20,7 +20,7 @@ namespace Priem
     {
         private DBPriem _bdc;
         private string sQuery;
-        protected MainClass.ProtocolRefreshHandler prh = null;
+        protected ProtocolRefreshHandler prh = null;
 
         public DisEntryViewList()
         {            

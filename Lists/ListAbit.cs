@@ -20,7 +20,7 @@ namespace Priem
 {
     public partial class ListAbit : FormFilter
     {
-        private MainClass.DataRefreshHandler _drh;
+        private DataRefreshHandler _drh;
         private DBPriem _bdc;
 
         public string FacultyId
@@ -69,7 +69,7 @@ namespace Priem
                 this.CenterToScreen();
                 this.MdiParent = MainClass.mainform;
                 _bdc = MainClass.Bdc;
-                _drh = new MainClass.DataRefreshHandler(UpdateDataGrid);
+                _drh = new DataRefreshHandler(UpdateDataGrid);
                 MainClass.AddHandler(_drh);
 
                 Dgv = dgvAbitList;
