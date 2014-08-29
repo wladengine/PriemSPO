@@ -2888,8 +2888,8 @@ namespace Priem
                         form2 = "по очной форме";
                         break;
                     case "2":
-                        form = "очно-заочная (вечерняя) форма обучения";
-                        form2 = "по очно-заочной (вечерней) форме";
+                        form = "заочная форма обучения";
+                        form2 = "по заочной форме";
                         break;
                 }
 
@@ -2898,7 +2898,7 @@ namespace Priem
 
                 naprobProgRod = "образовательной программе"; ;
 
-                if (MainClass.dbType == PriemType.PriemMag)
+                /*if (MainClass.dbType == PriemType.PriemMag)
                 {
                     bakspec = "магистра";
                     bakspecRod = "магистратуры";
@@ -2908,7 +2908,7 @@ namespace Priem
                     educDoc = "о высшем профессиональном образовании";
                 }
                 else
-                {
+                {*/
                     if (LicenseProgramCode.EndsWith("00"))
                     {
                         bakspec = "бакалавра";
@@ -2924,8 +2924,7 @@ namespace Priem
                     naprspecRod = "направлению подготовки";
                     profspec = "по профилю";
                     educDoc = "об образовании";
-
-                }
+               // }
 
                 string copyDoc = "оригиналы";
                 if (isList.HasValue && isList.Value)
@@ -2947,30 +2946,30 @@ namespace Priem
                 switch (basisId)
                 {
                     case "1":
-                        basis = "обучение за счет средств\n федерального бюджета";
-                        basis2 = "обучения за счет средств\n федерального бюджета";
+                        //basis = "обучения за счет бюджетных ассигнований федерального бюджета";
+                        basis2 = "обучения за счет бюджетных ассигнований федерального бюджета";
                         dogovorDoc = "";
                         break;
                     case "2":
-                        basis = string.Format("по договорам оказания государственной услуги по обучению по основной{0} образовательной программе высшего профессионального образования", sec);
-                        basis2 = string.Format("обучения по договорам оказания государственной услуги по обучению по основной{0} образовательной программе высшего профессионального образования", sec);
-                        dogovorDoc = string.Format(", договор оказания государственной услуги по обучению по основной{0} образовательной программе высшего профессионального образования", sec);
+                        //basis = string.Format("обучения по договорам об образовании", sec);
+                        basis2 = string.Format("обучения по договорам об образовании");
+                        dogovorDoc = string.Format(", договоры об образовании", sec);
                         break;
                 }
 
                 wd.SetFields("Граждан", isRus ? "граждан Российской Федерации" : "иностранных граждан");
                 wd.SetFields("Граждан2", isRus ? "граждан Российской Федерации" : "");
                 wd.SetFields("Стипендия", (basisId == "2" || formId == "2") ? "" : "и назначении стипендии");
-                wd.SetFields("Факультет", facDat);
-                wd.SetFields("Форма", form);
+                //wd.SetFields("Факультет", facDat);
+                //wd.SetFields("Форма", form);
                 wd.SetFields("Форма2", form2);
-                wd.SetFields("Основа", basis);
+                //wd.SetFields("Основа", basis);
                 wd.SetFields("Основа2", basis2);
-                wd.SetFields("БакСпец", bakspecRod);
+                //wd.SetFields("БакСпец", bakspecRod);
                 wd.SetFields("БакСпецРод", bakspecRod);
-                wd.SetFields("НапрСпец", string.Format(" {0} {1} «{2}»", naprspecRod, LicenseProgramCode, LicenseProgramName));
+                //wd.SetFields("НапрСпец", string.Format(" {0} {1} «{2}»", naprspecRod, LicenseProgramCode, LicenseProgramName));
                 wd.SetFields("Слушатель", list);
-                wd.SetFields("Сокращ", sec);
+                //wd.SetFields("Сокращ", sec);
                 wd.SetFields("Сокращ1", sec);
                 wd.SetFields("CopyDoc", copyDoc);
                 wd.SetFields("DogovorDoc", dogovorDoc);
@@ -3008,6 +3007,7 @@ namespace Priem
                                    TotalSum = (extabit.CompetitionId == 8 || extabit.CompetitionId == 1) ? null : extabitMarksSum.TotalSum,
                                    ФИО = extabit.FIO,
                                    CelCompName = celCompetition.TvorName,
+                                   LicenseProgramId = extabit.LicenseProgramId,
                                    LicenseProgramName = extabit.LicenseProgramName,
                                    LicenseProgramCode = extabit.LicenseProgramCode,
                                    ProfileName = extabit.ProfileName,
@@ -3026,6 +3026,7 @@ namespace Priem
                                        TotalSum = x.TotalSum.ToString(),
                                        ФИО = x.ФИО,
                                        CelCompName = x.CelCompName,
+                                       LicenseProgramId = x.LicenseProgramId,
                                        LicenseProgramName = x.LicenseProgramName,
                                        LicenseProgramCode = x.LicenseProgramCode,
                                        ProfileName = x.ProfileName,
@@ -3039,6 +3040,22 @@ namespace Priem
                                );
 
                     bool bFirstRun = true;
+
+                    /*if (!string.IsNullOrEmpty(curMotivation) && isCel)
+                        td[0, curRow] += "\n\t\t" + curMotivation + "\n";*/
+                    /*
+                    if (v.LicenseProgramId == 557 || v.LicenseProgramId == 521)//Физическая культура
+                    {
+                    }
+                    */
+
+                    /*if (basisId != "2" && formId != "2")//платникам и всем очно-заочникам стипендия не платится
+                    {
+                        td.AddRow(1);
+                        curRow++;
+                        td[0, curRow] = "\r\n2.      Назначить лицам, указанным в п. 1 настоящего Приказа, стипендию в размере 487 рубля ежемесячно с 01.09.2014 по 31.12.2014.";
+                    }
+                    */
 
                     foreach (var v in lst)
                     {
@@ -3173,11 +3190,24 @@ namespace Priem
                         if (balls.Length == 0)
                             ballToStr = "";
                         else if (balls.EndsWith("1"))
-                            ballToStr += "";
+                        {
+                            if (balls.EndsWith("11"))
+                                ballToStr += "ов";
+                            else
+                                ballToStr += "";
+
+                        }
                         else if (balls.EndsWith("2") || balls.EndsWith("3") || balls.EndsWith("4"))
-                            ballToStr += "а";
+                        {
+                            if (balls.EndsWith("12") || balls.EndsWith("13") || balls.EndsWith("14"))
+                                ballToStr += "ов";
+                            else
+                                ballToStr += "а";
+                        }
                         else
+                        {
                             ballToStr += "ов";
+                        }
 
                         if (isCel && curMotivation == "-")
                             curMotivation = string.Format("ОСНОВАНИЕ: договор об организации целевого приема с {0} от … № …, Протокол заседания Приемной комиссии СПбГУ от 30.07.2013 № ..., личное заявление, оригинал документа государственного образца об образовании.", v.CelCompName);
@@ -3192,13 +3222,21 @@ namespace Priem
                         }
                         else
                             Motivation = string.Empty;
-
-                        td.AddRow(1);
-                        curRow++;
-                        td[0, curRow] = string.Format("\t\t1.{0}. {1} {2} {3}", counter, v.ФИО, balls + ballToStr, string.IsNullOrEmpty(Motivation) ? "" : ("\n\n\t\t" + tmpMotiv + "\n"));
+                        if (v.LicenseProgramId == 557 || v.LicenseProgramId == 521)//Физическая культура
+                        {
+                            td.AddRow(1);
+                            curRow++;
+                            td[0, curRow] = string.Format("\t\t1.{0}. {1} {2} {3}", counter, v.ФИО, balls + ballToStr, string.IsNullOrEmpty(Motivation) ? "" : ("\n\n\t\t" + tmpMotiv + "\n"));
+                        }
+                        else
+                        {
+                            td.AddRow(1);
+                            curRow++;
+                            td[0, curRow] = string.Format("\t\t1.{0}. {1} ", counter, v.ФИО);
+                        }
                     }
                 }
-
+                /*
                 if (!string.IsNullOrEmpty(curMotivation) && isCel)
                     td[0, curRow] += "\n\t\t" + curMotivation + "\n";
 
@@ -3206,8 +3244,9 @@ namespace Priem
                 {
                     td.AddRow(1);
                     curRow++;
-                    td[0, curRow] = "\r\n2.      Назначить лицам, указанным в п. 1 настоящего Приказа, стипендию в размере 1272 рубля ежемесячно с 01.09.2013 по 31.01.2014.";
+                    td[0, curRow] = "\r\n2.      Назначить лицам, указанным в п. 1 настоящего Приказа, стипендию в размере 487 рубля ежемесячно с 01.09.2014 по 31.12.2014.";
                 }
+                 */
             }
             catch (WordException we)
             {
