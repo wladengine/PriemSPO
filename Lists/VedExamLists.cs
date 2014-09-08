@@ -143,7 +143,7 @@ namespace Priem
 
         protected override void OpenCard(string id, BaseFormEx formOwner, int? index)
         {
-            MainClassCards.OpenCardAbit(id, this, dgvVed.CurrentRow.Index);
+            MainClass.OpenCardAbit(id, this, dgvVed.CurrentRow.Index);
         }
 
         //обновление грида
@@ -288,7 +288,7 @@ namespace Priem
                     if (dgvr.Cells["Печать"].Value.ToString() == "True")
                     {
                         Guid abitId = new Guid(dgvr.Cells["Id"].Value.ToString());
-                        Print.PrintExamListWord(abitId, false/*true*/);
+                        PriemLib.Print.PrintExamListWord(abitId, false/*true*/);
                     }
                 }
             }

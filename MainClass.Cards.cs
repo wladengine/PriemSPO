@@ -9,9 +9,6 @@ using PriemLib;
 
 namespace Priem
 {
-    public delegate void DataRefreshHandler();
-    public delegate void ProtocolRefreshHandler();
-
     public static partial class MainClassCards
     {
         public static void OpenCardPerson(string personId, BaseFormEx formOwner, int? rowIndex)

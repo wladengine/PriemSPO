@@ -661,7 +661,7 @@ ORDER BY ФИО", abitFilters);
         
         protected override void OpenCard(string itemId, BaseFormEx formOwner, int? index)
         {
-            MainClassCards.OpenCardAbit(itemId, this, dgvMarks.CurrentRow.Index);
+            MainClass.OpenCardAbit(itemId, this, dgvMarks.CurrentRow.Index);
         }       
 
         //поиск по номеру

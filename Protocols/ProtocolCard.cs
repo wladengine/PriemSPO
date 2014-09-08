@@ -119,7 +119,7 @@ namespace Priem
             this.CenterToParent();
             InitFocusHandlers();
 
-            _drh = new MainClass.DataRefreshHandler(UpdateRightGrid);           
+            _drh = new DataRefreshHandler(UpdateRightGrid);           
             MainClass.AddHandler(_drh);
 
             btnDelete.Visible = false;

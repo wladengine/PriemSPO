@@ -111,7 +111,7 @@ namespace Priem
             {
                 string abId = dgvAbitList.Rows[dgvAbitList.CurrentCell.RowIndex].Cells["Id"].Value.ToString();
                 if (abId != "")
-                    MainClassCards.OpenCardPerson(abId, this, dgvAbitList.CurrentRow.Index);                
+                    MainClass.OpenCardPerson(abId, this, dgvAbitList.CurrentRow.Index);                
             }
         }
 

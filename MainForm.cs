@@ -251,12 +251,14 @@ namespace Priem
                 }
 
                 if (MainClass.IsPrintOrder())
+                {
                     smiEntryView.Visible = true;
+                    smiOrderNumbers.Visible = true;
+                }
 
                 //временно                
                 smiImport.Visible = false;                
                 
-
                 Form frm;
                 if (MainClass._config.ValuesList.Keys.Contains("lstAbitDef"))
                 {
@@ -640,7 +642,7 @@ namespace Priem
 
         private void smiOrderNumbers_Click(object sender, EventArgs e)
         {
-            new OrderNumbersList().Show();
+            new CardOrderNumbers().Show();
         }
 
         private void smiRatingBackUp_Click(object sender, EventArgs e)

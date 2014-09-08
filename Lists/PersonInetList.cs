@@ -56,7 +56,7 @@ namespace Priem
 
         protected override void OpenCard(string id, BaseFormEx formOwner, int? index)
         {
-            MainClassCards.OpenCardPerson(id, formOwner, index);
+            MainClass.OpenCardPerson(id, formOwner, index);
         }
 
         protected override void GetSource()
@@ -176,7 +176,7 @@ namespace Priem
                     WinFormsServ.Search(this.dgvAbiturients, "PersonNum", num);
                     DialogResult dr = MessageBox.Show(string.Format("Абитуриент {0} с данным номером баркода уже импортирован в базу.\nОткрыть карточку абитуриента?", fio), "Внимание", MessageBoxButtons.YesNo);
                     if (dr == System.Windows.Forms.DialogResult.Yes)
-                        MainClassCards.OpenCardPerson(persId, this, null);
+                        MainClass.OpenCardPerson(persId, this, null);
                 }
             }
 

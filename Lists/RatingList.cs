@@ -375,7 +375,7 @@ qPersonAttMarkRussian.Value AS 'Атт. Русский Язык',
 
         protected override void OpenCard(string id, BaseFormsLib.BaseFormEx formOwner, int? index)
         {
-            MainClassCards.OpenCardAbit(id, this, dgvAbits.CurrentRow.Index);
+            MainClass.OpenCardAbit(id, this, dgvAbits.CurrentRow.Index);
         }
 
         int GetPlanValueAndCheckLock()
@@ -763,8 +763,8 @@ AND ed.FixierenView.IsSecond = {7} AND ed.FixierenView.IsReduced = {8} AND ed.Fi
             SaveFileDialog sfd = new SaveFileDialog();
             sfd.Filter = "ADOBE Pdf files|*.pdf";
             if (sfd.ShowDialog() == DialogResult.OK)
-                Print.PrintRatingProtocol(StudyFormId, StudyBasisId, FacultyId, LicenseProgramId, ObrazProgramId, ProfileId, IsCel, IsCrimea,  
-                    plan, sfd.FileName, IsSecond, IsReduced, IsParallel);
+                PriemLib.Print.PrintRatingProtocol(StudyFormId, StudyBasisId, FacultyId, LicenseProgramId, ObrazProgramId, ProfileId, IsCel, IsCrimea,  
+                    plan, sfd.FileName, IsSecond, IsReduced, IsParallel, false);
         }        
 
         private void btnWord_Click(object sender, EventArgs e)

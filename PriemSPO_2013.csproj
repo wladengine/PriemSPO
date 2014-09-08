@@ -96,21 +96,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Cards\CardAbit.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Cards\CardAbit.designer.cs">
-      <DependentUpon>CardAbit.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Cards\CardAbit.Fields.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Cards\CardAttMarks.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Cards\CardAttMarks.designer.cs">
-      <DependentUpon>CardAttMarks.cs</DependentUpon>
-    </Compile>
     <Compile Include="Cards\CardCompetitionInInet.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -141,55 +126,13 @@
     <Compile Include="Cards\CardObrazProgramInEntryInCompetitionInInet.designer.cs">
       <DependentUpon>CardObrazProgramInEntryInCompetitionInInet.cs</DependentUpon>
     </Compile>
-    <Compile Include="Cards\CardPaidData.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Cards\CardPaidData.designer.cs">
-      <DependentUpon>CardPaidData.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Cards\CardPaidData.Fields.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Cards\CardPerson.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Cards\CardPerson.designer.cs">
-      <DependentUpon>CardPerson.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Cards\CardPerson.Fields.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="Cards\CardProfileInObrazProgramInEntryInCompetition.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Cards\CardProfileInObrazProgramInEntryInCompetition.designer.cs">
       <DependentUpon>CardProfileInObrazProgramInEntryInCompetition.cs</DependentUpon>
     </Compile>
-    <Compile Include="Cards\DocCard.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Cards\DocCard.designer.cs">
-      <DependentUpon>DocCard.cs</DependentUpon>
-    </Compile>
     <Compile Include="Cards\DocsClass.cs" />
-    <Compile Include="Cards\EgeCard.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Cards\EgeCard.designer.cs">
-      <DependentUpon>EgeCard.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Cards\EgeCard.Fields.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Cards\OlympCard.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Cards\OlympCard.designer.cs">
-      <DependentUpon>OlympCard.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Cards\OlympCard.Fields.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="Cards\ShortCompetition.cs" />
     <Compile Include="ChangeAbitClass.cs" />
     <Compile Include="ComboServ.cs" />
@@ -393,9 +336,6 @@
       <DependentUpon>VedExamLists.cs</DependentUpon>
     </Compile>
     <Compile Include="LoadFromInet.cs" />
-    <Compile Include="MainClass.Cards.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -414,76 +354,11 @@
     <Compile Include="Migrator.designer.cs">
       <DependentUpon>Migrator.cs</DependentUpon>
     </Compile>
-    <Compile Include="Print.cs" />
+    <Compile Include="Print.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Protocols\ChangeCompBEProtocol.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Protocols\ChangeCompBEProtocolList.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Protocols\ChangeCompCelProtocol.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Protocols\ChangeCompCelProtocolList.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Protocols\DisEnableProtocol.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Protocols\DisEnableProtocolList.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Protocols\DisEntryViewList.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Protocols\DisEntryViewList.designer.cs">
-      <DependentUpon>DisEntryViewList.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Protocols\DisEntryViewProtocol.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Protocols\DisEntryViewProtocol.designer.cs">
-      <DependentUpon>DisEntryViewProtocol.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Protocols\EnableProtocol.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Protocols\EnableProtocolList.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Protocols\EntryViewList.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Protocols\EntryViewList.designer.cs">
-      <DependentUpon>EntryViewList.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Protocols\EntryViewProtocol.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Protocols\OrderNumbersList.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Protocols\OrderNumbersList.designer.cs">
-      <DependentUpon>OrderNumbersList.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Protocols\ProtocolCard.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Protocols\ProtocolCard.designer.cs">
-      <DependentUpon>ProtocolCard.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Protocols\ProtocolTypes.cs" />
-    <Compile Include="Protocols\ProtocolList.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Protocols\ProtocolList.designer.cs">
-      <DependentUpon>ProtocolList.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Protocols\ProtocolList.Fields.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="SomeMethodsClass.cs" />
     <Compile Include="Statistics\AbitFacultyIntersection.cs">
       <SubType>Form</SubType>
@@ -596,12 +471,6 @@
     <Compile Include="Statistics\Watch.designer.cs">
       <DependentUpon>Watch.cs</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="Cards\CardAbit.resx">
-      <DependentUpon>CardAbit.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Cards\CardAttMarks.resx">
-      <DependentUpon>CardAttMarks.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Cards\CardCompetitionInInet.resx">
       <DependentUpon>CardCompetitionInInet.cs</DependentUpon>
     </EmbeddedResource>
@@ -614,23 +483,8 @@
     <EmbeddedResource Include="Cards\CardObrazProgramInEntryInCompetitionInInet.resx">
       <DependentUpon>CardObrazProgramInEntryInCompetitionInInet.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Cards\CardPaidData.resx">
-      <DependentUpon>CardPaidData.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Cards\CardPerson.resx">
-      <DependentUpon>CardPerson.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Cards\CardProfileInObrazProgramInEntryInCompetition.resx">
       <DependentUpon>CardProfileInObrazProgramInEntryInCompetition.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Cards\DocCard.resx">
-      <DependentUpon>DocCard.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Cards\EgeCard.resx">
-      <DependentUpon>EgeCard.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Cards\OlympCard.resx">
-      <DependentUpon>OlympCard.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Crypto\AddMark.resx">
       <DependentUpon>AddMark.cs</DependentUpon>
@@ -747,21 +601,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="Protocols\DisEntryViewList.resx">
-      <DependentUpon>DisEntryViewList.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Protocols\EntryViewList.resx">
-      <DependentUpon>EntryViewList.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Protocols\OrderNumbersList.resx">
-      <DependentUpon>OrderNumbersList.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Protocols\ProtocolCard.resx">
-      <DependentUpon>ProtocolCard.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Protocols\ProtocolList.resx">
-      <DependentUpon>ProtocolList.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Statistics\AbitFacultyIntersection.resx">
       <DependentUpon>AbitFacultyIntersection.cs</DependentUpon>
     </EmbeddedResource>
@@ -878,6 +717,9 @@
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Protocols\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

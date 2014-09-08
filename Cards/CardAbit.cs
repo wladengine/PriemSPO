@@ -59,7 +59,7 @@ namespace Priem
             base.ExtraInit();
             _tableName = "ed.Abiturient";
 
-            _drh = new MainClass.DataRefreshHandler(UpdateFIO);
+            _drh = new DataRefreshHandler(UpdateFIO);
             MainClass.AddHandler(_drh);           
            
             tcCard = tabCard;

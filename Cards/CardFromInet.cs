@@ -1267,7 +1267,7 @@ FROM [extApplicationDetails] WHERE [ApplicationId]=@AppId";
                                    select ab.PersonId).FirstOrDefault();
 
                     //MainClass.OpenCardAbit(abId.ToString(), null, null);
-                    MainClassCards.OpenCardPerson(perId.ToString(), null, null);
+                    MainClass.OpenCardPerson(perId.ToString(), null, null);
 
                 }
                 else
@@ -1276,7 +1276,7 @@ FROM [extApplicationDetails] WHERE [ApplicationId]=@AppId";
                                    where per.Barcode == _personBarc
                                    select per.Id).FirstOrDefault();
 
-                    MainClassCards.OpenCardPerson(perId.ToString(), null, null);
+                    MainClass.OpenCardPerson(perId.ToString(), null, null);
                 }
             }
         }

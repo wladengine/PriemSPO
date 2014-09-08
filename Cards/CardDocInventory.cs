@@ -92,7 +92,7 @@ namespace Priem
 
         private void btnPrint_Click(object sender, EventArgs e)
         {
-            Print.PrintDocInventory(AbitDocsIds, _abitId);
+            PriemLib.Print.PrintDocInventory(AbitDocsIds, _abitId);
         }
     }
 }
