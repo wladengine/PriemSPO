@@ -63,7 +63,7 @@ namespace Priem
             AddItem(new FilterItem("Гражданство", FilterType.Multi, "ed.Person.NationalityId", "ed.Person", " SELECT ed.Country.Id, ed.Country.Name FROM ed.Country ORDER BY Name "));
             AddItem(new FilterItem("Регион", FilterType.Multi, "ed.Person.RegionId", "ed.Person", " SELECT Id, Name FROM ed.Region "));
             AddItem(new FilterItem("Телефон", FilterType.Text, "ed.Person.Phone", "ed.Person"));
-            AddItem(new FilterItem("Предоставлять общежитие на время поступления", FilterType.Bool, "ed.Person.HostelAbit", "ed.Person"));
+            AddItem(new FilterItem("Предоставлять общежитие на время поступления", FilterType.Bool, "ed.extPersonSPO.HostelAbit", "ed.extPersonSPO"));
             AddItem(new FilterItem("Выдано направление на поселение", FilterType.Bool, "ed.Person.HasAssignToHostel", "ed.Person"));
             AddItem(new FilterItem("Выдан экзаменационный пропуск", FilterType.Bool, "ed.Person.HasExamPass", "ed.Person"));
             AddItem(new FilterItem("Факультет, выдавший направление", FilterType.Multi, "ed.Person.HostelFacultyId", "ed.Person", " SELECT Id, Name FROM ed.SP_Faculty "));
@@ -73,7 +73,7 @@ namespace Priem
             AddItem(new FilterItem("Факультет", FilterType.Multi, "ed.qAbiturient.FacultyId", "ed.qAbiturient", " SELECT Id, Name FROM ed.qFaculty "));
             AddItem(new FilterItem("Форма обучения", FilterType.Multi, "ed.qAbiturient.StudyFormId", "ed.qAbiturient", "SELECT Id, Name FROM ed.StudyForm "));
             AddItem(new FilterItem("Основа обучения", FilterType.Multi, "ed.qAbiturient.StudyBasisId", "ed.qAbiturient", " SELECT Id, Name FROM ed.StudyBasis "));
-            AddItem(new FilterItem("Предоставлять общежитие на время обучения", FilterType.Bool, "ed.Person_AdditionalInfo.HostelEduc", "ed.Person_AdditionalInfo"));
+            AddItem(new FilterItem("Предоставлять общежитие на время обучения", FilterType.Bool, "ed.extPersonSPO.HostelEduc", "ed.extPersonSPO"));
             AddItem(new FilterItem("Тип конкурса", FilterType.Multi, "ed.qAbiturient.CompetitionId", "ed.qAbiturient", "SELECT Id, Name FROM ed.Competition ORDER BY Name"));           
             AddItem(new FilterItem("Слушатель", FilterType.Bool, "ed.qAbiturient.IsListener", "ed.qAbiturient"));                      
             AddItem(new FilterItem("Оплатил", FilterType.Bool, "ed.qAbiturient.IsPaid", "ed.qAbiturient"));
