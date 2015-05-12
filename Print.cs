@@ -31,8 +31,8 @@ namespace Priem
                                      select ab.PersonId).FirstOrDefault();
 
                     var abitList = (from x in context.Abiturient
-                                    join Entry in context.Entry on x.EntryId equals Entry.Id
-                                    where Entry.StudyLevel.StudyLevelGroup.Id == MainClass.studyLevelGroupId
+                                    join Entry in context.extEntry on x.EntryId equals Entry.Id
+                                    where Entry.StudyLevelGroupId == MainClass.studyLevelGroupId
                                     && x.IsGosLine == false
                                     && x.PersonId == PersonId
                                     && x.BackDoc == false
@@ -41,13 +41,13 @@ namespace Priem
                                         x.Id,
                                         x.PersonId,
                                         x.Barcode,
-                                        Faculty = Entry.SP_Faculty.Name,
-                                        Profession = Entry.SP_LicenseProgram.Name,
-                                        ProfessionCode = Entry.SP_LicenseProgram.Code,
-                                        ObrazProgram = Entry.StudyLevel.Acronym + "." + Entry.SP_ObrazProgram.Number + "." + MainClass.PriemYear + " " + Entry.SP_ObrazProgram.Name,
+                                        Faculty = Entry.FacultyName,
+                                        Profession = Entry.LicenseProgramName,
+                                        ProfessionCode = Entry.LicenseProgramCode,
+                                        ObrazProgram = Entry.ObrazProgramCrypt + " " + Entry.ObrazProgramName,
                                         Specialization = Entry.ProfileName,
                                         Entry.StudyFormId,
-                                        Entry.StudyForm.Name,
+                                        Entry.StudyFormName,
                                         Entry.StudyBasisId,
                                         EntryType = (Entry.StudyLevelId == 17 ? 2 : 1),
                                         Entry.StudyLevelId,
@@ -87,25 +87,14 @@ namespace Priem
                             return;
                         }
 
-
                         PdfStamper pdfStm = new PdfStamper(pdfRd, fileS);
                         pdfStm.SetEncryption(PdfWriter.STRENGTH128BITS, "", "",
                         PdfWriter.ALLOW_SCREENREADERS | PdfWriter.ALLOW_PRINTING |
                         PdfWriter.AllowPrinting);
                         AcroFields acrFlds = pdfStm.AcroFields;
 
-                        //чей мы рисуем штрих-код??
-                        //upd 03.06.2011 - уже не рисуем
-                        //Barcode128 barcode = new Barcode128();
-                        //barcode.Code = abit.RegNum;
-                        //barcode.Code = "0008456";
-
                         PdfContentByte cb = pdfStm.GetOverContent(1);
 
-                        //iTextSharp.text.Image img = barcode.CreateImageWithBarcode(cb, null, null);
-                        //img.SetAbsolutePosition(420, 720);
-                        //cb.AddImage(img);
-                        //acrFlds.SetField("RegNum", abit.PersonNum + @"\" + abit.RegNum);
                         string[] splitStr;
 
                         // ФИО
@@ -139,10 +128,10 @@ namespace Priem
                         acrFlds.SetField("Email", person.Email);
                         acrFlds.SetField("Mobiles", person.Mobiles);
                         // общежитие
-                        acrFlds.SetField("HostelEducYes", person.HostelEduc ?? false ? "1" : "0");
-                        acrFlds.SetField("HostelEducNo", person.HostelEduc ?? false ? "0" : "1");
-                        acrFlds.SetField("HostelAbitYes", person.HostelAbit ?? false ? "1" : "0");
-                        acrFlds.SetField("HostelAbitNo", person.HostelAbit ?? false ? "0" : "1");
+                        acrFlds.SetField("HostelEducYes", person.HostelEduc ? "1" : "0");
+                        acrFlds.SetField("HostelEducNo", person.HostelEduc ? "0" : "1");
+                        acrFlds.SetField("HostelAbitYes", person.HostelAbit ? "1" : "0");
+                        acrFlds.SetField("HostelAbitNo", person.HostelAbit ? "0" : "1");
                         // стаж
                         if (person.Stag != string.Empty)
                         {
@@ -170,45 +159,45 @@ namespace Priem
                         }
                         else
                             acrFlds.SetField("NoEduc", "1");
-                        tmp = person.StartEnglish ?? false ? "Yes" : "No";  //+
-                        acrFlds.SetField("chbEnglish" + tmp, "1");          //+
+                        tmp = person.StartEnglish ? "Yes" : "No";
+                        acrFlds.SetField("chbEnglish" + tmp, "1");
                         acrFlds.SetField("EnglishMark", person.EnglishMark.ToString());  
                         // спорт
                         string SportQualification = "";
-                        extPersonSPO personSPO = (from per in context.extPersonSPO
+                        extPerson pSPO = (from per in context.extPerson
                                                   where per.Id == PersonId
                                                   select per).FirstOrDefault();
-                        if (personSPO != null)
+                        if (pSPO != null)
                         {
-                            if (personSPO.SportQualificationId.HasValue && personSPO.SportQualificationId > 0)
-                                SportQualification = personSPO.SportQualificationName + ((!String.IsNullOrEmpty(personSPO.SportQualificationLevel)) ? " разряд:" + personSPO.SportQualificationLevel : "");
+                            if (pSPO.SportQualificationId.HasValue && pSPO.SportQualificationId > 0)
+                                SportQualification = pSPO.SportQualificationName + ((!String.IsNullOrEmpty(pSPO.SportQualificationLevel)) ? " разряд:" + pSPO.SportQualificationLevel : "");
 
-                            else if (!personSPO.SportQualificationId.HasValue || personSPO.SportQualificationId == 0)
+                            else if (!pSPO.SportQualificationId.HasValue || pSPO.SportQualificationId == 0)
                                 SportQualification = "нет";
 
-                            else if (!personSPO.SportQualificationId.HasValue || personSPO.SportQualificationId == 44)
-                                SportQualification = personSPO.OtherSportQualification;
+                            else if (!pSPO.SportQualificationId.HasValue || pSPO.SportQualificationId == 44)
+                                SportQualification = pSPO.OtherSportQualification;
                        
                             acrFlds.SetField("SportQualification", SportQualification); 
                         }
+
                         // Полученное образование
-                        string SchoolTypeName = context.SchoolType.Where(x => x.Id == person.SchoolTypeId).Select(x => x.Name).First();
-                        if (SchoolTypeName + person.SchoolName + person.SchoolNum + person.SchoolCity != string.Empty)
+                        string SchoolTypeName = context.SchoolType.Where(x => x.Id == pSPO.SchoolTypeId).Select(x => x.Name).First();
+                        if (SchoolTypeName + pSPO.SchoolName + pSPO.SchoolNum + pSPO.SchoolCity != string.Empty)
                             acrFlds.SetField("chbSchoolFinished", "1");
 
-                        string CountryEducName = context.Country.Where(x => x.Id == person.CountryEducId).Select(x => x.Name).FirstOrDefault();
+                        string CountryEducName = context.Country.Where(x => x.Id == pSPO.CountryEducId).Select(x => x.Name).FirstOrDefault();
                         acrFlds.SetField("CountryEduc", CountryEducName);
 
-                        acrFlds.SetField("ExitYear", person.SchoolExitYear.ToString());
-                        splitStr = GetSplittedStrings(person.SchoolName ?? "", 50, 70, 2);
+                        acrFlds.SetField("ExitYear", pSPO.SchoolExitYear.ToString());
+                        splitStr = GetSplittedStrings(pSPO.SchoolName ?? "", 50, 70, 2);
                         for (int ii = 1; ii <= 2; ii++)
                             acrFlds.SetField("School" + ii, splitStr[ii - 1]);
 
-                        string attreg = person.AttestatRegion;
-                        if (person.SchoolTypeId == 1)
-                            acrFlds.SetField("Attestat", string.Format("аттестат  {0} серия {1} № {2}", attreg == string.Empty ? "" : "регион " + attreg, person.AttestatSeries, person.AttestatNum));
+                        if (pSPO.SchoolTypeId == 1)
+                            acrFlds.SetField("Attestat", string.Format("аттестат серия {0} № {1}", pSPO.AttestatSeries, pSPO.AttestatNum));
                         else
-                            acrFlds.SetField("Attestat", string.Format("диплом серия {0} № {1}", person.DiplomSeries, person.DiplomNum));
+                            acrFlds.SetField("Attestat", string.Format("диплом серия {0} № {1}", pSPO.DiplomSeries, pSPO.DiplomNum));
 
                         string queryEge = "SELECT TOP 5 EgeMark.Id, EgeExamName.Name AS ExamName, EgeMark.Value, " +
                                       "EgeCertificate.Number, EgeMark.EgeCertificateId " +
@@ -232,15 +221,7 @@ namespace Priem
                             acrFlds.SetField("TableNumber" + i, dre["Number"].ToString());
                             i++;
                         }
-                        /*
-                        acrFlds.SetField("Priority1", abit.Priority.ToString()); 
-                        acrFlds.SetField("Profession1", "(" + abit.LicenseProgramCode + ") " + abit.LicenseProgramName);
-                        acrFlds.SetField("Specialization1", abit.ProfileName);
-                        acrFlds.SetField("ObrazProgram1", abit.ObrazProgramCrypt + " " + abit.ObrazProgramName);
-                        acrFlds.SetField("StudyBasis" + abit.StudyBasisId.ToString() + "1", "1");
-                        acrFlds.SetField("StudyForm" + abit.StudyFormId.ToString() + "1", "1");
-                        */
-
+                        
                         for (int ii=0; ii< abitList.Count; ii++)
                         {
                             acrFlds.SetField("Priority"+(ii+1).ToString(), abitList[ii].Priority.ToString());
@@ -252,7 +233,7 @@ namespace Priem
                         }
 
 
-                        string addInfo = person.Mobiles.Replace('\r', ',').Replace('\n', ' ').Trim();//если начнут вбивать построчно, то хотя бы в одну строку сведём
+                        string addInfo = pSPO.Mobiles.Replace('\r', ',').Replace('\n', ' ').Trim();//если начнут вбивать построчно, то хотя бы в одну строку сведём
                         if (addInfo.Length > 100)
                         {
                             int cutpos = 0;
@@ -264,10 +245,10 @@ namespace Priem
                         acrFlds.SetField("Copy", "1");
 
                         // олимпиады
-                        acrFlds.SetField("Extra", person.ExtraInfo + "\r\n" + person.ScienceWork);
+                        acrFlds.SetField("Extra", pSPO.ExtraInfo + "\r\n" + pSPO.ScienceWork);
 
                         //экстр. случаи
-                        tmp = person.PersonInfo.Replace('\r', ';').Replace('\n', ' ').Trim();
+                        tmp = pSPO.PersonInfo.Replace('\r', ';').Replace('\n', ' ').Trim();
                         string[] mamaPapaWords = tmp.Split(' ');
 
                         string[] mamaPapa = new string[3];
@@ -323,6 +304,361 @@ namespace Priem
                 if (fileS != null)
                     fileS.Dispose();
             }
+        }
+        public static byte[] GetApplicationPDF_SPO(Guid appId, string dirPath, Guid PersonId)
+        {
+            using (PriemEntities context = new PriemEntities())
+            {
+                var abitList = (from x in context.extAbit
+                                join Entry in context.extEntry on x.EntryId equals Entry.Id
+                                where x.CommitId == appId
+                                select new
+                                {
+                                    x.Id,
+                                    x.PersonId,
+                                    x.Barcode,
+                                    Faculty = Entry.FacultyName,
+                                    Profession = Entry.LicenseProgramName,
+                                    ProfessionCode = Entry.LicenseProgramCode,
+                                    ObrazProgram = Entry.ObrazProgramName,
+                                    Specialization = Entry.ProfileName,
+                                    Entry.StudyFormId,
+                                    Entry.StudyFormName,
+                                    Entry.StudyBasisId,
+                                    EntryType = (Entry.StudyLevelId == 17 ? 2 : 1),
+                                    Entry.StudyLevelId,
+                                    CommitIntNumber = x.CommitNumber,
+                                    x.Priority,
+                                    IsGosLine = Entry.IsForeign && Entry.StudyBasisId == 1
+                                    //x.IsGosLine
+                                }).ToList();
+
+                var person = (from x in context.Person
+                              where x.Id == PersonId
+                              select new
+                              {
+                                  x.Surname,
+                                  x.Name,
+                                  x.SecondName,
+                                  x.Barcode,
+                                  x.Person_AdditionalInfo.HostelAbit,
+                                  x.BirthDate,
+                                  BirthPlace = x.BirthPlace ?? "",
+                                  Sex = x.Sex,
+                                  Nationality = x.Nationality.Name,
+                                  Country = x.Person_Contacts.Country.Name,
+                                  PassportType = x.PassportType.Name,
+                                  x.PassportSeries,
+                                  x.PassportNumber,
+                                  x.PassportAuthor,
+                                  x.PassportDate,
+                                  x.Person_Contacts.City,
+                                  Region = x.Person_Contacts.Region.Name,
+                                  x.Person_Contacts.Code,
+                                  x.Person_Contacts.Street,
+                                  x.Person_Contacts.House,
+                                  x.Person_Contacts.Korpus,
+                                  x.Person_Contacts.Flat,
+                                  x.Person_Contacts.Email,
+                                  x.Person_Contacts.Phone,
+                                  x.Person_Contacts.Mobiles,
+                                  AddInfo = x.Person_AdditionalInfo.ExtraInfo,
+                                  Parents = x.Person_AdditionalInfo.PersonInfo,
+                                  HasPrivileges = x.Person_AdditionalInfo.Privileges > 0,
+                                  SportQualificationName = x.PersonSportQualification.SportQualification.Name,
+                                  x.PersonSportQualification.SportQualificationId,
+                                  x.PersonSportQualification.SportQualificationLevel,
+                                  x.PersonSportQualification.OtherSportQualification,
+                                  x.Person_AdditionalInfo.HostelEduc,
+                                  x.Person_Contacts.ForeignCountry.IsRussia,
+                                  x.HasRussianNationality,
+                                  x.Person_AdditionalInfo.StartEnglish,
+                                  x.Person_AdditionalInfo.EnglishMark,
+                                  Language = x.Person_AdditionalInfo.Language.Name,
+                                  x.Person_AdditionalInfo.HasTRKI,
+                                  x.Person_AdditionalInfo.TRKICertificateNumber,
+                              }).FirstOrDefault();
+
+                var personEducation = context.Person_EducationInfo.Where(x => x.PersonId == PersonId)
+                    .Select(x => new
+                    {
+                        x.SchoolExitYear,
+                        x.SchoolName,
+                        x.IsEqual,
+                        x.EqualDocumentNumber,
+                        CountryEduc = x.CountryEducId != null ? x.Country.Name : "",
+                        x.CountryEducId,
+                        x.SchoolTypeId,
+                        EducationDocumentSeries = x.SchoolTypeId == 1 ? x.AttestatSeries : x.DiplomSeries,
+                        EducationDocumentNumber = x.SchoolTypeId == 1 ? x.AttestatNum : x.DiplomNum,
+                    }).FirstOrDefault();
+
+                MemoryStream ms = new MemoryStream();
+                string dotName = "ApplicationSPO_page3.pdf";
+
+                byte[] templateBytes;
+                using (FileStream fs = new FileStream(dirPath + dotName, FileMode.Open, FileAccess.Read))
+                {
+                    templateBytes = new byte[fs.Length];
+                    fs.Read(templateBytes, 0, templateBytes.Length);
+                }
+
+                PdfReader pdfRd = new PdfReader(templateBytes);
+                PdfStamper pdfStm = new PdfStamper(pdfRd, ms);
+                //pdfStm.SetEncryption(PdfWriter.STRENGTH128BITS, "", "", PdfWriter.ALLOW_SCREENREADERS | PdfWriter.ALLOW_PRINTING | PdfWriter.AllowPrinting);
+                AcroFields acrFlds = pdfStm.AcroFields;
+
+                acrFlds.SetField("FIO", ((person.Surname ?? "") + " " + (person.Name ?? "") + " " + (person.SecondName ?? "")).Trim());
+                List<byte[]> lstFiles = new List<byte[]>();
+
+                if (person.HostelEduc)
+                    acrFlds.SetField("HostelEducYes", "1");
+                else
+                    acrFlds.SetField("HostelEducNo", "1");
+
+                if (abitList.Where(x => x.IsGosLine).Count() > 0)
+                    acrFlds.SetField("IsGosLine", "1");
+
+                acrFlds.SetField("HostelAbitYes", person.HostelAbit ? "1" : "0";
+                acrFlds.SetField("HostelAbitNo", person.HostelAbit ? "0" : "1";
+
+                acrFlds.SetField("BirthDateYear", person.BirthDate.Year.ToString("D2"));
+                acrFlds.SetField("BirthDateMonth", person.BirthDate.Month.ToString("D2"));
+                acrFlds.SetField("BirthDateDay", person.BirthDate.Day.ToString());
+
+                acrFlds.SetField("BirthPlace", person.BirthPlace);
+                acrFlds.SetField("Male", person.Sex ? "1" : "0");
+                acrFlds.SetField("Female", person.Sex ? "0" : "1");
+                acrFlds.SetField("Nationality", person.Nationality);
+                acrFlds.SetField("PassportSeries", person.PassportSeries);
+                acrFlds.SetField("PassportNumber", person.PassportNumber);
+
+                //dd.MM.yyyy :12.05.2000
+                string[] splitStr = GetSplittedStrings(person.PassportAuthor + " " + person.PassportDate.Value.ToString("dd.MM.yyyy"), 60, 70, 2);
+                for (int i = 1; i <= 2; i++)
+                    acrFlds.SetField("PassportAuthor" + i, splitStr[i - 1]);
+
+                string Address = string.Format("{0} {1}{2},", (person.Code) ?? "", (person.IsRussia ? (person.Region + ", ") ?? "" : person.Country + ", "), (person.City + ", ") ?? "") +
+                    string.Format("{0} {1} {2} {3}", person.Street ?? "", person.House == string.Empty ? "" : "дом " + person.House,
+                    person.Korpus == string.Empty ? "" : "корп. " + person.Korpus,
+                    person.Flat == string.Empty ? "" : "кв. " + person.Flat);
+
+                if (person.HasRussianNationality)
+                    acrFlds.SetField("HasRussianNationalityYes", "1");
+                else
+                    acrFlds.SetField("HasRussianNationalityNo", "1");
+
+                splitStr = GetSplittedStrings(Address, 50, 70, 3);
+                for (int i = 1; i <= 3; i++)
+                    acrFlds.SetField("Address" + i, splitStr[i - 1]);
+
+                acrFlds.SetField("EnglishMark", person.EnglishMark.ToString());
+                if (person.StartEnglish)
+                    acrFlds.SetField("chbEnglishYes", "1");
+                else
+                    acrFlds.SetField("chbEnglishNo", "1");
+
+                acrFlds.SetField("Phone", person.Phone);
+                acrFlds.SetField("Email", person.Email);
+                acrFlds.SetField("Mobiles", person.Mobiles);
+
+                acrFlds.SetField("ExitYear", personEducation.SchoolExitYear.ToString());
+                splitStr = GetSplittedStrings(personEducation.SchoolName ?? "", 50, 70, 2);
+                for (int i = 1; i <= 2; i++)
+                    acrFlds.SetField("School" + i, splitStr[i - 1]);
+
+                //только у магистров
+                var HEInfo = context.Person_EducationInfo
+                    .Where(x => x.PersonId == PersonId)
+                    .Select(x => new { ProgramName = x.HEProfession, Qualification = x.HEQualification }).FirstOrDefault();
+
+                if (HEInfo != null)
+                {
+                    acrFlds.SetField("HEProfession", HEInfo.ProgramName ?? "");
+                    acrFlds.SetField("Qualification", HEInfo.Qualification ?? "");
+
+                    acrFlds.SetField("Original", "0");
+                    acrFlds.SetField("Copy", "0");
+                    acrFlds.SetField("CountryEduc", personEducation.CountryEduc ?? "");
+                    acrFlds.SetField("Language", person.Language ?? "");
+                }
+                //SportQualification
+                if (person.SportQualificationId == 0)
+                    acrFlds.SetField("SportQualification", "нет");
+                else if (person.SportQualificationId == 44)
+                    acrFlds.SetField("SportQualification", person.OtherSportQualification);
+                else
+                    acrFlds.SetField("SportQualification", person.SportQualificationName + "; " + person.SportQualificationLevel);
+
+                string extraPerson = person.Parents ?? "";
+                splitStr = GetSplittedStrings(extraPerson, 70, 70, 3);
+                for (int i = 1; i <= 3; i++)
+                    acrFlds.SetField("Parents" + i.ToString(), splitStr[i - 1]);
+
+                string Attestat = personEducation.SchoolTypeId == 1 ? ("аттестат серия " + (personEducation.EducationDocumentSeries ?? "") + " №" + (personEducation.EducationDocumentNumber ?? "")) :
+                        ("диплом серия " + (personEducation.EducationDocumentSeries ?? "") + " №" + (personEducation.EducationDocumentNumber ?? ""));
+                acrFlds.SetField("Attestat", Attestat);
+                acrFlds.SetField("Extra", person.AddInfo ?? "");
+
+                if (personEducation.IsEqual && personEducation.CountryEducId != 193)
+                {
+                    acrFlds.SetField("IsEqual", "1");
+                    acrFlds.SetField("EqualSertificateNumber", personEducation.EqualDocumentNumber);
+                }
+                else
+                {
+                    acrFlds.SetField("NoEqual", "1");
+                }
+
+                if (person.HasPrivileges)
+                    acrFlds.SetField("HasPrivileges", "1");
+
+                if ((personEducation.SchoolTypeId != 2) && (personEducation.SchoolTypeId != 5))//SSUZ & SPO
+                    acrFlds.SetField("NoEduc", "1");
+                else
+                {
+                    acrFlds.SetField("HasEduc", "1");
+                    acrFlds.SetField("HighEducation", personEducation.SchoolName);
+                }
+
+                //VSEROS
+                var OlympVseros = context.Olympiads.Where(x => x.PersonId == PersonId && x.OlympType.IsVseross)
+                    .Select(x => new { x.OlympSubject.Name, x.DocumentDate, x.DocumentSeries, x.DocumentNumber }).ToList();
+                int egeCnt = 1;
+                foreach (var ex in OlympVseros)
+                {
+                    acrFlds.SetField("OlympVserosName" + egeCnt, ex.Name);
+                    acrFlds.SetField("OlympVserosYear" + egeCnt, ex.DocumentDate.HasValue ? ex.DocumentDate.Value.Year.ToString() : "");
+                    acrFlds.SetField("OlympVserosDiplom" + egeCnt, (ex.DocumentSeries + " " ?? "") + (ex.DocumentNumber ?? ""));
+
+                    if (egeCnt == 2)
+                        break;
+                    egeCnt++;
+                }
+
+                //OTHEROLYMPS
+                var OlympNoVseros = context.Olympiads.Where(x => x.PersonId == PersonId && !x.OlympType.IsVseross)
+                    .Select(x => new { x.OlympName.Name, OlympSubject = x.OlympSubject.Name, x.DocumentDate, x.DocumentSeries, x.DocumentNumber }).ToList();
+                egeCnt = 1;
+                foreach (var ex in OlympNoVseros)
+                {
+                    acrFlds.SetField("OlympName" + egeCnt, ex.Name + " (" + ex.OlympSubject + ")");
+                    acrFlds.SetField("OlympYear" + egeCnt, ex.DocumentDate.HasValue ? ex.DocumentDate.Value.Year.ToString() : "");
+                    acrFlds.SetField("OlympDiplom" + egeCnt, (ex.DocumentSeries + " " ?? "") + (ex.DocumentNumber ?? ""));
+
+                    if (egeCnt == 2)
+                        break;
+                    egeCnt++;
+                }
+
+                query = "SELECT WorkPlace, WorkProfession, Stage FROM PersonWork WHERE PersonId=@PersonId";
+                tbl = Util.AbitDB.GetDataTable(query, new SortedList<string, object>() { { "@PersonId", PersonId } });
+                var work =
+                    (from DataRow rw in tbl.Rows
+                     select new
+                     {
+                         WorkPlace = rw.Field<string>("WorkPlace"),
+                         WorkProfession = rw.Field<string>("WorkProfession"),
+                         Stage = rw.Field<string>("Stage")
+                     }).FirstOrDefault();
+                if (work != null)
+                {
+                    acrFlds.SetField("HasStag", "1");
+                    acrFlds.SetField("WorkPlace", work.WorkPlace + ", " + work.WorkProfession);
+                    acrFlds.SetField("Stag", work.Stage);
+                }
+                else
+                    acrFlds.SetField("NoStag", "1");
+
+                var Version = context.ApplicationCommitVersion.Where(x => x.CommitId == appId).Select(x => new { x.VersionDate, x.Id }).ToList().LastOrDefault();
+                string sVersion = "";
+                if (Version != null)
+                    sVersion = "Версия №" + Version.Id + " от " + Version.VersionDate.ToString("dd.MM.yyyy HH:mm");
+                string FIO = ((person.Surname ?? "") + " " + (person.Name ?? "") + " " + (person.SecondName ?? "")).Trim();
+
+                var Comm = context.ApplicationCommit.Where(x => x.Id == appId).FirstOrDefault();
+                if (Comm != null)
+                {
+                    int multiplyer = 3;
+                    string code = ((multiplyer * 100000) + Comm.IntNumber).ToString();
+
+                    List<ShortAppcation> lstApps = abitList
+                    .Select(x => new ShortAppcation()
+                    {
+                        ApplicationId = x.Id,
+                        LicenseProgramName = x.ProfessionCode + " " + x.Profession,
+                        ObrazProgramName = x.ObrazProgram,
+                        ProfileName = x.Specialization,
+                        Priority = x.Priority,
+                        StudyBasisId = x.StudyBasisId,
+                        StudyFormId = x.StudyFormId,
+                        HasInnerPriorities = false,
+                    }).ToList();
+
+                    List<ShortAppcation> lstAppsFirst = new List<ShortAppcation>();
+                    for (int u = 0; u < 3; u++)
+                    {
+                        if (lstApps.Count > u)
+                            lstAppsFirst.Add(lstApps[u]);
+                    }
+
+                    //добавляем первый файл
+                    lstFiles.Add(GetApplicationPDF_FirstPage(lstAppsFirst, lstApps, dirPath, "ApplicationSPO_page1.pdf", FIO, sVersion, code, false));
+                    //acrFlds.SetField("Version", sVersion);
+
+                    //остальные - по 4 на новую страницу
+                    int appcount = 3;
+                    while (appcount < lstApps.Count)
+                    {
+                        lstAppsFirst = new List<ShortAppcation>();
+                        for (int u = 0; u < 4; u++)
+                        {
+                            if (lstApps.Count > appcount)
+                                lstAppsFirst.Add(lstApps[appcount]);
+                            else
+                                break;
+                            appcount++;
+                        }
+
+                        lstFiles.Add(GetApplicationPDF_NextPage(lstAppsFirst, lstApps, dirPath, "ApplicationSPO_page2.pdf", FIO));
+                    }
+                }
+
+                pdfStm.FormFlattening = true;
+                pdfStm.Close();
+                pdfRd.Close();
+
+                lstFiles.Add(ms.ToArray());
+
+                return MergePdfFiles(lstFiles);
+            }
+        }
+        public static byte[] MergePdfFiles(List<byte[]> lstFilesBinary)
+        {
+            MemoryStream ms = new MemoryStream();
+            Document document = new Document(PageSize.A4);
+            PdfWriter writer = PdfWriter.GetInstance(document, ms);
+
+            document.Open();
+
+            foreach (byte[] doc in lstFilesBinary)
+            {
+                PdfReader reader = new PdfReader(doc);
+                int n = reader.NumberOfPages;
+
+                PdfContentByte cb = writer.DirectContent;
+                PdfImportedPage page;
+
+                for (int i = 0; i < n; i++)
+                {
+                    document.NewPage();
+                    page = writer.GetImportedPage(reader, i + 1);
+                    cb.AddTemplate(page, 1f, 0, 0, 1f, 0, 0);
+                }
+            }
+
+            document.Close();
+            return ms.ToArray();
         }
         public static string[] GetSplittedStrings(string sourceStr, int firstStrLen, int strLen, int numOfStrings)
         {

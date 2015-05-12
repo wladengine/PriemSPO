@@ -164,7 +164,7 @@ namespace Priem
                 UpdateDataGrid();
                 using (PriemEntities context = new PriemEntities())
                 {
-                    extPersonSPO person = (from per in context.extPersonSPO
+                    extPerson person = (from per in context.extPerson
                                            join ab in context.Abiturient on per.Id equals ab.PersonId
                                         where ab.CommitNumber == fileNum
                                         select per).FirstOrDefault();

@@ -299,7 +299,7 @@ namespace Priem
             chlbFile.DisplayMember = "Value";   
         }
 
-        private extPersonSPO GetPerson()
+        private extPerson GetPerson()
         {
             if (_personBarc == null)
                 return null;
@@ -312,7 +312,7 @@ namespace Priem
 
                     using (PriemEntities context = new PriemEntities())
                     {
-                        extPersonSPO person = (from pers in context.extPersonSPO
+                        extPerson person = (from pers in context.extPerson
                                             where pers.Barcode == _personBarc
                                             select pers).FirstOrDefault();
 
@@ -335,7 +335,7 @@ namespace Priem
                     tcCard.SelectedIndex = 0;
                     tbSurname.Focus();
 
-                    extPersonSPO person = load.GetPersonByBarcode(_personBarc.Value); 
+                    extPerson person = load.GetPersonByBarcode(_personBarc.Value); 
                     
                     this.Text = "ЗАГРУЗКА " + person.FIO;
                     return person;
@@ -348,7 +348,7 @@ namespace Priem
                 return null;
             }       
         }
-        private void FillPersonData(extPersonSPO person)
+        private void FillPersonData(extPerson person)
         {
             if (person == null)
             {
@@ -392,37 +392,37 @@ namespace Priem
                 KorpusReal = person.KorpusReal;
                 FlatReal = person.FlatReal;
                 KladrCode = person.KladrCode;
-                HostelAbit = person.HostelAbit ?? false;
-                HostelEduc = person.HostelEduc ?? false;
+                HostelAbit = person.HostelAbit;
+                HostelEduc = person.HostelEduc;
                 IsExcellent = person.IsExcellent ?? false;
                 LanguageId = person.LanguageId;
-                SchoolCity = person.SchoolCity;
-                SchoolTypeId = person.SchoolTypeId;
-                SchoolName = person.SchoolName;
-                SchoolNum = person.SchoolNum;
-                SchoolExitYear = person.SchoolExitYear;
-                CountryEducId = person.CountryEducId;
-                RegionEducId = person.RegionEducId;
-                IsEqual = person.IsEqual ?? false;
-                AttestatRegion = person.AttestatRegion;
-                AttestatSeries = person.AttestatSeries;
-                AttestatNum = person.AttestatNum;
-                DiplomSeries = person.DiplomSeries;
-                DiplomNum = person.DiplomNum;
-                SchoolAVG = person.SchoolAVG;
-                HighEducation = person.HighEducation;
-                HEProfession = person.HEProfession;
-                HEQualification = person.HEQualification;
-                HEEntryYear = person.HEEntryYear;
-                HEExitYear = person.HEExitYear;
-                HEWork = person.HEWork;
-                HEStudyFormId = person.HEStudyFormId;
+                //SchoolCity = person.SchoolCity;
+                //SchoolTypeId = person.SchoolTypeId;
+                //SchoolName = person.SchoolName;
+                //SchoolNum = person.SchoolNum;
+                //SchoolExitYear = person.SchoolExitYear;
+                //CountryEducId = person.CountryEducId;
+                //RegionEducId = person.RegionEducId;
+                //IsEqual = person.IsEqual ?? false;
+                //AttestatRegion = person.AttestatRegion;
+                //AttestatSeries = person.AttestatSeries;
+                //AttestatNum = person.AttestatNum;
+                //DiplomSeries = person.DiplomSeries;
+                //DiplomNum = person.DiplomNum;
+                //SchoolAVG = person.SchoolAVG;
+                //HighEducation = person.HighEducation;
+                //HEProfession = person.HEProfession;
+                //HEQualification = person.HEQualification;
+                //HEEntryYear = person.HEEntryYear;
+                //HEExitYear = person.HEExitYear;
+                //HEWork = person.HEWork;
+                //HEStudyFormId = person.HEStudyFormId;
                 Stag = person.Stag;
                 WorkPlace = person.WorkPlace;
                 Privileges = person.Privileges;
                 ExtraInfo = person.ExtraInfo;
                 PersonInfo = person.PersonInfo;
-                StartEnglish = person.StartEnglish ?? false;
+                StartEnglish = person.StartEnglish;
                 EnglishMark = person.EnglishMark;
 
                 IsEqual = person.IsEqual ?? false;

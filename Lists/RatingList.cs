@@ -136,15 +136,11 @@ qPersonAttMarkRussian.Value AS 'Атт. Русский Язык',
             set { ComboServ.SetComboId(cbObrazProgram, value); }
         }
 
-        public Guid? ProfileId
+        public int? ProfileId
         {
             get
             {
-                string prId = ComboServ.GetComboId(cbProfile);
-                if (string.IsNullOrEmpty(prId))
-                    return null;
-                else
-                    return new Guid(prId);
+                return ComboServ.GetComboIdInt(cbProfile);
             }
             set
             {
@@ -608,7 +604,7 @@ AND ed.FixierenView.IsSecond = {7} AND ed.FixierenView.IsReduced = {8} AND ed.Fi
             }
             catch (Exception ex)
             {
-                WinFormsServ.Error("Ошибка при обновлении списка.");
+                WinFormsServ.Error(ex, "Ошибка при обновлении списка.");
             }
         }
       
@@ -748,7 +744,7 @@ AND ed.FixierenView.IsSecond = {7} AND ed.FixierenView.IsReduced = {8} AND ed.Fi
                     }
                     catch (Exception ex)
                     {
-                        WinFormsServ.Error("Ошибка при сохранении списка");
+                        WinFormsServ.Error(ex, "Ошибка при сохранении списка");
                         return;
                     }                   
                 }
@@ -886,7 +882,7 @@ AND ed.FixierenView.IsSecond = {7} AND ed.FixierenView.IsReduced = {8} AND ed.Fi
             }
             catch (Exception ex)
             {
-                WinFormsServ.Error("Ошибка при локе/анлоке");
+                WinFormsServ.Error(ex, "Ошибка при локе/анлоке");
             }
             return;            
         }
@@ -966,7 +962,7 @@ AND ed.FixierenView.IsSecond = {7} AND ed.FixierenView.IsReduced = {8} AND ed.Fi
             }
             catch (Exception ex)
             {
-                WinFormsServ.Error("Ошибка при WEB FIXIEREN !");
+                WinFormsServ.Error(ex, "Ошибка при WEB FIXIEREN !");
             }
             MessageBox.Show("DONE!");
         }        
@@ -997,7 +993,7 @@ AND ed.FixierenView.IsSecond = {7} AND ed.FixierenView.IsReduced = {8} AND ed.Fi
             }
             catch (Exception ex)
             {
-                WinFormsServ.Error("Ошибка при WEB FIXIEREN !");
+                WinFormsServ.Error(ex, "Ошибка при WEB FIXIEREN !");
             }
             MessageBox.Show("DONE!");
         }

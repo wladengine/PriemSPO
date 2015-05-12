@@ -94,7 +94,7 @@ namespace Priem
 
             _titleString = " СПО";
 
-            this.Text = "ПРИЕМ " + MainClass.PriemYear + _titleString;
+            this.Text = "ПРИЕМ " + MainClass.sPriemYear + _titleString;
         }
 
         /// <summary>
@@ -108,7 +108,7 @@ namespace Priem
                 // убирает все IsOpen для данного пользователя                
                 MainClass.DeleteAllOpenByHolder();
 
-                tsslMain.Text = string.Format("Открыта база: Прием в СПбГУ {0} {1}; ", MainClass.PriemYear, path);
+                tsslMain.Text = string.Format("Открыта база: Прием в СПбГУ {0} {1}; ", MainClass.sPriemYear, path);
                 MainClass.dirTemplates = string.Format(@"{0}\Templates", Application.StartupPath);
 
                 MainClass.InitQueryBuilder();
@@ -326,6 +326,7 @@ namespace Priem
             {
                 WinFormsServ.Error("Ошибка при чтении параметров из файла: " + ex.Message);
             }
+
             try
             {
                 MainClass.DeleteAllOpenByHolder();
@@ -472,11 +473,6 @@ namespace Priem
 
         #endregion
 
-        private void импортОлимпиадToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            SomeMethodsClass.FillOlymps();
-        }
-
         private void smiChangeCompCel_Click(object sender, EventArgs e)
         {
             new ChangeCompCelProtocolList().Show();
@@ -510,12 +506,6 @@ namespace Priem
         private void smiMinEge_Click(object sender, EventArgs e)
         {
             new MinEgeList().Show();
-        }
-
-        private void smiImportMags_Click(object sender, EventArgs e)
-        {
-            if(MainClass.IsOwner())
-                SomeMethodsClass.ImportMagAbits();
         }
 
         private void smiHelp_Click(object sender, EventArgs e)
@@ -648,16 +638,6 @@ namespace Priem
         private void smiRatingBackUp_Click(object sender, EventArgs e)
         {
             new BackUpFix().Show();
-        }
-
-        private void smiMakeBackDoc_Click(object sender, EventArgs e)
-        {
-            SomeMethodsClass.SetBackDocForBudgetInEntryView();
-        }
-
-        private void smiDeleteDog_Click(object sender, EventArgs e)
-        {
-            SomeMethodsClass.DeleteDogFromFirstWave();
         }
 
         private void smiVTB_Click(object sender, EventArgs e)

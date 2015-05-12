@@ -22,7 +22,7 @@ namespace Priem
         public string LicenseProgramName { get; set; }
         public int ObrazProgramId { get; set; }
         public string ObrazProgramName { get; set; }
-        public Guid? ProfileId { get; set; }
+        public int ProfileId { get; set; }
         public string ProfileName { get; set; }
         public int FacultyId { get; set; }
         public string FacultyName { get; set; }
@@ -75,12 +75,12 @@ namespace Priem
                         && x.StudyLevelId == StudyLevelId
                         && x.StudyFormId == StudyFormId
                         && x.StudyBasisId == StudyBasisId
-                        && (ProfileId.HasValue ? x.ProfileId == ProfileId : x.ProfileId == null ))
+                        && x.ProfileId == ProfileId)
                         .Select(x => x.Id)
                         .FirstOrDefault();
 
                 if (Entry != null)
-                    EntryId = Entry ;
+                    EntryId = Entry;
             }
         }
     }

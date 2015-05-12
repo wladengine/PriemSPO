@@ -41,17 +41,11 @@ namespace Priem
             }
         }
 
-        public Guid? ProfileId
+        public int? ProfileId
         {
             get
             {
-                if (cbProfile.Text == ComboServ.ALL_VALUE || cbProfile.Text == ComboServ.NO_VALUE)
-                    return null;
-                Guid g = Guid.Empty;
-                if (!Guid.TryParse(ComboServ.GetComboId(cbProfile), out g))
-                    return null;
-                else
-                    return g;
+                return ComboServ.GetComboIdInt(cbProfile);
             }
         }
 

@@ -68,7 +68,7 @@
       <HintPath>bin\Debug\BDClassLib.dll</HintPath>
     </Reference>
     <Reference Include="itextsharp">
-      <HintPath>..\..\..\..\LIBRARIES\itextsharp.dll</HintPath>
+      <HintPath>..\..\PriemLib\PriemLib\itextsharp.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Office.Interop.Excel, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <EmbedInteropTypes>True</EmbedInteropTypes>
@@ -96,46 +96,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Cards\CardCompetitionInInet.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Cards\CardCompetitionInInet.designer.cs">
-      <DependentUpon>CardCompetitionInInet.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Cards\CardCompetitionInInet.Fields.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="Cards\CardDocInventory.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Cards\CardDocInventory.designer.cs">
       <DependentUpon>CardDocInventory.cs</DependentUpon>
     </Compile>
-    <Compile Include="Cards\CardFromInet.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Cards\CardFromInet.Designer.cs">
-      <DependentUpon>CardFromInet.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Cards\CardFromInet.Fields.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Cards\CardObrazProgramInEntryInCompetitionInInet.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Cards\CardObrazProgramInEntryInCompetitionInInet.designer.cs">
-      <DependentUpon>CardObrazProgramInEntryInCompetitionInInet.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Cards\CardProfileInObrazProgramInEntryInCompetition.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Cards\CardProfileInObrazProgramInEntryInCompetition.designer.cs">
-      <DependentUpon>CardProfileInObrazProgramInEntryInCompetition.cs</DependentUpon>
-    </Compile>
     <Compile Include="Cards\DocsClass.cs" />
     <Compile Include="Cards\ShortCompetition.cs" />
     <Compile Include="ChangeAbitClass.cs" />
-    <Compile Include="ComboServ.cs" />
     <Compile Include="Crypto\AddMark.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -342,12 +311,6 @@
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Lists\PersonInetList.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Lists\PersonInetList.Designer.cs">
-      <DependentUpon>PersonInetList.cs</DependentUpon>
-    </Compile>
     <Compile Include="Migrator.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -377,12 +340,6 @@
     </Compile>
     <Compile Include="Statistics\AbitEGEMarksStatistics.Designer.cs">
       <DependentUpon>AbitEGEMarksStatistics.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Statistics\CountAbitStatistics.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Statistics\CountAbitStatistics.Designer.cs">
-      <DependentUpon>CountAbitStatistics.cs</DependentUpon>
     </Compile>
     <Compile Include="Statistics\CPK1.cs">
       <SubType>Form</SubType>
@@ -471,20 +428,8 @@
     <Compile Include="Statistics\Watch.designer.cs">
       <DependentUpon>Watch.cs</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="Cards\CardCompetitionInInet.resx">
-      <DependentUpon>CardCompetitionInInet.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Cards\CardDocInventory.resx">
       <DependentUpon>CardDocInventory.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Cards\CardFromInet.resx">
-      <DependentUpon>CardFromInet.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Cards\CardObrazProgramInEntryInCompetitionInInet.resx">
-      <DependentUpon>CardObrazProgramInEntryInCompetitionInInet.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Cards\CardProfileInObrazProgramInEntryInCompetition.resx">
-      <DependentUpon>CardProfileInObrazProgramInEntryInCompetition.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Crypto\AddMark.resx">
       <DependentUpon>AddMark.cs</DependentUpon>
@@ -585,9 +530,6 @@
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Lists\PersonInetList.resx">
-      <DependentUpon>PersonInetList.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Migrator.resx">
       <DependentUpon>Migrator.cs</DependentUpon>
     </EmbeddedResource>
@@ -609,9 +551,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Statistics\AbitEGEMarksStatistics.resx">
       <DependentUpon>AbitEGEMarksStatistics.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Statistics\CountAbitStatistics.resx">
-      <DependentUpon>CountAbitStatistics.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Statistics\CPK1.resx">
       <DependentUpon>CPK1.cs</DependentUpon>
@@ -707,7 +646,7 @@
       <Name>BaseFormsLib</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\_SHARED LIBS\EducServLib\EducServLib\EducServLib.csproj">
-      <Project>{96257583-5FF8-4F63-AED3-96C36DF6477D}</Project>
+      <Project>{96257583-5ff8-4f63-aed3-96c36df6477d}</Project>
       <Name>EducServLib</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\_SHARED LIBS\WordOut\WordOut.csproj">
