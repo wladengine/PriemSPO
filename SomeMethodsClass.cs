@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.IO;
-using System.Data.Objects;
+using System.Data.Entity.Core.Objects;
 using System.Data;
 using System.Transactions;
 
@@ -29,7 +29,7 @@ namespace Priem
                                  //&& allab.LicenseProgramId != LicenseProgramId
                                  //&& allab.ObrazProgramId != ObrazProgramId
                                  //&& (ProfileId == null ? allab.ProfileId != null : allab.ProfileId != ProfileId)
-                             && allab.StudyLevelGroupId == MainClass.studyLevelGroupId
+                             && MainClass.lstStudyLevelGroupId.Contains(allab.StudyLevelGroupId)
                              && allab.BackDoc != true
                              select new { allab.LicenseProgramId, allab.ObrazProgramId, allab.ProfileId }).Distinct();
             int cntExist = concurses.Count();

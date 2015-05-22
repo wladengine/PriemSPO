@@ -174,7 +174,6 @@ namespace Priem
                                x.Id,
                                x.Name
                            }).ToList().Select(x => new KeyValuePair<string, string>(x.Id.ToString(), x.Name)).ToList();
-
                 
                 ComboServ.FillCombo(cbOtherFaculty, src, false, false);
             }
@@ -184,7 +183,7 @@ namespace Priem
             using (PriemEntities context = new PriemEntities())
             {
                 var bind = (from x in context.qEntry
-                            where x.StudyLevelGroupId == MainClass.studyLevelGroupId
+                            where MainClass.lstStudyLevelGroupId.Contains(x.StudyLevelGroupId)
                             orderby x.FacultyId
                             select new
                             {
@@ -202,7 +201,7 @@ namespace Priem
                 var src = (from x in context.Entry
                            join y in context.StudyLevel
                            on x.StudyLevelId equals y.Id
-                           where y.LevelGroupId == MainClass.studyLevelGroupId && x.FacultyId == FacultyId
+                           where MainClass.lstStudyLevelGroupId.Contains(y.LevelGroupId) && x.FacultyId == FacultyId
                            orderby x.SP_LicenseProgram.Code
                            select new
                            {
@@ -222,7 +221,7 @@ namespace Priem
                 var src = (from x in context.extEntry
                            join y in context.StudyLevel
                            on x.StudyLevelId equals y.Id
-                           where y.LevelGroupId == MainClass.studyLevelGroupId && x.FacultyId == FacultyId
+                           where MainClass.lstStudyLevelGroupId.Contains(y.LevelGroupId) && x.FacultyId == FacultyId
                            orderby x.ObrazProgramNumber
                            select new
                            {
@@ -248,7 +247,7 @@ namespace Priem
                            on x.StudyLevelId equals y.Id
                            join sf in context.StudyForm
                            on x.StudyFormId equals sf.Id
-                           where y.LevelGroupId == MainClass.studyLevelGroupId && x.FacultyId == FacultyId
+                           where MainClass.lstStudyLevelGroupId.Contains(y.LevelGroupId) && x.FacultyId == FacultyId
                            orderby sf.Id
                            select new
                            {
@@ -276,7 +275,7 @@ namespace Priem
                            on x.StudyLevelId equals y.Id
                            join sb in context.StudyBasis
                            on x.StudyBasisId equals sb.Id
-                           where y.LevelGroupId == MainClass.studyLevelGroupId && x.FacultyId == FacultyId && x.StudyFormId == StudyFormId
+                           where MainClass.lstStudyLevelGroupId.Contains(y.LevelGroupId) && x.FacultyId == FacultyId && x.StudyFormId == StudyFormId
                            orderby sb.Id
                            select new
                            {
@@ -302,7 +301,7 @@ namespace Priem
                 var src = (from x in context.Entry
                            join y in context.StudyLevel
                            on x.StudyLevelId equals y.Id
-                           where y.LevelGroupId == MainClass.studyLevelGroupId && x.FacultyId == OtherFacultyId
+                           where MainClass.lstStudyLevelGroupId.Contains(y.LevelGroupId) && x.FacultyId == OtherFacultyId
                            orderby x.SP_LicenseProgram.Code
                            select new
                            {
@@ -322,7 +321,7 @@ namespace Priem
                 var src = (from x in context.extEntry
                            join y in context.StudyLevel
                            on x.StudyLevelId equals y.Id
-                           where y.LevelGroupId == MainClass.studyLevelGroupId && x.FacultyId == OtherFacultyId
+                           where MainClass.lstStudyLevelGroupId.Contains(y.LevelGroupId) && x.FacultyId == OtherFacultyId
                            orderby x.ObrazProgramNumber
                            select new
                            {
@@ -348,7 +347,7 @@ namespace Priem
                            on x.StudyLevelId equals y.Id
                            join sf in context.StudyForm
                            on x.StudyFormId equals sf.Id
-                           where y.LevelGroupId == MainClass.studyLevelGroupId && x.FacultyId == OtherFacultyId
+                           where MainClass.lstStudyLevelGroupId.Contains(y.LevelGroupId) && x.FacultyId == OtherFacultyId
                            orderby sf.Id
                            select new
                            {
@@ -376,7 +375,7 @@ namespace Priem
                            on x.StudyLevelId equals y.Id
                            join sb in context.StudyBasis
                            on x.StudyBasisId equals sb.Id
-                           where y.LevelGroupId == MainClass.studyLevelGroupId && x.FacultyId == OtherFacultyId && x.StudyFormId == OtherStudyFormId
+                           where MainClass.lstStudyLevelGroupId.Contains(y.LevelGroupId) && x.FacultyId == OtherFacultyId && x.StudyFormId == OtherStudyFormId
                            orderby sb.Id
                            select new
                            {
@@ -494,7 +493,7 @@ namespace Priem
 
         private void FillGrid()
         {
-            string query = @"
+            string query = string.Format(@"
                 SELECT DISTINCT extPerson.Id, extPerson.FIO, hlpStatRatingList.SUM, hlpStatRatingList.Rank, Entry.KCP, 
                 (case when q.CompetitionId IN (1,2,5,7,8) then 1 else 0 end) AS VKs,
                 (CASE when Rank <= Entry.KCP then 1 else 0 end) AS GREEN, (case when q.HasOriginals='True' then 1 else 0 end) AS Orig
@@ -508,14 +507,13 @@ namespace Priem
                     FROM ed.qAbitAll
                     WHERE qAbitAll.FacultyId <> q.FacultyId
                     AND qAbitAll.FacultyId = @OtherFacultyId
-                    AND StudyLevelGroupId = @StudyLevelGroupId
+                    AND StudyLevelGroupId IN ({0})
                     AND qAbitAll.BackDoc = 0
                 )
                 AND StudyLevelGroupId = @StudyLevelGroupId
-                AND q.FacultyId=@FacultyId AND q.BackDoc = 0 AND q.StudyFormId=@StudyFormId AND q.StudyBasisId=@StudyBasisId AND q.CompetitionId<>6 ";
+                AND q.FacultyId=@FacultyId AND q.BackDoc = 0 AND q.StudyFormId=@StudyFormId AND q.StudyBasisId=@StudyBasisId AND q.CompetitionId<>6 ", Util.BuildStringWithCollection(MainClass.lstStudyLevelGroupId));
 
             SortedList<string, object> sl = new SortedList<string, object>();
-            sl.Add("@StudyLevelGroupId", MainClass.studyLevelGroupId);
             sl.Add("@FacultyId", FacultyId);
             sl.Add("@OtherFacultyId", OtherFacultyId);
             sl.Add("@StudyFormId", StudyFormId);

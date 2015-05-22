@@ -38,7 +38,7 @@ namespace Priem
             }
             catch (Exception exc)
             {
-                WinFormsServ.Error("Не удалось подключиться под вашей учетной записью  " + exc.Message);
+                WinFormsServ.Error("Не удалось подключиться под вашей учетной записью", exc);
                 msMainMenu.Enabled = false;
             }
         }
@@ -141,7 +141,6 @@ namespace Priem
                 smiCreateVed.Visible = false;
                 smiBooks.Visible = false;
                 smiCrypto.Visible = false;                
-                smiFBS.Visible = false;
                 smiExport.Visible = false;
                 smiImport.Visible = false;
                 smiExamsVedRoomList.Visible = false;
@@ -186,7 +185,6 @@ namespace Priem
                     smiCrypto.Visible = true;
                     smiBooks.Visible = true;
                     smiRatingList.Visible = true;
-                    smiFBS.Visible = true;
                     smiOrderNumbers.Visible = true;
                     smiExport.Visible = true;
                     smiEntryView.Visible = true;
@@ -357,10 +355,7 @@ namespace Priem
 
         private void smiLoad_Click(object sender, EventArgs e)
         {
-            if (MainClass.dbType == PriemType.PriemMag)
-                new ApplicationInetList().Show();
-            else
-                new PersonInetList().Show();
+            new ApplicationInetList().Show();
         }
 
         private void smiAbits_Click(object sender, EventArgs e)
@@ -528,22 +523,6 @@ namespace Priem
             new CountAbitStatistics().Show();
         }
 
-        private void smiGetByFIOPasp_Click(object sender, EventArgs e)
-        {
-            FBSClass.MakeFBS(2);
-        }
-
-        private void smiLoadFBS_Click(object sender, EventArgs e)
-        {
-            if (MainClass.IsPasha())
-                new LoadFBS().Show();
-        }
-
-        private void smiGetByBalls_Click(object sender, EventArgs e)
-        {
-            FBSClass.MakeFBS(1);
-        }
-
         private void smiEGEStatistics_Click(object sender, EventArgs e)
         {
             //EGE Stat
@@ -580,11 +559,6 @@ namespace Priem
             new Decriptor().Show();
         }
 
-        private void smiEgeLoad_Click(object sender, EventArgs e)
-        {
-            new LoadEgeMarks().Show();
-        }
-
         private void smiRatingList_Click(object sender, EventArgs e)
         {
             new RatingList(false).Show();
@@ -608,11 +582,6 @@ namespace Priem
         private void smiRatingListPasha_Click(object sender, EventArgs e)
         {
             new RatingList(true).Show();
-        }
-
-        private void smiGetByFIOPasp2_Click(object sender, EventArgs e)
-        {
-            FBSClass.MakeFBS(3);
         }
 
         private void smiRegionFacultyAbitCount_Click(object sender, EventArgs e)

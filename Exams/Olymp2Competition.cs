@@ -389,7 +389,7 @@ namespace Priem
 
             string s1 = string.Empty;
 
-            s1 += " AND ed.qAbiturient.StudyLevelGroupId = " + MainClass.studyLevelGroupId;
+            s1 += " AND ed.qAbiturient.StudyLevelGroupId IN (" + Util.BuildStringWithCollection(MainClass.lstStudyLevelGroupId) + ")";
 
             //обработали форму обучения  
             if (StudyFormId != null)

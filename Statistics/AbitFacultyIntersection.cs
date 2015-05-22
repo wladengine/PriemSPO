@@ -79,7 +79,7 @@ namespace Priem
             {
                 var src = (from x in context.qEntry
                            orderby x.LicenseProgramCode
-                           where x.FacultyId == FacultyId && x.StudyLevelGroupId == MainClass.studyLevelGroupId
+                           where x.FacultyId == FacultyId && MainClass.lstStudyLevelGroupId.Contains(x.StudyLevelGroupId)
                            select new
                            {
                                x.LicenseProgramId,
@@ -116,21 +116,20 @@ namespace Priem
 	                    SELECT PersonId
 	                    FROM ed.qAbitAll
 	                    WHERE qAbitAll.FacultyId <> q.FacultyId
-	                    AND StudyLevelGroupId = @StudyLevelGroupId
+	                    AND StudyLevelGroupId IN {1}
                         AND qAbitAll.BackDoc = 0
                     )
-                    AND StudyLevelGroupId = @StudyLevelGroupId
+                    AND StudyLevelGroupId IN {1}
                     AND q.FacultyId = @FacultyId
                     AND q.BackDoc = 0
                     {0}
                 )
-                AND StudyLevelGroupId = @StudyLevelGroupId
                 AND FacultyId <> @FacultyId
                 AND qq.BackDoc = 0
-                GROUP BY qq.FacultyId, qq.FacultyName", LicenseProgramId == null ? "" : "AND q.LicenseProgramId=@LicenseProgramId ");
+                AND StudyLevelGroupId IN {1}
+                GROUP BY qq.FacultyId, qq.FacultyName", LicenseProgramId == null ? "" : "AND q.LicenseProgramId=@LicenseProgramId ", Util.BuildStringWithCollection(MainClass.lstStudyLevelGroupId));
             SortedList<string, object> sl = new SortedList<string, object>();
             sl.Add("@FacultyId", iFacultyId);
-            sl.Add("@StudyLevelGroupId", MainClass.studyLevelGroupId);
             if (LicenseProgramId != null)
                 sl.Add("@LicenseProgramId", LicenseProgramId);
             

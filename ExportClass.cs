@@ -29,14 +29,14 @@ namespace Priem
             {
                 //взять максимум номера, если еще ничего не назначено
                 string num = (from ab in context.extAbit
-                              where ab.StudyLevelGroupId == MainClass.studyLevelGroupId
+                              where ab.StudyLevelGroupId == MainClass.lstStudyLevelGroupId.Contains()
                               select ab.StudyNumber).Max();
                
 
                 var abits = from ab in context.extAbit
                             join ev in context.extEntryView
                             on ab.Id equals ev.AbiturientId
-                            where ab.StudyLevelGroupId == MainClass.studyLevelGroupId && (ab.StudyNumber == null || ab.StudyNumber.Length == 0)
+                            where ab.StudyLevelGroupId == MainClass.lstStudyLevelGroupId.Contains() && (ab.StudyNumber == null || ab.StudyNumber.Length == 0)
                             orderby ab.FacultyId, ab.FIO
                             select ab;
 

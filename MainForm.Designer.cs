@@ -104,12 +104,6 @@
             this.smiLoadMarks = new System.Windows.Forms.ToolStripMenuItem();
             this.smiDecryptor = new System.Windows.Forms.ToolStripMenuItem();
             this.smiAppeal = new System.Windows.Forms.ToolStripMenuItem();
-            this.smiFBS = new System.Windows.Forms.ToolStripMenuItem();
-            this.smiGetByFIOPasp = new System.Windows.Forms.ToolStripMenuItem();
-            this.smiGetByFIOPasp2 = new System.Windows.Forms.ToolStripMenuItem();
-            this.smiGetByBalls = new System.Windows.Forms.ToolStripMenuItem();
-            this.smiLoadFBS = new System.Windows.Forms.ToolStripMenuItem();
-            this.smiEgeLoad = new System.Windows.Forms.ToolStripMenuItem();
             this.smiExport = new System.Windows.Forms.ToolStripMenuItem();
             this.smiVTB = new System.Windows.Forms.ToolStripMenuItem();
             this.smiSberbank = new System.Windows.Forms.ToolStripMenuItem();
@@ -135,7 +129,6 @@
             this.smiHelp,
             this.smiBooks,
             this.smiCrypto,
-            this.smiFBS,
             this.smiExport,
             this.smiImport});
             this.msMainMenu.Location = new System.Drawing.Point(0, 0);
@@ -157,21 +150,21 @@
             this.smiListHostel,
             this.smiRatingList});
             this.smiLists.Name = "smiLists";
-            this.smiLists.Size = new System.Drawing.Size(55, 20);
+            this.smiLists.Size = new System.Drawing.Size(60, 20);
             this.smiLists.Text = "Списки";
             // 
             // smiAbits
             // 
             this.smiAbits.Name = "smiAbits";
             this.smiAbits.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F1)));
-            this.smiAbits.Size = new System.Drawing.Size(382, 22);
+            this.smiAbits.Size = new System.Drawing.Size(402, 22);
             this.smiAbits.Text = "Список заявлений (по факультетам)";
             this.smiAbits.Click += new System.EventHandler(this.smiAbits_Click);
             // 
             // smiPersons
             // 
             this.smiPersons.Name = "smiPersons";
-            this.smiPersons.Size = new System.Drawing.Size(382, 22);
+            this.smiPersons.Size = new System.Drawing.Size(402, 22);
             this.smiPersons.Text = "Список абитуриентов (по факультетам)";
             this.smiPersons.Click += new System.EventHandler(this.smiPersons_Click);
             // 
@@ -179,56 +172,56 @@
             // 
             this.smiPersonsSPBGU.Name = "smiPersonsSPBGU";
             this.smiPersonsSPBGU.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F2)));
-            this.smiPersonsSPBGU.Size = new System.Drawing.Size(382, 22);
+            this.smiPersonsSPBGU.Size = new System.Drawing.Size(402, 22);
             this.smiPersonsSPBGU.Text = "Список абитуриентов в СПбГУ";
             this.smiPersonsSPBGU.Click += new System.EventHandler(this.smiPersonsSPBGU_Click);
             // 
             // smiLoad
             // 
             this.smiLoad.Name = "smiLoad";
-            this.smiLoad.Size = new System.Drawing.Size(382, 22);
+            this.smiLoad.Size = new System.Drawing.Size(402, 22);
             this.smiLoad.Text = "Загрузка данных из online базы";
             this.smiLoad.Click += new System.EventHandler(this.smiLoad_Click);
             // 
             // smiOnlineChanges
             // 
             this.smiOnlineChanges.Name = "smiOnlineChanges";
-            this.smiOnlineChanges.Size = new System.Drawing.Size(382, 22);
+            this.smiOnlineChanges.Size = new System.Drawing.Size(402, 22);
             this.smiOnlineChanges.Text = "Изменения online";
             this.smiOnlineChanges.Click += new System.EventHandler(this.smiOnlineChanges_Click);
             // 
             // smiAllAbitList
             // 
             this.smiAllAbitList.Name = "smiAllAbitList";
-            this.smiAllAbitList.Size = new System.Drawing.Size(382, 22);
+            this.smiAllAbitList.Size = new System.Drawing.Size(402, 22);
             this.smiAllAbitList.Text = "Список абитуриентов с заявлениями на другие факультеты";
             this.smiAllAbitList.Click += new System.EventHandler(this.smiAllAbitList_Click);
             // 
             // smiVedExamList
             // 
             this.smiVedExamList.Name = "smiVedExamList";
-            this.smiVedExamList.Size = new System.Drawing.Size(382, 22);
+            this.smiVedExamList.Size = new System.Drawing.Size(402, 22);
             this.smiVedExamList.Text = "Ведомость выдачи экз. листов ";
             this.smiVedExamList.Click += new System.EventHandler(this.smiVedExamList_Click);
             // 
             // smiOlympAbitList
             // 
             this.smiOlympAbitList.Name = "smiOlympAbitList";
-            this.smiOlympAbitList.Size = new System.Drawing.Size(382, 22);
+            this.smiOlympAbitList.Size = new System.Drawing.Size(402, 22);
             this.smiOlympAbitList.Text = "Список абитуриентов с олимпиадами";
             this.smiOlympAbitList.Click += new System.EventHandler(this.smiOlympAbitList_Click);
             // 
             // smiListHostel
             // 
             this.smiListHostel.Name = "smiListHostel";
-            this.smiListHostel.Size = new System.Drawing.Size(382, 22);
+            this.smiListHostel.Size = new System.Drawing.Size(402, 22);
             this.smiListHostel.Text = "Список для общежитий";
             this.smiListHostel.Click += new System.EventHandler(this.smiListHostel_Click);
             // 
             // smiRatingList
             // 
             this.smiRatingList.Name = "smiRatingList";
-            this.smiRatingList.Size = new System.Drawing.Size(382, 22);
+            this.smiRatingList.Size = new System.Drawing.Size(402, 22);
             this.smiRatingList.Text = "Рейтинговые списки";
             this.smiRatingList.Click += new System.EventHandler(this.smiRatingList_Click);
             // 
@@ -243,55 +236,55 @@
             this.smiDisEntryView,
             this.smiOrderNumbers});
             this.smiProtocols.Name = "smiProtocols";
-            this.smiProtocols.Size = new System.Drawing.Size(76, 20);
+            this.smiProtocols.Size = new System.Drawing.Size(83, 20);
             this.smiProtocols.Text = "Протоколы";
             // 
             // smiEnableProtocol
             // 
             this.smiEnableProtocol.Name = "smiEnableProtocol";
-            this.smiEnableProtocol.Size = new System.Drawing.Size(328, 22);
+            this.smiEnableProtocol.Size = new System.Drawing.Size(353, 22);
             this.smiEnableProtocol.Text = "Протокол о допуске";
             this.smiEnableProtocol.Click += new System.EventHandler(this.smiEnableProtocol_Click);
             // 
             // smiDisEnableProtocol
             // 
             this.smiDisEnableProtocol.Name = "smiDisEnableProtocol";
-            this.smiDisEnableProtocol.Size = new System.Drawing.Size(328, 22);
+            this.smiDisEnableProtocol.Size = new System.Drawing.Size(353, 22);
             this.smiDisEnableProtocol.Text = "Протокол об исключении из протокола о допуске";
             this.smiDisEnableProtocol.Click += new System.EventHandler(this.smiDisEnableProtocol_Click);
             // 
             // smiChangeCompCel
             // 
             this.smiChangeCompCel.Name = "smiChangeCompCel";
-            this.smiChangeCompCel.Size = new System.Drawing.Size(328, 22);
+            this.smiChangeCompCel.Size = new System.Drawing.Size(353, 22);
             this.smiChangeCompCel.Text = "Протокол о смене конкурса целевикам";
             this.smiChangeCompCel.Click += new System.EventHandler(this.smiChangeCompCel_Click);
             // 
             // smiChangeCompBE
             // 
             this.smiChangeCompBE.Name = "smiChangeCompBE";
-            this.smiChangeCompBE.Size = new System.Drawing.Size(328, 22);
+            this.smiChangeCompBE.Size = new System.Drawing.Size(353, 22);
             this.smiChangeCompBE.Text = "Протокол о смене типа конкурса на общий";
             this.smiChangeCompBE.Click += new System.EventHandler(this.smiChangeCompBE_Click);
             // 
             // smiEntryView
             // 
             this.smiEntryView.Name = "smiEntryView";
-            this.smiEntryView.Size = new System.Drawing.Size(328, 22);
+            this.smiEntryView.Size = new System.Drawing.Size(353, 22);
             this.smiEntryView.Text = "Представление к зачислению";
             this.smiEntryView.Click += new System.EventHandler(this.smiEntryView_Click);
             // 
             // smiDisEntryView
             // 
             this.smiDisEntryView.Name = "smiDisEntryView";
-            this.smiDisEntryView.Size = new System.Drawing.Size(328, 22);
+            this.smiDisEntryView.Size = new System.Drawing.Size(353, 22);
             this.smiDisEntryView.Text = "Приказ об исключении";
             this.smiDisEntryView.Click += new System.EventHandler(this.smiDisEntryView_Click);
             // 
             // smiOrderNumbers
             // 
             this.smiOrderNumbers.Name = "smiOrderNumbers";
-            this.smiOrderNumbers.Size = new System.Drawing.Size(328, 22);
+            this.smiOrderNumbers.Size = new System.Drawing.Size(353, 22);
             this.smiOrderNumbers.Text = "Номера приказов";
             this.smiOrderNumbers.Click += new System.EventHandler(this.smiOrderNumbers_Click);
             // 
@@ -303,13 +296,13 @@
             this.smiCreateVed,
             this.smiExamsVedRoomList});
             this.smiMarks.Name = "smiMarks";
-            this.smiMarks.Size = new System.Drawing.Size(57, 20);
+            this.smiMarks.Size = new System.Drawing.Size(61, 20);
             this.smiMarks.Text = "Оценки";
             // 
             // smiExams
             // 
             this.smiExams.Name = "smiExams";
-            this.smiExams.Size = new System.Drawing.Size(237, 22);
+            this.smiExams.Size = new System.Drawing.Size(259, 22);
             this.smiExams.Text = "Результаты экзаменов";
             this.smiExams.Click += new System.EventHandler(this.smiExams_Click);
             // 
@@ -319,34 +312,34 @@
             this.smiOlymp2Mark,
             this.smiOlymp2Competition});
             this.smiOlymps.Name = "smiOlymps";
-            this.smiOlymps.Size = new System.Drawing.Size(237, 22);
+            this.smiOlymps.Size = new System.Drawing.Size(259, 22);
             this.smiOlymps.Text = "Зачет результатов олимпиад";
             // 
             // smiOlymp2Mark
             // 
             this.smiOlymp2Mark.Name = "smiOlymp2Mark";
-            this.smiOlymp2Mark.Size = new System.Drawing.Size(259, 22);
+            this.smiOlymp2Mark.Size = new System.Drawing.Size(275, 22);
             this.smiOlymp2Mark.Text = "Как 100 баллов за экзамен";
             this.smiOlymp2Mark.Click += new System.EventHandler(this.smiOlymp2Mark_Click);
             // 
             // smiOlymp2Competition
             // 
             this.smiOlymp2Competition.Name = "smiOlymp2Competition";
-            this.smiOlymp2Competition.Size = new System.Drawing.Size(259, 22);
+            this.smiOlymp2Competition.Size = new System.Drawing.Size(275, 22);
             this.smiOlymp2Competition.Text = "Как изменение типа конкурса на б/э";
             this.smiOlymp2Competition.Click += new System.EventHandler(this.smiOlymp2Competition_Click);
             // 
             // smiCreateVed
             // 
             this.smiCreateVed.Name = "smiCreateVed";
-            this.smiCreateVed.Size = new System.Drawing.Size(237, 22);
+            this.smiCreateVed.Size = new System.Drawing.Size(259, 22);
             this.smiCreateVed.Text = "Ведомости для экзамена";
             this.smiCreateVed.Click += new System.EventHandler(this.smiCreateVed_Click);
             // 
             // smiExamsVedRoomList
             // 
             this.smiExamsVedRoomList.Name = "smiExamsVedRoomList";
-            this.smiExamsVedRoomList.Size = new System.Drawing.Size(237, 22);
+            this.smiExamsVedRoomList.Size = new System.Drawing.Size(259, 22);
             this.smiExamsVedRoomList.Text = "Ведомости по помещениям и csv";
             this.smiExamsVedRoomList.Click += new System.EventHandler(this.smiExamsVedRoomList_Click);
             // 
@@ -362,48 +355,48 @@
             this.smiRegionStat,
             this.smiOlympStatistics});
             this.smiStatistics.Name = "smiStatistics";
-            this.smiStatistics.Size = new System.Drawing.Size(79, 20);
+            this.smiStatistics.Size = new System.Drawing.Size(80, 20);
             this.smiStatistics.Text = "Статистика";
             // 
             // smiCPK1
             // 
             this.smiCPK1.Name = "smiCPK1";
-            this.smiCPK1.Size = new System.Drawing.Size(215, 22);
+            this.smiCPK1.Size = new System.Drawing.Size(226, 22);
             this.smiCPK1.Text = "ЦПК1";
             this.smiCPK1.Click += new System.EventHandler(this.smiCPK1_Click);
             // 
             // smiFormA
             // 
             this.smiFormA.Name = "smiFormA";
-            this.smiFormA.Size = new System.Drawing.Size(215, 22);
+            this.smiFormA.Size = new System.Drawing.Size(226, 22);
             this.smiFormA.Text = "Форма А";
             this.smiFormA.Click += new System.EventHandler(this.smiFormA_Click);
             // 
             // smiForm2
             // 
             this.smiForm2.Name = "smiForm2";
-            this.smiForm2.Size = new System.Drawing.Size(215, 22);
+            this.smiForm2.Size = new System.Drawing.Size(226, 22);
             this.smiForm2.Text = "Форма 2";
             this.smiForm2.Click += new System.EventHandler(this.smiForm2_Click);
             // 
             // smiDynamics
             // 
             this.smiDynamics.Name = "smiDynamics";
-            this.smiDynamics.Size = new System.Drawing.Size(215, 22);
+            this.smiDynamics.Size = new System.Drawing.Size(226, 22);
             this.smiDynamics.Text = "Динамика абитуриентов";
             this.smiDynamics.Click += new System.EventHandler(this.smiDynamics_Click);
             // 
             // smiEGEStatistics
             // 
             this.smiEGEStatistics.Name = "smiEGEStatistics";
-            this.smiEGEStatistics.Size = new System.Drawing.Size(215, 22);
+            this.smiEGEStatistics.Size = new System.Drawing.Size(226, 22);
             this.smiEGEStatistics.Text = "Баллы ЕГЭ";
             this.smiEGEStatistics.Click += new System.EventHandler(this.smiEGEStatistics_Click);
             // 
             // smiAbitFacultyIntesection
             // 
             this.smiAbitFacultyIntesection.Name = "smiAbitFacultyIntesection";
-            this.smiAbitFacultyIntesection.Size = new System.Drawing.Size(215, 22);
+            this.smiAbitFacultyIntesection.Size = new System.Drawing.Size(226, 22);
             this.smiAbitFacultyIntesection.Text = "Пересечения абитуриентов";
             this.smiAbitFacultyIntesection.Click += new System.EventHandler(this.smiAbitFacultyIntesection_Click);
             // 
@@ -416,41 +409,41 @@
             this.smiRegionAbitEGEMarksStatistics,
             this.smiRegionFacultyAbitCount});
             this.smiRegionStat.Name = "smiRegionStat";
-            this.smiRegionStat.Size = new System.Drawing.Size(215, 22);
+            this.smiRegionStat.Size = new System.Drawing.Size(226, 22);
             this.smiRegionStat.Text = "Статистика по регионам";
             // 
             // smiRegionAbitsStat
             // 
             this.smiRegionAbitsStat.Name = "smiRegionAbitsStat";
-            this.smiRegionAbitsStat.Size = new System.Drawing.Size(208, 22);
+            this.smiRegionAbitsStat.Size = new System.Drawing.Size(222, 22);
             this.smiRegionAbitsStat.Text = "Абитуриенты по регионам";
             this.smiRegionAbitsStat.Click += new System.EventHandler(this.smiRegionAbitsStat_Click);
             // 
             // smiRegionAbitStat_Rev
             // 
             this.smiRegionAbitStat_Rev.Name = "smiRegionAbitStat_Rev";
-            this.smiRegionAbitStat_Rev.Size = new System.Drawing.Size(208, 22);
+            this.smiRegionAbitStat_Rev.Size = new System.Drawing.Size(222, 22);
             this.smiRegionAbitStat_Rev.Text = "Регионы по факультетам";
             this.smiRegionAbitStat_Rev.Click += new System.EventHandler(this.smiRegionAbitStat_Rev_Click);
             // 
             // smiRegionStatMarks
             // 
             this.smiRegionStatMarks.Name = "smiRegionStatMarks";
-            this.smiRegionStatMarks.Size = new System.Drawing.Size(208, 22);
+            this.smiRegionStatMarks.Size = new System.Drawing.Size(222, 22);
             this.smiRegionStatMarks.Text = "Оценки ЕГЭ по регионам";
             this.smiRegionStatMarks.Click += new System.EventHandler(this.smiRegionStatMarks_Click);
             // 
             // smiRegionAbitEGEMarksStatistics
             // 
             this.smiRegionAbitEGEMarksStatistics.Name = "smiRegionAbitEGEMarksStatistics";
-            this.smiRegionAbitEGEMarksStatistics.Size = new System.Drawing.Size(208, 22);
+            this.smiRegionAbitEGEMarksStatistics.Size = new System.Drawing.Size(222, 22);
             this.smiRegionAbitEGEMarksStatistics.Text = "Регионы - оценки ЕГЭ";
             this.smiRegionAbitEGEMarksStatistics.Click += new System.EventHandler(this.smiRegionAbitEGEMarksStatistics_Click);
             // 
             // smiRegionFacultyAbitCount
             // 
             this.smiRegionFacultyAbitCount.Name = "smiRegionFacultyAbitCount";
-            this.smiRegionFacultyAbitCount.Size = new System.Drawing.Size(208, 22);
+            this.smiRegionFacultyAbitCount.Size = new System.Drawing.Size(222, 22);
             this.smiRegionFacultyAbitCount.Text = "Факультеты";
             this.smiRegionFacultyAbitCount.Click += new System.EventHandler(this.smiRegionFacultyAbitCount_Click);
             // 
@@ -461,7 +454,7 @@
             this.smiOlympLevelAbitRating,
             this.smiOlympAbitBallsAndRatings});
             this.smiOlympStatistics.Name = "smiOlympStatistics";
-            this.smiOlympStatistics.Size = new System.Drawing.Size(215, 22);
+            this.smiOlympStatistics.Size = new System.Drawing.Size(226, 22);
             this.smiOlympStatistics.Text = "Статистика по олимпиадам";
             // 
             // предметыПоРегионамToolStripMenuItem
@@ -470,41 +463,41 @@
             this.smiOlympSubjectByRegion,
             this.smiOlympRegionBySubject});
             this.предметыПоРегионамToolStripMenuItem.Name = "предметыПоРегионамToolStripMenuItem";
-            this.предметыПоРегионамToolStripMenuItem.Size = new System.Drawing.Size(291, 22);
+            this.предметыПоРегионамToolStripMenuItem.Size = new System.Drawing.Size(313, 22);
             this.предметыПоРегионамToolStripMenuItem.Text = "Предметы";
             // 
             // smiOlympSubjectByRegion
             // 
             this.smiOlympSubjectByRegion.Name = "smiOlympSubjectByRegion";
-            this.smiOlympSubjectByRegion.Size = new System.Drawing.Size(191, 22);
+            this.smiOlympSubjectByRegion.Size = new System.Drawing.Size(205, 22);
             this.smiOlympSubjectByRegion.Text = "Предметы по регионам";
             this.smiOlympSubjectByRegion.Click += new System.EventHandler(this.smiOlympSubjectByRegion_Click);
             // 
             // smiOlympRegionBySubject
             // 
             this.smiOlympRegionBySubject.Name = "smiOlympRegionBySubject";
-            this.smiOlympRegionBySubject.Size = new System.Drawing.Size(191, 22);
+            this.smiOlympRegionBySubject.Size = new System.Drawing.Size(205, 22);
             this.smiOlympRegionBySubject.Text = "Регионы по предметам";
             this.smiOlympRegionBySubject.Click += new System.EventHandler(this.smiOlympRegionBySubject_Click);
             // 
             // smiOlympLevelAbitRating
             // 
             this.smiOlympLevelAbitRating.Name = "smiOlympLevelAbitRating";
-            this.smiOlympLevelAbitRating.Size = new System.Drawing.Size(291, 22);
+            this.smiOlympLevelAbitRating.Size = new System.Drawing.Size(313, 22);
             this.smiOlympLevelAbitRating.Text = "Соотношения поступавших и зачисленных";
             this.smiOlympLevelAbitRating.Click += new System.EventHandler(this.региональноToolStripMenuItem_Click);
             // 
             // smiOlympAbitBallsAndRatings
             // 
             this.smiOlympAbitBallsAndRatings.Name = "smiOlympAbitBallsAndRatings";
-            this.smiOlympAbitBallsAndRatings.Size = new System.Drawing.Size(291, 22);
+            this.smiOlympAbitBallsAndRatings.Size = new System.Drawing.Size(313, 22);
             this.smiOlympAbitBallsAndRatings.Text = "Проходные баллы олимпиадников";
             this.smiOlympAbitBallsAndRatings.Click += new System.EventHandler(this.smiOlympAbitBallsAndRatings_Click);
             // 
             // smiChanges
             // 
             this.smiChanges.Name = "smiChanges";
-            this.smiChanges.Size = new System.Drawing.Size(73, 20);
+            this.smiChanges.Size = new System.Drawing.Size(81, 20);
             this.smiChanges.Text = "Изменения";
             this.smiChanges.Click += new System.EventHandler(this.smiChanges_Click);
             // 
@@ -514,7 +507,7 @@
             this.smiListOpen,
             this.smiFilters});
             this.smiSettings.Name = "smiSettings";
-            this.smiSettings.Size = new System.Drawing.Size(73, 20);
+            this.smiSettings.Size = new System.Drawing.Size(79, 20);
             this.smiSettings.Text = "Настройки";
             // 
             // smiListOpen
@@ -523,7 +516,7 @@
             this.smiListPerson,
             this.smiListAbit});
             this.smiListOpen.Name = "smiListOpen";
-            this.smiListOpen.Size = new System.Drawing.Size(277, 22);
+            this.smiListOpen.Size = new System.Drawing.Size(300, 22);
             this.smiListOpen.Text = "Список, открывающийся по умолчанию";
             // 
             // smiListPerson
@@ -532,7 +525,7 @@
             this.smiListPerson.CheckOnClick = true;
             this.smiListPerson.CheckState = System.Windows.Forms.CheckState.Checked;
             this.smiListPerson.Name = "smiListPerson";
-            this.smiListPerson.Size = new System.Drawing.Size(185, 22);
+            this.smiListPerson.Size = new System.Drawing.Size(194, 22);
             this.smiListPerson.Text = "Список абитуриентов";
             this.smiListPerson.Click += new System.EventHandler(this.smiListPerson_Click);
             // 
@@ -540,7 +533,7 @@
             // 
             this.smiListAbit.CheckOnClick = true;
             this.smiListAbit.Name = "smiListAbit";
-            this.smiListAbit.Size = new System.Drawing.Size(185, 22);
+            this.smiListAbit.Size = new System.Drawing.Size(194, 22);
             this.smiListAbit.Text = "Список заявлений";
             this.smiListAbit.Click += new System.EventHandler(this.smiListAbit_Click);
             // 
@@ -550,20 +543,20 @@
             this.smiFiltersSave,
             this.smiFiltersChoose});
             this.smiFilters.Name = "smiFilters";
-            this.smiFilters.Size = new System.Drawing.Size(277, 22);
+            this.smiFilters.Size = new System.Drawing.Size(300, 22);
             this.smiFilters.Text = "Фильтры";
             // 
             // smiFiltersSave
             // 
             this.smiFiltersSave.Name = "smiFiltersSave";
-            this.smiFiltersSave.Size = new System.Drawing.Size(129, 22);
+            this.smiFiltersSave.Size = new System.Drawing.Size(132, 22);
             this.smiFiltersSave.Text = "Сохранить";
             this.smiFiltersSave.Click += new System.EventHandler(this.smiFiltersSave_Click);
             // 
             // smiFiltersChoose
             // 
             this.smiFiltersChoose.Name = "smiFiltersChoose";
-            this.smiFiltersChoose.Size = new System.Drawing.Size(129, 22);
+            this.smiFiltersChoose.Size = new System.Drawing.Size(132, 22);
             this.smiFiltersChoose.Text = "Выбрать";
             this.smiFiltersChoose.Click += new System.EventHandler(this.smiFiltersChoose_Click);
             // 
@@ -592,106 +585,103 @@
             this.smiMakeBackDoc,
             this.smiDeleteDog});
             this.smiBooks.Name = "smiBooks";
-            this.smiBooks.Size = new System.Drawing.Size(138, 20);
+            this.smiBooks.Size = new System.Drawing.Size(152, 20);
             this.smiBooks.Text = "Справочники для Паши";
             // 
             // smiEntry
             // 
             this.smiEntry.Name = "smiEntry";
-            this.smiEntry.Size = new System.Drawing.Size(424, 22);
+            this.smiEntry.Size = new System.Drawing.Size(453, 22);
             this.smiEntry.Text = "Конкурс";
             this.smiEntry.Click += new System.EventHandler(this.smiEntry_Click);
             // 
             // smiExamName
             // 
             this.smiExamName.Name = "smiExamName";
-            this.smiExamName.Size = new System.Drawing.Size(424, 22);
+            this.smiExamName.Size = new System.Drawing.Size(453, 22);
             this.smiExamName.Text = "Названия экзаменов";
             this.smiExamName.Click += new System.EventHandler(this.smiExamName_Click);
             // 
             // smiExam
             // 
             this.smiExam.Name = "smiExam";
-            this.smiExam.Size = new System.Drawing.Size(424, 22);
+            this.smiExam.Size = new System.Drawing.Size(453, 22);
             this.smiExam.Text = "Экзамены";
             this.smiExam.Click += new System.EventHandler(this.smiExam_Click);
             // 
             // smiOlymBook
             // 
             this.smiOlymBook.Name = "smiOlymBook";
-            this.smiOlymBook.Size = new System.Drawing.Size(424, 22);
+            this.smiOlymBook.Size = new System.Drawing.Size(453, 22);
             this.smiOlymBook.Text = "Олимпиады";
             this.smiOlymBook.Click += new System.EventHandler(this.smiOlymBook_Click);
             // 
             // smiEGE
             // 
             this.smiEGE.Name = "smiEGE";
-            this.smiEGE.Size = new System.Drawing.Size(424, 22);
+            this.smiEGE.Size = new System.Drawing.Size(453, 22);
             this.smiEGE.Text = "ЕГЭ";
             this.smiEGE.Click += new System.EventHandler(this.smiEGE_Click);
             // 
             // smiMinEge
             // 
             this.smiMinEge.Name = "smiMinEge";
-            this.smiMinEge.Size = new System.Drawing.Size(424, 22);
+            this.smiMinEge.Size = new System.Drawing.Size(453, 22);
             this.smiMinEge.Text = "Минимальные планки по ЕГЭ";
             this.smiMinEge.Click += new System.EventHandler(this.smiMinEge_Click);
             // 
             // smiEnterManual
             // 
             this.smiEnterManual.Name = "smiEnterManual";
-            this.smiEnterManual.Size = new System.Drawing.Size(424, 22);
+            this.smiEnterManual.Size = new System.Drawing.Size(453, 22);
             this.smiEnterManual.Text = "Ведомость ручного ввода";
             this.smiEnterManual.Click += new System.EventHandler(this.smiEnterManual_Click);
             // 
             // smiRatingListPasha
             // 
             this.smiRatingListPasha.Name = "smiRatingListPasha";
-            this.smiRatingListPasha.Size = new System.Drawing.Size(424, 22);
+            this.smiRatingListPasha.Size = new System.Drawing.Size(453, 22);
             this.smiRatingListPasha.Text = "Рейтинговый список для сайта";
             this.smiRatingListPasha.Click += new System.EventHandler(this.smiRatingListPasha_Click);
             // 
             // номераЗачетокToolStripMenuItem
             // 
             this.номераЗачетокToolStripMenuItem.Name = "номераЗачетокToolStripMenuItem";
-            this.номераЗачетокToolStripMenuItem.Size = new System.Drawing.Size(424, 22);
+            this.номераЗачетокToolStripMenuItem.Size = new System.Drawing.Size(453, 22);
             this.номераЗачетокToolStripMenuItem.Text = "Номера зачеток";
             this.номераЗачетокToolStripMenuItem.Click += new System.EventHandler(this.номераЗачетокToolStripMenuItem_Click);
             // 
             // smiExportStudent
             // 
             this.smiExportStudent.Name = "smiExportStudent";
-            this.smiExportStudent.Size = new System.Drawing.Size(424, 22);
+            this.smiExportStudent.Size = new System.Drawing.Size(453, 22);
             this.smiExportStudent.Text = "Выгрузка для студента";
             this.smiExportStudent.Click += new System.EventHandler(this.smiExportStudent_Click);
             // 
             // smiImportMags
             // 
             this.smiImportMags.Name = "smiImportMags";
-            this.smiImportMags.Size = new System.Drawing.Size(424, 22);
+            this.smiImportMags.Size = new System.Drawing.Size(453, 22);
             this.smiImportMags.Text = "Импорт магистров";
-            this.smiImportMags.Click += new System.EventHandler(this.smiImportMags_Click);
             // 
             // smiRatingBackUp
             // 
             this.smiRatingBackUp.Name = "smiRatingBackUp";
-            this.smiRatingBackUp.Size = new System.Drawing.Size(424, 22);
+            this.smiRatingBackUp.Size = new System.Drawing.Size(453, 22);
             this.smiRatingBackUp.Text = "Бэкап рейтинга";
             this.smiRatingBackUp.Click += new System.EventHandler(this.smiRatingBackUp_Click);
             // 
             // smiMakeBackDoc
             // 
             this.smiMakeBackDoc.Name = "smiMakeBackDoc";
-            this.smiMakeBackDoc.Size = new System.Drawing.Size(424, 22);
+            this.smiMakeBackDoc.Size = new System.Drawing.Size(453, 22);
             this.smiMakeBackDoc.Text = "Проставить забор документам на платное, поступившим на бюджет";
-            this.smiMakeBackDoc.Click += new System.EventHandler(this.smiMakeBackDoc_Click);
             // 
             // smiDeleteDog
             // 
             this.smiDeleteDog.Name = "smiDeleteDog";
-            this.smiDeleteDog.Size = new System.Drawing.Size(424, 22);
+            this.smiDeleteDog.Size = new System.Drawing.Size(453, 22);
             this.smiDeleteDog.Text = "Удалить платников (зачисленных или backdoc)";
-            this.smiDeleteDog.Click += new System.EventHandler(this.smiDeleteDog_Click);
             // 
             // smiCrypto
             // 
@@ -701,83 +691,36 @@
             this.smiDecryptor,
             this.smiAppeal});
             this.smiCrypto.Name = "smiCrypto";
-            this.smiCrypto.Size = new System.Drawing.Size(85, 20);
+            this.smiCrypto.Size = new System.Drawing.Size(91, 20);
             this.smiCrypto.Text = "Шифровалка";
             // 
             // smiEnterMarks
             // 
             this.smiEnterMarks.Name = "smiEnterMarks";
-            this.smiEnterMarks.Size = new System.Drawing.Size(230, 22);
+            this.smiEnterMarks.Size = new System.Drawing.Size(242, 22);
             this.smiEnterMarks.Text = "Ввод оценок в ведомость";
             this.smiEnterMarks.Click += new System.EventHandler(this.smiEnterMarks_Click);
             // 
             // smiLoadMarks
             // 
             this.smiLoadMarks.Name = "smiLoadMarks";
-            this.smiLoadMarks.Size = new System.Drawing.Size(230, 22);
+            this.smiLoadMarks.Size = new System.Drawing.Size(242, 22);
             this.smiLoadMarks.Text = "Загрузка оценок из ведомости";
             this.smiLoadMarks.Click += new System.EventHandler(this.smiLoadMarks_Click);
             // 
             // smiDecryptor
             // 
             this.smiDecryptor.Name = "smiDecryptor";
-            this.smiDecryptor.Size = new System.Drawing.Size(230, 22);
+            this.smiDecryptor.Size = new System.Drawing.Size(242, 22);
             this.smiDecryptor.Text = "Дешифровка";
             this.smiDecryptor.Click += new System.EventHandler(this.smiDecryptor_Click);
             // 
             // smiAppeal
             // 
             this.smiAppeal.Name = "smiAppeal";
-            this.smiAppeal.Size = new System.Drawing.Size(230, 22);
+            this.smiAppeal.Size = new System.Drawing.Size(242, 22);
             this.smiAppeal.Text = "Ведомость для аппеляции";
             this.smiAppeal.Click += new System.EventHandler(this.smiAppeal_Click);
-            // 
-            // smiFBS
-            // 
-            this.smiFBS.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.smiGetByFIOPasp,
-            this.smiGetByFIOPasp2,
-            this.smiGetByBalls,
-            this.smiLoadFBS,
-            this.smiEgeLoad});
-            this.smiFBS.Name = "smiFBS";
-            this.smiFBS.Size = new System.Drawing.Size(114, 20);
-            this.smiFBS.Text = "Проверка ФБС ЕГЭ";
-            // 
-            // smiGetByFIOPasp
-            // 
-            this.smiGetByFIOPasp.Name = "smiGetByFIOPasp";
-            this.smiGetByFIOPasp.Size = new System.Drawing.Size(368, 22);
-            this.smiGetByFIOPasp.Text = "Сформировать запрос по номеру паспорта";
-            this.smiGetByFIOPasp.Click += new System.EventHandler(this.smiGetByFIOPasp_Click);
-            // 
-            // smiGetByFIOPasp2
-            // 
-            this.smiGetByFIOPasp2.Name = "smiGetByFIOPasp2";
-            this.smiGetByFIOPasp2.Size = new System.Drawing.Size(368, 22);
-            this.smiGetByFIOPasp2.Text = "Запрос по номеру паспорта 2";
-            this.smiGetByFIOPasp2.Click += new System.EventHandler(this.smiGetByFIOPasp2_Click);
-            // 
-            // smiGetByBalls
-            // 
-            this.smiGetByBalls.Name = "smiGetByBalls";
-            this.smiGetByBalls.Size = new System.Drawing.Size(368, 22);
-            this.smiGetByBalls.Text = "Сформировать запрос по номеру свидетельства и баллам";
-            this.smiGetByBalls.Click += new System.EventHandler(this.smiGetByBalls_Click);
-            // 
-            // smiLoadFBS
-            // 
-            this.smiLoadFBS.Name = "smiLoadFBS";
-            this.smiLoadFBS.Size = new System.Drawing.Size(368, 22);
-            this.smiLoadFBS.Text = "Загрузить ответ ФБС";
-            this.smiLoadFBS.Click += new System.EventHandler(this.smiLoadFBS_Click);
-            // 
-            // smiEgeLoad
-            // 
-            this.smiEgeLoad.Name = "smiEgeLoad";
-            this.smiEgeLoad.Size = new System.Drawing.Size(368, 22);
-            this.smiEgeLoad.Text = "Загрузить ЕГЭ";
-            this.smiEgeLoad.Click += new System.EventHandler(this.smiEgeLoad_Click);
             // 
             // smiExport
             // 
@@ -785,20 +728,20 @@
             this.smiVTB,
             this.smiSberbank});
             this.smiExport.Name = "smiExport";
-            this.smiExport.Size = new System.Drawing.Size(61, 20);
+            this.smiExport.Size = new System.Drawing.Size(64, 20);
             this.smiExport.Text = "Экспорт";
             // 
             // smiVTB
             // 
             this.smiVTB.Name = "smiVTB";
-            this.smiVTB.Size = new System.Drawing.Size(222, 22);
+            this.smiVTB.Size = new System.Drawing.Size(235, 22);
             this.smiVTB.Text = "Поступивших для ВТБ24";
             this.smiVTB.Click += new System.EventHandler(this.smiVTB_Click);
             // 
             // smiSberbank
             // 
             this.smiSberbank.Name = "smiSberbank";
-            this.smiSberbank.Size = new System.Drawing.Size(222, 22);
+            this.smiSberbank.Size = new System.Drawing.Size(235, 22);
             this.smiSberbank.Text = "Поступивших для Сбербанка";
             this.smiSberbank.Click += new System.EventHandler(this.smiSberbank_Click);
             // 
@@ -808,19 +751,19 @@
             this.срюбаллToolStripMenuItem,
             this.оплатаДоговоровToolStripMenuItem});
             this.smiImport.Name = "smiImport";
-            this.smiImport.Size = new System.Drawing.Size(65, 20);
+            this.smiImport.Size = new System.Drawing.Size(67, 20);
             this.smiImport.Text = "Загрузка";
             // 
             // срюбаллToolStripMenuItem
             // 
             this.срюбаллToolStripMenuItem.Name = "срюбаллToolStripMenuItem";
-            this.срюбаллToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
+            this.срюбаллToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
             this.срюбаллToolStripMenuItem.Text = "Ср.балл";
             // 
             // оплатаДоговоровToolStripMenuItem
             // 
             this.оплатаДоговоровToolStripMenuItem.Name = "оплатаДоговоровToolStripMenuItem";
-            this.оплатаДоговоровToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
+            this.оплатаДоговоровToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
             this.оплатаДоговоровToolStripMenuItem.Text = "Оплата договоров";
             // 
             // statusStrip1
@@ -917,11 +860,6 @@
         private System.Windows.Forms.ToolStripMenuItem smiLoadMarks;
         private System.Windows.Forms.ToolStripMenuItem smiDecryptor;
         private System.Windows.Forms.ToolStripMenuItem smiAppeal;
-        private System.Windows.Forms.ToolStripMenuItem smiFBS;
-        private System.Windows.Forms.ToolStripMenuItem smiGetByBalls;
-        private System.Windows.Forms.ToolStripMenuItem smiGetByFIOPasp;
-        private System.Windows.Forms.ToolStripMenuItem smiLoadFBS;
-        private System.Windows.Forms.ToolStripMenuItem smiEgeLoad;
         private System.Windows.Forms.ToolStripMenuItem smiExport;
         private System.Windows.Forms.ToolStripMenuItem smiVTB;
         private System.Windows.Forms.ToolStripMenuItem smiSberbank;
@@ -944,7 +882,6 @@
         private System.Windows.Forms.ToolStripMenuItem smiRegionStat;
         private System.Windows.Forms.ToolStripMenuItem smiRegionAbitsStat;
         private System.Windows.Forms.ToolStripMenuItem smiRegionStatMarks;
-        private System.Windows.Forms.ToolStripMenuItem smiGetByFIOPasp2;
         private System.Windows.Forms.ToolStripMenuItem smiRegionFacultyAbitCount;
         private System.Windows.Forms.ToolStripMenuItem smiRatingBackUp;
         private System.Windows.Forms.ToolStripMenuItem smiMakeBackDoc;

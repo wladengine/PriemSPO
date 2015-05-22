@@ -8,7 +8,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using System.Data.Objects;
+using System.Data.Entity.Core.Objects;
 
 using EducServLib;
 using BDClassLib;
@@ -22,8 +22,6 @@ namespace Priem
     {
         string _queryFrom;
         string _queryBody;
-        string _queryOlymps;
-        string _queryFWJoin;
         string _queryOrange;
 
         //constructor
@@ -52,9 +50,6 @@ qPersonAttMarkRussian.Value AS 'Атт. Русский Язык',
                     ed.extPersonAll.DiplomSeries as 'Серия диплома', 
                     ed.extPersonAll.SchoolAVG as 'Средний балл', 
                     ed.extPersonAll.Email + ', '+ ed.extPersonAll.Phone + ', ' +ed.extPersonAll.Mobiles AS 'Контакты'"; 
- 
-            _queryOlymps = MainClass.studyLevelGroupId == 1 ? @", (SELECT TOP(1) ed.extOlympiads.OlympValueAcr + '-' + ed.extOlympiads.OlympName FROM ed.extOlympiads 
-                           WHERE ed.extOlympiads.AbiturientId = ed.qAbiturient.Id AND ed.extOlympiads.OlympTypeId = 3 order by ed.extOlympiads.sortOrder) as 'Олимпиада' " : "";
              
             _queryFrom = @" FROM ed.qAbiturient 
     INNER JOIN ed.extPersonAll ON ed.extPersonAll.Id = ed.qAbiturient.PersonId
@@ -69,8 +64,6 @@ qPersonAttMarkRussian.Value AS 'Атт. Русский Язык',
     LEFT JOIN ed.extAbitMarksSum ON ed.qAbiturient.Id = ed.extAbitMarksSum.Id
     LEFT JOIN ed.hlpMinMarkAbiturient ON hlpMinMarkAbiturient.Id = qAbiturient.Id";
 
-            _queryFWJoin = "";                       
-            
             Dgv = dgvAbits;
             _title = "Рейтинговый список";
 
@@ -107,6 +100,7 @@ qPersonAttMarkRussian.Value AS 'Атт. Русский Язык',
             ComboServ.FillCombo(cbStudyBasis, HelpClass.GetComboListByTable("ed.StudyBasis", "ORDER BY Name"), false, false);
 
             cbStudyBasis.SelectedIndex = 0;
+            FillStudyLevelGroup();
             FillStudyForm();
             FillLicenseProgram();
             FillObrazProgram();
@@ -118,24 +112,26 @@ qPersonAttMarkRussian.Value AS 'Атт. Русский Язык',
                 chbWithOlymps.Visible = false;
         }
 
+        public int? StudyLevelGroupId
+        {
+            get { return ComboServ.GetComboIdInt(cbStudyLevelGroup); }
+            set { ComboServ.SetComboId(cbStudyLevelGroup, value); }
+        }
         public int? FacultyId
         {
             get { return ComboServ.GetComboIdInt(cbFaculty); }
             set { ComboServ.SetComboId(cbFaculty, value); }
         }
-
         public int? LicenseProgramId
         {
             get { return ComboServ.GetComboIdInt(cbLicenseProgram); }
             set { ComboServ.SetComboId(cbLicenseProgram, value); }
         }
-
         public int? ObrazProgramId
         {
             get { return ComboServ.GetComboIdInt(cbObrazProgram); }
             set { ComboServ.SetComboId(cbObrazProgram, value); }
         }
-
         public int? ProfileId
         {
             get
@@ -150,31 +146,26 @@ qPersonAttMarkRussian.Value AS 'Атт. Русский Язык',
                     ComboServ.SetComboId(cbProfile, value.ToString());
             }
         }
-
         public int? StudyBasisId
         {
             get { return ComboServ.GetComboIdInt(cbStudyBasis); }
             set { ComboServ.SetComboId(cbStudyBasis, value); }
         }
-
         public int? StudyFormId
         {
             get { return ComboServ.GetComboIdInt(cbStudyForm); }
             set { ComboServ.SetComboId(cbStudyForm, value); }
         }
-
         public bool IsSecond
         {
             get { return chbIsSecond.Checked; }
             set { chbIsSecond.Checked = value; }
         }
-
         public bool IsReduced
         {
             get { return chbIsReduced.Checked; }
             set { chbIsReduced.Checked = value; }
         }
-
         public bool IsParallel
         {
             get { return chbIsParallel.Checked; }
@@ -195,7 +186,6 @@ qPersonAttMarkRussian.Value AS 'Атт. Русский Язык',
             get { return chbCel.Checked; }
             set { chbCel.Checked = value; }
         }
-
         public Guid? EntryId
         {
             get
@@ -222,6 +212,17 @@ qPersonAttMarkRussian.Value AS 'Атт. Русский Язык',
             }            
         }
 
+        private void FillStudyLevelGroup()
+        {
+            using (PriemEntities context = new PriemEntities())
+            {
+                var ent = MainClass.GetEntry(context).Select(x => new { x.StudyLevelGroupId, x.StudyLevelGroupName });
+
+                List<KeyValuePair<string, string>> lst = ent.ToList().Select(u => new KeyValuePair<string, string>(u.StudyLevelGroupId.ToString(), u.StudyLevelGroupName)).Distinct().ToList();
+
+                ComboServ.FillCombo(cbStudyLevelGroup, lst, false, false);
+            }
+        }
         private void FillStudyForm()
         {
             using (PriemEntities context = new PriemEntities())
@@ -235,7 +236,6 @@ qPersonAttMarkRussian.Value AS 'Атт. Русский Язык',
                 ComboServ.FillCombo(cbStudyForm, lst, false, false);                
             }
         }
-
         private void FillLicenseProgram()
         {
             using (PriemEntities context = new PriemEntities())
@@ -254,7 +254,6 @@ qPersonAttMarkRussian.Value AS 'Атт. Русский Язык',
                 ComboServ.FillCombo(cbLicenseProgram, lst, false, false);                
             }
         }
-
         private void FillObrazProgram()
         {
             using (PriemEntities context = new PriemEntities())
@@ -275,7 +274,6 @@ qPersonAttMarkRussian.Value AS 'Атт. Русский Язык',
                 ComboServ.FillCombo(cbObrazProgram, lst, false, false);
             }
         }
-
         private void FillProfile()
         {
             using (PriemEntities context = new PriemEntities())
@@ -323,7 +321,8 @@ qPersonAttMarkRussian.Value AS 'Атт. Русский Язык',
             cbStudyBasis.SelectedIndexChanged += new EventHandler(cbStudyBasis_SelectedIndexChanged);
             cbLicenseProgram.SelectedIndexChanged += new EventHandler(cbLicenseProgram_SelectedIndexChanged);
             cbObrazProgram.SelectedIndexChanged += new EventHandler(cbObrazProgram_SelectedIndexChanged);
-            
+            cbStudyLevelGroup.SelectedIndexChanged += cbFaculty_SelectedIndexChanged;
+
             chbFix.CheckedChanged += new EventHandler(chbFix_CheckedChanged);
         }
 
@@ -332,25 +331,21 @@ qPersonAttMarkRussian.Value AS 'Атт. Русский Язык',
             FillStudyForm();
             NullDataGrid();
         }
-
         void cbStudyBasis_SelectedIndexChanged(object sender, EventArgs e)
         {
             FillStudyForm();
             NullDataGrid();
         }
-
         void cbStudyForm_SelectedIndexChanged(object sender, EventArgs e)
         {
             FillLicenseProgram();
             NullDataGrid();
         }        
-
         void cbLicenseProgram_SelectedIndexChanged(object sender, EventArgs e)
         {
             FillObrazProgram();
             NullDataGrid();
         }
-
         void cbObrazProgram_SelectedIndexChanged(object sender, EventArgs e)
         {           
             FillProfile();
@@ -442,16 +437,18 @@ qPersonAttMarkRussian.Value AS 'Атт. Русский Язык',
         private void CheckLockAndPasha(PriemEntities context)
         {
             //лочит кнопку 
-            FixierenView fixView = (from fv in context.FixierenView
-                           where fv.StudyLevelGroupId == MainClass.studyLevelGroupId && fv.IsReduced == IsReduced && fv.IsParallel == IsParallel && fv.IsSecond == IsSecond
-                           && fv.FacultyId == FacultyId && fv.LicenseProgramId == LicenseProgramId
-                           && fv.ObrazProgramId == ObrazProgramId
-                           && (ProfileId == null ? fv.ProfileId == null : fv.ProfileId == ProfileId)
-                           && fv.StudyFormId == StudyFormId
-                           && fv.StudyBasisId == StudyBasisId
-                           && fv.IsCel == IsCel
-                           && fv.IsCrimea == IsCrimea
-                           select fv).FirstOrDefault();
+            FixierenView fixView = 
+                (from fv in context.FixierenView
+                 where fv.StudyLevelGroupId == StudyLevelGroupId
+                 && fv.IsReduced == IsReduced && fv.IsParallel == IsParallel && fv.IsSecond == IsSecond
+                 && fv.FacultyId == FacultyId && fv.LicenseProgramId == LicenseProgramId
+                 && fv.ObrazProgramId == ObrazProgramId
+                 && (ProfileId == null ? fv.ProfileId == null : fv.ProfileId == ProfileId)
+                 && fv.StudyFormId == StudyFormId
+                 && fv.StudyBasisId == StudyBasisId
+                 && fv.IsCel == IsCel
+                 && fv.IsCrimea == IsCrimea
+                 select fv).FirstOrDefault();
             
             string DocNum = string.Empty;
             bool? locked = false;
@@ -528,7 +525,7 @@ AND ed.FixierenView.LicenseProgramId={3} AND ed.FixierenView.ObrazProgramId={4} 
 AND ed.FixierenView.IsSecond = {7} AND ed.FixierenView.IsReduced = {8} AND ed.FixierenView.IsParallel = {9} AND ed.FixierenView.IsCrimea = {11} AND ed.FixierenView.IsQuota = {12}",
                         StudyFormId, StudyBasisId, FacultyId, LicenseProgramId, ObrazProgramId, ProfileId == null ? " AND ed.FixierenView.ProfileId IS NULL" : "AND ed.FixierenView.ProfileId='" + ProfileId + "'",
                         QueryServ.StringParseFromBool(IsCel), QueryServ.StringParseFromBool(IsSecond), QueryServ.StringParseFromBool(IsReduced), QueryServ.StringParseFromBool(IsParallel),
-                        MainClass.studyLevelGroupId, QueryServ.StringParseFromBool(IsCrimea), QueryServ.StringParseFromBool(IsQuota));
+                        StudyLevelGroupId, QueryServ.StringParseFromBool(IsCrimea), QueryServ.StringParseFromBool(IsQuota));
                     //sOrderBy = " ORDER BY Fixieren.Number ";
 
                     totalQuery = queryFix + whereFix + sOrderBy;
@@ -569,7 +566,7 @@ AND ed.FixierenView.IsSecond = {7} AND ed.FixierenView.IsReduced = {8} AND ed.Fi
                     // кроме бэ нужное кол-во оценок есть
                     sFilters += " AND ((CompetitionId=1  OR CompetitionId=8) OR ed.extAbitMarksSum.TotalCount = " + examsCnt + " ) ";
 
-                    totalQuery = _queryBody + (chbWithOlymps.Checked ? _queryOlymps : "") + _queryOrange + _queryFrom + sFilters + sOrderBy;
+                    totalQuery = _queryBody + _queryOrange + _queryFrom + sFilters + sOrderBy;
 
                 }
 
@@ -604,14 +601,14 @@ AND ed.FixierenView.IsSecond = {7} AND ed.FixierenView.IsReduced = {8} AND ed.Fi
             }
             catch (Exception ex)
             {
-                WinFormsServ.Error(ex, "Ошибка при обновлении списка.");
+                WinFormsServ.Error("Ошибка при обновлении списка.", ex);
             }
         }
       
         private string GetFilterString()
         {
             string s = " WHERE 1=1 ";
-            s += " AND ed.qAbiturient.StudyLevelGroupId = " + MainClass.studyLevelGroupId;  
+            s += " AND ed.qAbiturient.StudyLevelGroupId = " + StudyLevelGroupId;  
             
             //s += " AND ed.qAbiturient.DocDate>='20120813'"; 
 
@@ -699,7 +696,7 @@ AND ed.FixierenView.IsSecond = {7} AND ed.FixierenView.IsReduced = {8} AND ed.Fi
                     try
                     {
                         Guid? fixViewId = (from fv in context.FixierenView
-                                           where fv.StudyLevelGroupId == MainClass.studyLevelGroupId && fv.IsReduced == IsReduced && fv.IsParallel == IsParallel && fv.IsSecond == IsSecond
+                                           where fv.StudyLevelGroupId == StudyLevelGroupId && fv.IsReduced == IsReduced && fv.IsParallel == IsParallel && fv.IsSecond == IsSecond
                                            && fv.FacultyId == FacultyId && fv.LicenseProgramId == LicenseProgramId
                                            && fv.ObrazProgramId == ObrazProgramId
                                            && (ProfileId == null ? fv.ProfileId == null : fv.ProfileId == ProfileId)
@@ -729,7 +726,7 @@ AND ed.FixierenView.IsSecond = {7} AND ed.FixierenView.IsReduced = {8} AND ed.Fi
                         int rand = new Random().Next(10000, 99999);
 
                         ObjectParameter fvId = new ObjectParameter("id", typeof(Guid));
-                        context.FixierenView_Insert(MainClass.studyLevelGroupId, FacultyId, LicenseProgramId, ObrazProgramId, ProfileId, StudyBasisId, StudyFormId, IsSecond, IsReduced, IsParallel, IsCel, rand, false, IsCrimea, IsQuota, fvId);
+                        context.FixierenView_Insert(StudyLevelGroupId, FacultyId, LicenseProgramId, ObrazProgramId, ProfileId, StudyBasisId, StudyFormId, IsSecond, IsReduced, IsParallel, IsCel, rand, false, IsCrimea, IsQuota, fvId);
                         Guid? viewId = (Guid?)fvId.Value;
 
                         int counter = 0;
@@ -744,7 +741,7 @@ AND ed.FixierenView.IsSecond = {7} AND ed.FixierenView.IsReduced = {8} AND ed.Fi
                     }
                     catch (Exception ex)
                     {
-                        WinFormsServ.Error(ex, "Ошибка при сохранении списка");
+                        WinFormsServ.Error("Ошибка при сохранении списка", ex);
                         return;
                     }                   
                 }
@@ -875,14 +872,14 @@ AND ed.FixierenView.IsSecond = {7} AND ed.FixierenView.IsReduced = {8} AND ed.Fi
             {
                 using (PriemEntities context = new PriemEntities())
                 {
-                    context.FixierenView_UpdateLocked(MainClass.studyLevelGroupId, FacultyId, LicenseProgramId, ObrazProgramId, ProfileId, StudyBasisId, StudyFormId, IsSecond, IsReduced, IsParallel, IsCel, locked);
+                    context.FixierenView_UpdateLocked(StudyLevelGroupId, FacultyId, LicenseProgramId, ObrazProgramId, ProfileId, StudyBasisId, StudyFormId, IsSecond, IsReduced, IsParallel, IsCel, locked);
                     
                     lblLocked.Text = locked ? "ЗАЛОЧЕНА" : "НЕ залочена";
                 }
             }
             catch (Exception ex)
             {
-                WinFormsServ.Error(ex, "Ошибка при локе/анлоке");
+                WinFormsServ.Error("Ошибка при локе/анлоке", ex);
             }
             return;            
         }
@@ -906,7 +903,7 @@ AND ed.FixierenView.IsSecond = {7} AND ed.FixierenView.IsReduced = {8} AND ed.Fi
                     using (TransactionScope transaction = new TransactionScope(TransactionScopeOption.RequiresNew))
                     {
                         Guid? fixViewId = (from fv in context.FixierenView
-                                           where fv.StudyLevelGroupId == MainClass.studyLevelGroupId && fv.IsReduced == IsReduced && fv.IsParallel == IsParallel && fv.IsSecond == IsSecond
+                                           where fv.StudyLevelGroupId == StudyLevelGroupId && fv.IsReduced == IsReduced && fv.IsParallel == IsParallel && fv.IsSecond == IsSecond
                                            && fv.FacultyId == FacultyId && fv.LicenseProgramId == LicenseProgramId
                                            && fv.ObrazProgramId == ObrazProgramId
                                            && (ProfileId == null ? fv.ProfileId == null : fv.ProfileId == ProfileId)
@@ -917,7 +914,7 @@ AND ed.FixierenView.IsSecond = {7} AND ed.FixierenView.IsReduced = {8} AND ed.Fi
                                            select fv.Id).FirstOrDefault();
 
                         Guid? entryId = (from fv in context.qEntry
-                                           where fv.StudyLevelGroupId == MainClass.studyLevelGroupId && fv.IsReduced == IsReduced && fv.IsParallel == IsParallel && fv.IsSecond == IsSecond
+                                           where fv.StudyLevelGroupId == StudyLevelGroupId && fv.IsReduced == IsReduced && fv.IsParallel == IsParallel && fv.IsSecond == IsSecond
                                            && fv.FacultyId == FacultyId && fv.LicenseProgramId == LicenseProgramId
                                            && fv.ObrazProgramId == ObrazProgramId
                                            && (ProfileId == null ? fv.ProfileId == null : fv.ProfileId == ProfileId)
@@ -962,7 +959,7 @@ AND ed.FixierenView.IsSecond = {7} AND ed.FixierenView.IsReduced = {8} AND ed.Fi
             }
             catch (Exception ex)
             {
-                WinFormsServ.Error(ex, "Ошибка при WEB FIXIEREN !");
+                WinFormsServ.Error("Ошибка при WEB FIXIEREN !", ex);
             }
             MessageBox.Show("DONE!");
         }        
@@ -979,7 +976,7 @@ AND ed.FixierenView.IsSecond = {7} AND ed.FixierenView.IsReduced = {8} AND ed.Fi
                 using (PriemEntities context = new PriemEntities())
                 {
                     Guid? entryId = (from fv in context.qEntry
-                                         where fv.StudyLevelGroupId == MainClass.studyLevelGroupId && fv.IsReduced == IsReduced && fv.IsParallel == IsParallel && fv.IsSecond == IsSecond
+                                         where fv.StudyLevelGroupId == StudyLevelGroupId && fv.IsReduced == IsReduced && fv.IsParallel == IsParallel && fv.IsSecond == IsSecond
                                          && fv.FacultyId == FacultyId && fv.LicenseProgramId == LicenseProgramId
                                          && fv.ObrazProgramId == ObrazProgramId
                                          && (ProfileId == null ? fv.ProfileId == null : fv.ProfileId == ProfileId)
@@ -993,7 +990,7 @@ AND ed.FixierenView.IsSecond = {7} AND ed.FixierenView.IsReduced = {8} AND ed.Fi
             }
             catch (Exception ex)
             {
-                WinFormsServ.Error(ex, "Ошибка при WEB FIXIEREN !");
+                WinFormsServ.Error("Ошибка при WEB FIXIEREN !", ex);
             }
             MessageBox.Show("DONE!");
         }
