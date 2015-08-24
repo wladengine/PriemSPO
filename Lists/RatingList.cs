@@ -30,9 +30,10 @@ namespace Priem
             InitializeComponent();
 
             _queryBody = @"SELECT DISTINCT ed.qAbiturient.Id as Id, ed.qAbiturient.RegNum as Рег_Номер, 
-                    ed.extPersonAll.PersonNum as 'Ид. номер', ed.extPersonAll.FIO as ФИО, 
+                    extPersonAll.PersonNum as 'Ид. номер', extPersonAll.FIO as ФИО, 
                     ed.extAbitMarksSum.TotalSum as 'Сумма баллов', ed.extAbitMarksSum.TotalCount as 'Кол-во оценок', 
-                    case when ed.qAbiturient.HasOriginals>0 then 'Да' else 'Нет' end as 'Подлинники документов', ed.qAbiturient.Coefficient as 'Рейтинговый коэффициент', 
+                    case when ed.qAbiturient.HasOriginals>0 then 'Да' else 'Нет' end as 'Подлинники документов', 
+ed.qAbiturient.Coefficient as 'Рейтинговый коэффициент', 
 qAbiturientFizkultMark.Value AS 'Оценка Физ.Культ', 
 qPersonAttMarkBiology.Value AS 'Атт. биология', 
 qPersonAttMarkFizkult.Value AS 'Атт. Физ.Культ', 
@@ -40,16 +41,16 @@ qPersonAttMarkMath.Value AS 'Атт. матем',
 qPersonAttMarkRussian.Value AS 'Атт. Русский Язык', 
                     ed.Competition.Name as Конкурс, 
                     CASE WHEN EXISTS(SELECT Id FROM ed.Olympiads WHERE OlympTypeId = 3 AND OlympValueId = 6 AND AbiturientId = ed.qAbiturient.Id) then 1 else CASE WHEN EXISTS(SELECT Id FROM ed.Olympiads WHERE OlympTypeId = 3 AND OlympValueId = 5 AND AbiturientId = ed.qAbiturient.Id) then 2 else CASE WHEN EXISTS(SELECT Id FROM ed.Olympiads WHERE OlympTypeId = 3 AND OlympValueId = 7 AND AbiturientId = ed.qAbiturient.Id) then 3 else 4 end end end as olymp,
-                    CASE WHEN  ed.extPersonAll.AttestatSeries IN ('ЗА','ЗБ','ЗВ') then 1 else CASE WHEN  ed.extPersonAll.AttestatSeries IN ('СА','СБ','СВ') then 2 else 3 end end as attestat,
+                    CASE WHEN extPersonAll.AttestatSeries IN ('ЗА','ЗБ','ЗВ') then 1 else CASE WHEN extPersonAll.AttestatSeries IN ('СА','СБ','СВ') then 2 else 3 end end as attestat,
                     ed.extPersonAll.SchoolAVG as attAvg, 
                     CASE WHEN (CompetitionId=1  OR CompetitionId=8) then 1 else case when (CompetitionId=2 OR CompetitionId=7) AND ed.extPersonAll.Privileges>0 then 2 else 3 end end as comp, 
                     CASE WHEN (CompetitionId=1 OR CompetitionId=8) then ed.qAbiturient.Coefficient else 10000 end as noexamssort, 
                     CASE WHEN (CompetitionId=5 OR CompetitionId=9) then 1 else 0 end as preimsort,
-                    case when ed.extPersonAll.IsExcellent>0 then 'Да' else 'Нет' end as 'Медалист', 
-                    ed.extPersonAll.AttestatSeries as 'Серия аттестата', 
-                    ed.extPersonAll.DiplomSeries as 'Серия диплома', 
-                    ed.extPersonAll.SchoolAVG as 'Средний балл', 
-                    ed.extPersonAll.Email + ', '+ ed.extPersonAll.Phone + ', ' +ed.extPersonAll.Mobiles AS 'Контакты'"; 
+                    case when extPersonAll.IsExcellent>0 then 'Да' else 'Нет' end as 'Медалист', 
+                    extPersonAll.AttestatSeries as 'Серия аттестата', 
+                    extPersonAll.DiplomSeries as 'Серия диплома', 
+                    extPersonAll.SchoolAVG as 'Средний балл', 
+                    extPersonAll.Email + ', '+ extPersonAll.Phone + ', ' + extPersonAll.Mobiles AS 'Контакты'"; 
              
             _queryFrom = @" FROM ed.qAbiturient 
     INNER JOIN ed.extPersonAll ON ed.extPersonAll.Id = ed.qAbiturient.PersonId
@@ -482,7 +483,7 @@ qPersonAttMarkRussian.Value AS 'Атт. Русский Язык',
             {
                 string sOrderBy = string.Empty;
                 if (LicenseProgramId == 557 || LicenseProgramId == 521)//Физическая культура
-                    sOrderBy = " ORDER BY comp, noexamssort desc, 'Оценка Физ.Культ' DESC, attAvg DESC, 'Атт. Физ.Культ' desc, 'Атт. биология' desc, 'Атт. Русский Язык' desc, ФИО";
+                    sOrderBy = " ORDER BY comp, noexamssort desc, 'Оценка Физ.Культ' DESC, attAvg DESC, 'Атт. Физ.Культ' desc, 'Атт. биология' desc, 'Атт. Русский Язык' desc, 'Рейтинговый коэффициент' DESC, ФИО";
                     //sOrderBy = " ORDER BY comp, noexamssort desc, 'Оценка Физ.Культ' DESC, attAvg DESC, 'Атт. Физ.Культ' desc, 'Атт. биология' desc, 'Атт. Русский Язык' desc, ФИО";
                 else //остальные
                     sOrderBy = " ORDER BY comp, noexamssort desc, attAvg DESC, 'Атт. матем' desc, 'Атт. Русский Язык' desc, 'Рейтинговый коэффициент' DESC, ФИО";
@@ -872,7 +873,7 @@ AND ed.FixierenView.IsSecond = {7} AND ed.FixierenView.IsReduced = {8} AND ed.Fi
             {
                 using (PriemEntities context = new PriemEntities())
                 {
-                    context.FixierenView_UpdateLocked(StudyLevelGroupId, FacultyId, LicenseProgramId, ObrazProgramId, ProfileId, StudyBasisId, StudyFormId, IsSecond, IsReduced, IsParallel, IsCel, locked);
+                    context.FixierenView_UpdateLocked(StudyLevelGroupId, FacultyId, LicenseProgramId, ObrazProgramId, ProfileId, StudyBasisId, StudyFormId, IsSecond, IsReduced, IsParallel, IsCel, IsCrimea, locked);
                     
                     lblLocked.Text = locked ? "ЗАЛОЧЕНА" : "НЕ залочена";
                 }
@@ -912,18 +913,21 @@ AND ed.FixierenView.IsSecond = {7} AND ed.FixierenView.IsReduced = {8} AND ed.Fi
                                            && fv.IsCrimea == IsCrimea
                                            && fv.IsCel == IsCel
                                            select fv.Id).FirstOrDefault();
-
+                        bool isForeign = MainClass.dbType == PriemType.PriemForeigners;
                         Guid? entryId = (from fv in context.qEntry
-                                           where fv.StudyLevelGroupId == StudyLevelGroupId && fv.IsReduced == IsReduced && fv.IsParallel == IsParallel && fv.IsSecond == IsSecond
+                                           where fv.StudyLevelGroupId == StudyLevelGroupId && fv.IsReduced == IsReduced 
+                                           && fv.IsParallel == IsParallel && fv.IsSecond == IsSecond
                                            && fv.FacultyId == FacultyId && fv.LicenseProgramId == LicenseProgramId
                                            && fv.ObrazProgramId == ObrazProgramId
                                            && (ProfileId == null ? fv.ProfileId == null : fv.ProfileId == ProfileId)
                                            && fv.StudyFormId == StudyFormId
-                                           && fv.StudyBasisId == StudyBasisId                                          
+                                           && fv.StudyBasisId == StudyBasisId   
+                                           && fv.IsCrimea == IsCrimea
+                                           && fv.IsForeign == isForeign
                                            select fv.Id).FirstOrDefault();
                         
                         //удалили старое
-                        context.FirstWave_DELETE(entryId, IsCel, IsCrimea);
+                        context.FirstWave_DELETE(entryId, IsCel, IsCrimea, IsQuota);
 
                         var fix = from fx in context.Fixieren
                                   where fx.FixierenViewId == fixViewId
@@ -985,7 +989,7 @@ AND ed.FixierenView.IsSecond = {7} AND ed.FixierenView.IsReduced = {8} AND ed.Fi
                                          select fv.Id).FirstOrDefault();
                     
                     //удалили
-                    context.FirstWave_DELETE(entryId, IsCel, IsCrimea);
+                    context.FirstWave_DELETE(entryId, IsCel, IsCrimea, IsQuota);
                 }
             }
             catch (Exception ex)

@@ -161,11 +161,11 @@ namespace Priem
                     newRow["Номер"] = pm.PersonVedNumber;
                     lstNumbers.Add(pm.PersonVedNumber);
                     
-                    int? sumMark = 0;
+                    decimal? sumMark = 0;
                     if(pm.Mark == null && pm.OralMark == null)
                         sumMark = null;
                     else                    
-                        sumMark = (pm.Mark ?? 0) + (pm.OralMark ?? 0); 
+                        sumMark = (pm.Mark ?? 0m) + (pm.OralMark ?? 0m); 
                   
                     newRow["Баллы"] = sumMark;
                     examTable.Rows.Add(newRow);
@@ -306,11 +306,11 @@ namespace Priem
                         td[8, i] = examId;
                         td[9, i] = examDate.ToShortDateString();
 
-                        int? sumMark = 0;
+                        decimal? sumMark = 0;
                         if (pm.Mark == null && pm.OralMark == null)
                             sumMark = null;
                         else
-                            sumMark = (pm.Mark ?? 0) + (pm.OralMark ?? 0);
+                            sumMark = (pm.Mark ?? 0m) + (pm.OralMark ?? 0m);
                                           
                         td[10, i] =  sumMark == null ? "" : sumMark.ToString();
 
@@ -429,7 +429,7 @@ namespace Priem
                             {
                                 Guid abitId = new Guid(abId);
                                 int examInEntryId = int.Parse(examInPr);
-                                int val = int.Parse(slReplaceMark[abId]);
+                                decimal val = decimal.Parse(slReplaceMark[abId]);
 
                                 context.Mark_DeleteByAbitExamId(abitId, examInEntryId);
                                 context.Mark_Insert(abitId, examInEntryId, val, _dateExam, false, false, false, _vedId, null, null);
