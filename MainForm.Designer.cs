@@ -104,6 +104,7 @@
             this.smiLoadMarks = new System.Windows.Forms.ToolStripMenuItem();
             this.smiDecryptor = new System.Windows.Forms.ToolStripMenuItem();
             this.smiAppeal = new System.Windows.Forms.ToolStripMenuItem();
+            this.smiExamsVedMarkToHistory = new System.Windows.Forms.ToolStripMenuItem();
             this.smiExport = new System.Windows.Forms.ToolStripMenuItem();
             this.smiVTB = new System.Windows.Forms.ToolStripMenuItem();
             this.smiSberbank = new System.Windows.Forms.ToolStripMenuItem();
@@ -113,6 +114,7 @@
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.lblDBPath = new System.Windows.Forms.ToolStripStatusLabel();
             this.tsslMain = new System.Windows.Forms.ToolStripStatusLabel();
+            this.smiLoadExamsResultsToParentExamTool = new System.Windows.Forms.ToolStripMenuItem();
             this.msMainMenu.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -689,7 +691,9 @@
             this.smiEnterMarks,
             this.smiLoadMarks,
             this.smiDecryptor,
-            this.smiAppeal});
+            this.smiAppeal,
+            this.smiExamsVedMarkToHistory,
+            this.smiLoadExamsResultsToParentExamTool});
             this.smiCrypto.Name = "smiCrypto";
             this.smiCrypto.Size = new System.Drawing.Size(91, 20);
             this.smiCrypto.Text = "Шифровалка";
@@ -697,30 +701,37 @@
             // smiEnterMarks
             // 
             this.smiEnterMarks.Name = "smiEnterMarks";
-            this.smiEnterMarks.Size = new System.Drawing.Size(242, 22);
+            this.smiEnterMarks.Size = new System.Drawing.Size(325, 22);
             this.smiEnterMarks.Text = "Ввод оценок в ведомость";
             this.smiEnterMarks.Click += new System.EventHandler(this.smiEnterMarks_Click);
             // 
             // smiLoadMarks
             // 
             this.smiLoadMarks.Name = "smiLoadMarks";
-            this.smiLoadMarks.Size = new System.Drawing.Size(242, 22);
+            this.smiLoadMarks.Size = new System.Drawing.Size(325, 22);
             this.smiLoadMarks.Text = "Загрузка оценок из ведомости";
             this.smiLoadMarks.Click += new System.EventHandler(this.smiLoadMarks_Click);
             // 
             // smiDecryptor
             // 
             this.smiDecryptor.Name = "smiDecryptor";
-            this.smiDecryptor.Size = new System.Drawing.Size(242, 22);
+            this.smiDecryptor.Size = new System.Drawing.Size(325, 22);
             this.smiDecryptor.Text = "Дешифровка";
             this.smiDecryptor.Click += new System.EventHandler(this.smiDecryptor_Click);
             // 
             // smiAppeal
             // 
             this.smiAppeal.Name = "smiAppeal";
-            this.smiAppeal.Size = new System.Drawing.Size(242, 22);
+            this.smiAppeal.Size = new System.Drawing.Size(325, 22);
             this.smiAppeal.Text = "Ведомость для аппеляции";
             this.smiAppeal.Click += new System.EventHandler(this.smiAppeal_Click);
+            // 
+            // smiExamsVedMarkToHistory
+            // 
+            this.smiExamsVedMarkToHistory.Name = "smiExamsVedMarkToHistory";
+            this.smiExamsVedMarkToHistory.Size = new System.Drawing.Size(325, 22);
+            this.smiExamsVedMarkToHistory.Text = "Перенос оценок из промежуточной таблицы";
+            this.smiExamsVedMarkToHistory.Click += new System.EventHandler(this.smiExamsVedMarkToHistory_Click);
             // 
             // smiExport
             // 
@@ -786,6 +797,13 @@
             // 
             this.tsslMain.Name = "tsslMain";
             this.tsslMain.Size = new System.Drawing.Size(0, 17);
+            // 
+            // smiLoadExamsResultsToParentExamTool
+            // 
+            this.smiLoadExamsResultsToParentExamTool.Name = "smiLoadExamsResultsToParentExamTool";
+            this.smiLoadExamsResultsToParentExamTool.Size = new System.Drawing.Size(325, 22);
+            this.smiLoadExamsResultsToParentExamTool.Text = "Загрузить оценки в родительский экзамен";
+            this.smiLoadExamsResultsToParentExamTool.Click += new System.EventHandler(this.smiLoadExamsResultsToParentExamTool_Click);
             // 
             // MainForm
             // 
@@ -894,6 +912,8 @@
         private System.Windows.Forms.ToolStripMenuItem smiOlympAbitBallsAndRatings;
         private System.Windows.Forms.ToolStripMenuItem smiRegionAbitStat_Rev;
         private System.Windows.Forms.ToolStripMenuItem smiRegionAbitEGEMarksStatistics;
+        private System.Windows.Forms.ToolStripMenuItem smiExamsVedMarkToHistory;
+        private System.Windows.Forms.ToolStripMenuItem smiLoadExamsResultsToParentExamTool;
 
     }
 }

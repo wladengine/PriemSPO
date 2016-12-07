@@ -11,6 +11,8 @@ using System.Diagnostics;
 
 using EducServLib;
 using PriemLib;
+using System.IO;
+using System.Threading;
 
 namespace Priem
 {
@@ -18,6 +20,12 @@ namespace Priem
     {
         private DBPriem _bdc;
         private string _titleString;
+        private bool bSuccessAuth;
+        private BackgroundWorker bw_tech;
+
+        private bool bFirstRun = true;
+        private bool bNewVersionWarningShowing = false;
+        BackgroundWorker bwChecker;
 
         public MainForm()
         {
@@ -31,16 +39,133 @@ namespace Priem
                 if (string.IsNullOrEmpty(MainClass.connString))
                     return;
 
-                MainClass.Init(this);               
+                bSuccessAuth = MainClass.Init(this);
+
+                if (!bSuccessAuth)
+                {
+                    WinFormsServ.Error("Не удалось подключиться под вашей учетной записью");
+                    return;
+                }
+
+                //автоматическая проверка актуальной версии
+                bwChecker = new BackgroundWorker();
+                bwChecker.WorkerSupportsCancellation = true;
+                bwChecker.DoWork += (sender, e) =>
+                {
+                    int zz = 0;
+                    int treshHoldSeconds = 30;
+                    //3 min
+                    while (true && !e.Cancel)
+                    {
+                        zz++;
+                        Thread.Sleep(1000);
+                        if (zz >= treshHoldSeconds)
+                        {
+                            ((BackgroundWorker)sender).ReportProgress(0);
+                            //CheckActualVersion();
+                            zz = 0;
+                        }
+                    }
+                };
+                bwChecker.WorkerReportsProgress = true;
+                bwChecker.ProgressChanged += (sender, e) => { CheckActualVersion(); };
+
+                bwChecker.RunWorkerAsync();
 
                 _bdc = MainClass.Bdc;
-                OpenHelp(string.Format("{0}; Пользователь: {1}", _titleString, MainClass.GetADUserName(System.Environment.UserName)));
+                //string sPath = string.Format("{0}; Пользователь: {1}", _titleString, MainClass.GetUserName());
+
+                CheckActualVersion();
+                //OpenHelp(sPath);
+
+                //Технические запросы к базе делаются асинхронно для ускорения запуска стартового окна
+                bw_tech = new BackgroundWorker();
+                bw_tech.DoWork += (sender, e) =>
+                {
+                    MainClass.DeleteAllOpenByHolder();
+                    MainClass.InitQueryBuilder();
+                    ShowProtocolWarning();
+                };
+                bw_tech.RunWorkerCompleted += (sender, e) =>
+                {
+                    if (e.Error != null)
+                        WinFormsServ.Error(e.Error);
+                };
+                bw_tech.WorkerSupportsCancellation = true;
+                bw_tech.RunWorkerAsync();
             }
             catch (Exception exc)
             {
-                WinFormsServ.Error("Не удалось подключиться под вашей учетной записью", exc);
+                WinFormsServ.Error("Не удалось подключиться под вашей учетной записью  " + exc.Message);
                 msMainMenu.Enabled = false;
             }
+        }
+
+        public void CheckActualVersion()
+        {
+            if (bNewVersionWarningShowing)
+                return;
+
+            using (PriemEntities context = new PriemEntities())
+            {
+                string currPath = Application.StartupPath;
+                string AppType_Postfix = "";
+                switch (MainClass.dbType)
+                {
+                    case PriemType.Priem: { AppType_Postfix = "1kurs"; break; }
+                    case PriemType.PriemMag: { AppType_Postfix = "mag"; break; }
+                    case PriemType.PriemAspirant: { AppType_Postfix = "aspirant"; break; }
+                    case PriemType.PriemSPO: { AppType_Postfix = "spo"; break; }
+                }
+
+                string actualPath = context.C_AppSettings.Where(x => x.ParamKey == "CurrentDir_" + AppType_Postfix)
+                    .Select(x => x.ParamValue).FirstOrDefault();
+
+                string sForceAutoOpenCurrentVer = context.C_AppSettings.Where(x => x.ParamKey == "ForceAutoOpenCurrentVer_" + AppType_Postfix)
+                    .Select(x => x.ParamValue).FirstOrDefault();
+                bool bForceAutoOpenCurrentVer = "1".Equals(sForceAutoOpenCurrentVer, StringComparison.OrdinalIgnoreCase);
+
+                DateTime dtInfo = new FileInfo(Application.ExecutablePath).LastWriteTime;
+                //string versionInfo = string.Format(" (версия от {0})", dtInfo.ToShortDateString() + " " + dtInfo.ToShortTimeString());
+                if (!string.IsNullOrEmpty(actualPath) && !currPath.Equals(actualPath, StringComparison.OrdinalIgnoreCase))
+                {
+                    if (bForceAutoOpenCurrentVer)
+                        OpenActualVersion(actualPath);
+                    else
+                    {
+                        string Message = "Вышла новая версия приложения. Запустить актуальную версию?";
+                        bNewVersionWarningShowing = true;
+                        var dr = MessageBox.Show(Message, "Контроль версий", MessageBoxButtons.YesNo);
+                        bNewVersionWarningShowing = false;
+                        if (dr == System.Windows.Forms.DialogResult.Yes)
+                            OpenActualVersion(actualPath);
+                        else if (bFirstRun)
+                            OpenHelp(string.Format("{0}; Пользователь: {1}", _titleString/* + versionInfo*/, MainClass.GetUserName()));
+                    }
+                }
+                else
+                {
+                    if (bFirstRun)
+                        OpenHelp(string.Format("{0}; Пользователь: {1}", _titleString/* + versionInfo*/, MainClass.GetUserName()));
+                }
+            }
+        }
+
+        public void OpenActualVersion(string path)
+        {
+            bwChecker.CancelAsync();
+
+            string ExeFile = "";
+            switch (MainClass.dbType)
+            {
+                case PriemType.Priem: { ExeFile = "1kurs"; break; }
+                case PriemType.PriemMag: { ExeFile = "mag"; break; }
+                case PriemType.PriemAspirant: { ExeFile = "aspirant"; break; }
+                case PriemType.PriemSPO: { ExeFile = "spo"; break; }
+            }
+
+            System.Diagnostics.Process.Start(path.TrimEnd('\\') + string.Format("\\Priem_{0}.exe", ExeFile));
+            this.Close();
         }
 
         private void SetDB()
@@ -49,50 +174,60 @@ namespace Priem
             MainClass.connString = DBConstants.CS_PRIEM;
             MainClass.connStringOnline = DBConstants.CS_PriemONLINE;
 
-            switch (dbName)
-            {
-                case "Priem":
-                    _titleString = " на первый курс";
-                    MainClass.dbType = PriemType.Priem;
-                    break;
-                
-                case "PriemMAG":
-                    _titleString = " в магистратуру";
-                    MainClass.dbType = PriemType.PriemMag;
-                    break;
+            DateTime crDate = new FileInfo(Application.ExecutablePath).LastWriteTime;
 
-                case "Priem_FAC":
+            switch (dbName.ToLowerInvariant())
+            {
+                case "priem":
+                    _titleString = " на первый курс (версия от " + crDate.ToShortDateString() + " " + crDate.ToShortTimeString() + ")";
+                    MainClass.dbType = PriemType.Priem;
+                    MainClass.IsTestDB = false;
+                    break;
+                case "priemsecond":
+                    _titleString = " на первый курс (новые правила)";
+                    MainClass.dbType = PriemType.Priem;
+                    MainClass.connString = DBConstants.CS_PRIEM_SECOND;
+                    MainClass.IsTestDB = false;
+                    break;
+                case "priemmag":
+                    _titleString = " в магистратуру (версия от " + crDate.ToShortDateString() + " " + crDate.ToShortTimeString() + ")";
+                    MainClass.dbType = PriemType.PriemMag;
+                    MainClass.IsTestDB = false;
+                    break;
+                case "priemspo":
+                    _titleString = "СПО (версия от " + crDate.ToShortDateString() + " " + crDate.ToShortTimeString() + ")";
+                    MainClass.dbType = PriemType.PriemSPO;
+                    MainClass.IsTestDB = false;
+                    break;
+                case "priem_fac":
                     _titleString = " рабочая 1 курс superman";
                     MainClass.connString = DBConstants.CS_PRIEM_FAC;
                     MainClass.dbType = PriemType.Priem;
+                    MainClass.IsTestDB = false;
                     break;
-                case "PriemMAG_FAC":
+                case "priemmag_fac":
                     _titleString = " рабочая магистратура superman";
                     MainClass.connString = DBConstants.CS_PRIEM_FAC;
                     MainClass.dbType = PriemType.PriemMag;
+                    MainClass.IsTestDB = false;
                     break;
-                case "PriemSPO":
-                    _titleString = " в колледжи";
-                    MainClass.connString = DBConstants.CS_PRIEM;
-                    MainClass.dbType = PriemType.PriemSPO;
-                    break;
-                case "PriemSPO_FAC":
-                    _titleString = " рабочая СПО superman";
+                case "priem_test":
+                    _titleString = " ТЕСТОВАЯ 1 курс";
                     MainClass.connString = DBConstants.CS_PRIEM_FAC;
-                    MainClass.dbType = PriemType.PriemSPO;
+                    MainClass.dbType = PriemType.Priem;
+                    MainClass.IsTestDB = true;
+                    break;
+                case "priemmag_test":
+                    _titleString = " ТЕСТОВАЯ магистратура";
+                    MainClass.connString = DBConstants.CS_PRIEM_FAC;
+                    MainClass.dbType = PriemType.PriemMag;
+                    MainClass.IsTestDB = true;
                     break;
                 default:
                     WinFormsServ.Error("Проверьте параметры конфиг-файла!");
                     this.Text = "ОШИБКА";
                     return;
             }
-
-            if (MainClass.connString.ToLower().Contains("test;integrated"))
-                _titleString += " ТЕСТОВАЯ";
-            if (MainClass.connString.Contains("Educ;Integrated"))
-                _titleString += " ДЛЯ ОБУЧЕНИЯ";
-
-            _titleString = " СПО";
 
             this.Text = "ПРИЕМ " + MainClass.sPriemYear + _titleString;
         }
@@ -105,6 +240,8 @@ namespace Priem
         {
             try
             {
+                bFirstRun = false;
+
                 // убирает все IsOpen для данного пользователя                
                 MainClass.DeleteAllOpenByHolder();
 
@@ -657,9 +794,16 @@ namespace Priem
         private void smiRegionAbitEGEMarksStatistics_Click(object sender, EventArgs e)
         {
            new RegionAbitEGEMarksStatistics().Show();
+        }
 
-            // тестовая запись
-           MessageBox.Show("");
+        private void smiExamsVedMarkToHistory_Click(object sender, EventArgs e)
+        {
+            new ExamsVedMarkToHistory().Show();
+        }
+
+        private void smiLoadExamsResultsToParentExamTool_Click(object sender, EventArgs e)
+        {
+            MarkProvider.LoadExamsResultsToParentExam();
         }
     }
 }
