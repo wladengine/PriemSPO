@@ -716,7 +716,7 @@ AND FixierenView.IsSecond = {7} AND FixierenView.IsReduced = {8} AND FixierenVie
                         int rand = new Random().Next(10000, 99999);
 
                         ObjectParameter fvId = new ObjectParameter("id", typeof(Guid));
-                        context.FixierenView_Insert(StudyLevelGroupId, FacultyId, LicenseProgramId, ObrazProgramId, ProfileId, StudyBasisId, StudyFormId, IsSecond, IsReduced, IsParallel, IsCel, rand, false, false, IsQuota, fvId);
+                        context.FixierenView_Insert(StudyLevelGroupId, FacultyId, LicenseProgramId, ObrazProgramId, ProfileId, StudyBasisId, StudyFormId, IsSecond, IsReduced, IsParallel, IsCel, rand, false, IsQuota, fvId);
                         Guid? viewId = (Guid?)fvId.Value;
 
                         int counter = 0;
@@ -862,7 +862,7 @@ AND FixierenView.IsSecond = {7} AND FixierenView.IsReduced = {8} AND FixierenVie
             {
                 using (PriemEntities context = new PriemEntities())
                 {
-                    context.FixierenView_UpdateLocked(StudyLevelGroupId, FacultyId, LicenseProgramId, ObrazProgramId, ProfileId, StudyBasisId, StudyFormId, IsSecond, IsReduced, IsParallel, IsCel, false, locked);
+                    context.FixierenView_UpdateLocked(StudyLevelGroupId, FacultyId, LicenseProgramId, ObrazProgramId, ProfileId, StudyBasisId, StudyFormId, IsSecond, IsReduced, IsParallel, IsCel, locked);
                     
                     lblLocked.Text = locked ? "ЗАЛОЧЕНА" : "НЕ залочена";
                 }
@@ -914,7 +914,7 @@ AND FixierenView.IsSecond = {7} AND FixierenView.IsReduced = {8} AND FixierenVie
                                            select fv.Id).FirstOrDefault();
                         
                         //удалили старое
-                        context.FirstWave_DELETE(entryId, IsCel, false, IsQuota);
+                        context.FirstWave_DELETE(entryId, IsCel, IsQuota);
 
                         var fix = from fx in context.Fixieren
                                   where fx.FixierenViewId == fixViewId
@@ -974,7 +974,7 @@ AND FixierenView.IsSecond = {7} AND FixierenView.IsReduced = {8} AND FixierenVie
                                      select fv.Id).FirstOrDefault();
                     
                     //удалили
-                    context.FirstWave_DELETE(entryId, IsCel, false, IsQuota);
+                    context.FirstWave_DELETE(entryId, IsCel, IsQuota);
                 }
             }
             catch (Exception ex)

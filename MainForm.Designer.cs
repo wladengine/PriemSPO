@@ -105,6 +105,7 @@
             this.smiDecryptor = new System.Windows.Forms.ToolStripMenuItem();
             this.smiAppeal = new System.Windows.Forms.ToolStripMenuItem();
             this.smiExamsVedMarkToHistory = new System.Windows.Forms.ToolStripMenuItem();
+            this.smiLoadExamsResultsToParentExamTool = new System.Windows.Forms.ToolStripMenuItem();
             this.smiExport = new System.Windows.Forms.ToolStripMenuItem();
             this.smiVTB = new System.Windows.Forms.ToolStripMenuItem();
             this.smiSberbank = new System.Windows.Forms.ToolStripMenuItem();
@@ -114,7 +115,7 @@
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.lblDBPath = new System.Windows.Forms.ToolStripStatusLabel();
             this.tsslMain = new System.Windows.Forms.ToolStripStatusLabel();
-            this.smiLoadExamsResultsToParentExamTool = new System.Windows.Forms.ToolStripMenuItem();
+            this.reSetPaidToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.msMainMenu.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -585,7 +586,8 @@
             this.smiImportMags,
             this.smiRatingBackUp,
             this.smiMakeBackDoc,
-            this.smiDeleteDog});
+            this.smiDeleteDog,
+            this.reSetPaidToolStripMenuItem});
             this.smiBooks.Name = "smiBooks";
             this.smiBooks.Size = new System.Drawing.Size(152, 20);
             this.smiBooks.Text = "Справочники для Паши";
@@ -733,6 +735,13 @@
             this.smiExamsVedMarkToHistory.Text = "Перенос оценок из промежуточной таблицы";
             this.smiExamsVedMarkToHistory.Click += new System.EventHandler(this.smiExamsVedMarkToHistory_Click);
             // 
+            // smiLoadExamsResultsToParentExamTool
+            // 
+            this.smiLoadExamsResultsToParentExamTool.Name = "smiLoadExamsResultsToParentExamTool";
+            this.smiLoadExamsResultsToParentExamTool.Size = new System.Drawing.Size(325, 22);
+            this.smiLoadExamsResultsToParentExamTool.Text = "Загрузить оценки в родительский экзамен";
+            this.smiLoadExamsResultsToParentExamTool.Click += new System.EventHandler(this.smiLoadExamsResultsToParentExamTool_Click);
+            // 
             // smiExport
             // 
             this.smiExport.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -798,12 +807,12 @@
             this.tsslMain.Name = "tsslMain";
             this.tsslMain.Size = new System.Drawing.Size(0, 17);
             // 
-            // smiLoadExamsResultsToParentExamTool
+            // reSetPaidToolStripMenuItem
             // 
-            this.smiLoadExamsResultsToParentExamTool.Name = "smiLoadExamsResultsToParentExamTool";
-            this.smiLoadExamsResultsToParentExamTool.Size = new System.Drawing.Size(325, 22);
-            this.smiLoadExamsResultsToParentExamTool.Text = "Загрузить оценки в родительский экзамен";
-            this.smiLoadExamsResultsToParentExamTool.Click += new System.EventHandler(this.smiLoadExamsResultsToParentExamTool_Click);
+            this.reSetPaidToolStripMenuItem.Name = "reSetPaidToolStripMenuItem";
+            this.reSetPaidToolStripMenuItem.Size = new System.Drawing.Size(453, 22);
+            this.reSetPaidToolStripMenuItem.Text = "ReSetPaid";
+            this.reSetPaidToolStripMenuItem.Click += new System.EventHandler(this.reSetPaidToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -914,7 +923,7 @@
         private System.Windows.Forms.ToolStripMenuItem smiRegionAbitEGEMarksStatistics;
         private System.Windows.Forms.ToolStripMenuItem smiExamsVedMarkToHistory;
         private System.Windows.Forms.ToolStripMenuItem smiLoadExamsResultsToParentExamTool;
-
+        private System.Windows.Forms.ToolStripMenuItem reSetPaidToolStripMenuItem;
     }
 }
 

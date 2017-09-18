@@ -803,7 +803,14 @@ namespace Priem
 
         private void smiLoadExamsResultsToParentExamTool_Click(object sender, EventArgs e)
         {
-            MarkProvider.LoadExamsResultsToParentExam();
+            var dr = MessageBox.Show("Обновлять уже имеющиеся оценки?", "Уточнение", MessageBoxButtons.YesNo);
+            bool bUpdExistingMarks = dr == DialogResult.Yes;
+            MarkProvider.LoadExamsResultsToParentExam(bUpdExistingMarks);
+        }
+
+        private void reSetPaidToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MarkProvider.ReSetMarkFromBudget();
         }
     }
 }
